@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace LMIS.Api.Data.DataAccess
 {
-    public class ApplicationDbContext
+    public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
