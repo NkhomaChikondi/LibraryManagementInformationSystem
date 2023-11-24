@@ -25,5 +25,7 @@ namespace LMIS.Api.Core.Model
         public string Email { get; set; }
         [Required]
         public int Pin { get; set; }
+
+        public ICollection<UserRole> userRoles { get; set; }
     }
 }

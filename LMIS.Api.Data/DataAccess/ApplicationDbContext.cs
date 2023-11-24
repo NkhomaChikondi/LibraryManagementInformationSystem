@@ -14,5 +14,6 @@ namespace LMIS.Api.Data.DataAccess
         {
         }
         public DbSet<ApplicationUser> applicationUsers { get; set; }
+        public DbSet<Role> roles { get; set; }
     }
 }

@@ -13,5 +13,7 @@ namespace LMIS.Api.Core.Model
         public int RoleId { get; set; }
         [Required]
         public string RoleName { get; set; }       
+
+        public ICollection<UserRole> userRoles { get; set; }
     }
 }
