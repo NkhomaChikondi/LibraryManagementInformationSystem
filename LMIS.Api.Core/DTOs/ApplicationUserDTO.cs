@@ -24,5 +24,7 @@ namespace LMIS.Api.Core.DTOs
         public string Email { get; set; }
         [Required]
         public int Pin { get; set; }
+
+        public List<RoleDTO> Roles { get; set; }
     }
 }
