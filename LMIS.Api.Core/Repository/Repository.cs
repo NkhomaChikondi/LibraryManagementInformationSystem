@@ -1,4 +1,5 @@
 ﻿using LMIS.Api.Core.DataAccess;
+using LMIS.Api.Core.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -69,11 +70,6 @@ namespace LMIS.Api.Core.Repository
             return await _dbSet.FirstOrDefaultAsync(filter);
         }     
 
-        public Task UpdateAsync(T entity)
-        {
-            _dbSet.Attach(entity);
-            _db.Entry(entity).State = EntityState.Modified;
-            return Task.CompletedTask;
-        }
+        
     }
 }
