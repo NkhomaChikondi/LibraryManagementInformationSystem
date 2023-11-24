@@ -1,4 +1,4 @@
-﻿
+﻿using LMIS.Api.Core.Model;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LMIS.Api.Core.DataAccess
-{
+{   
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
@@ -35,4 +35,5 @@ namespace LMIS.Api.Core.DataAccess
                 .HasForeignKey(ur => ur.roleId);
         }
     }
+    
 }

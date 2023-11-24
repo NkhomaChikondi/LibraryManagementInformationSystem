@@ -13,8 +13,7 @@ namespace LMIS.Api.Core.Repository
         Task<T> GetByIdAsync(int id);
         Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter = null);
         IQueryable<T> GetAllAsync();
-        IQueryable<T> Get(Expression<Func<T, bool>> filter);
-        Task InsertAsync(T entity);
+        IQueryable<T> Get(Expression<Func<T, bool>> filter);       
         Task UpdateAsync(T entity);
         Task DeleteAsync(object id);
         Task DeleteAsync(T entity);
