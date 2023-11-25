@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LMIS.Api.Core.Repository
 {
-    public class RoleRepository : Repository<ApplicationUser>, IRoleRepository
+    public class RoleRepository : Repository<Role>, IRoleRepository
     {
         private ApplicationDbContext _db;
         public RoleRepository(ApplicationDbContext db) : base(db)

@@ -6,13 +6,10 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace LMIS.Api.Core.Repository.IRepository
-{
-    public interface IRoleRepository
+{  
+    public interface IRoleRepository : IRepository<Role>
     {
-        public interface IRoleRepository : IRepository<Role>
-        {
-            void Update(Role role);
+        void Update(Role role);
 
-        }
-    }
+    }    
 }

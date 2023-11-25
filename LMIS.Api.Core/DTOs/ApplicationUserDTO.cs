@@ -25,6 +25,6 @@ namespace LMIS.Api.Core.DTOs
         [Required]
         public int Pin { get; set; }
 
-        public List<RoleDTO> Roles { get; set; }
+        public string RoleName { get; set; }
     }
 }

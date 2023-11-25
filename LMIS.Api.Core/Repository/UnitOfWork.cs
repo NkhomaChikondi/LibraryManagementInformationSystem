@@ -23,7 +23,17 @@ namespace LMIS.Api.Core.Repository
         }
         public void Save()
         {
-            _db.SaveChanges();
+            try
+            {
+                _db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                var error = ex.Message;
+                var getError = error;
+            }
+           
         }
 
     }

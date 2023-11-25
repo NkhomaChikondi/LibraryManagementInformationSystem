@@ -13,7 +13,7 @@ namespace LMIS.Api.Core.Repository
     public class Repository<T> : IRepository<T> where T : class
     {
         private readonly ApplicationDbContext _db;
-        private readonly DbSet<T> _dbSet;
+        internal DbSet<T> _dbSet;
         public Repository(ApplicationDbContext dbContext)
         {
           _db = dbContext;   
@@ -24,10 +24,11 @@ namespace LMIS.Api.Core.Repository
             return filter == null ? await _dbSet.CountAsync() : await _dbSet.CountAsync(filter);
         }
 
-        public async Task<T> CreateAsync(T entity)
+        public async Task CreateAsync(T entity)
         {
             await _dbSet.AddAsync(entity);
-            return entity;
+           
+            
         }
 
         public async Task DeleteAsync(object id)
@@ -68,8 +69,8 @@ namespace LMIS.Api.Core.Repository
         public async Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter = null)
         {
             return await _dbSet.FirstOrDefaultAsync(filter);
-        }     
+        }
 
-        
+       
     }
 }
