@@ -10,9 +10,9 @@ namespace LMIS.Api.Core.Model
     public class UserRole
     {
         [Key]
-        public Guid userRoleId { get; set; }
-        public Guid userId { get; set; }
-        public Guid roleId { get; set; }
+        public int userRoleId { get; set; }
+        public int userId { get; set; }
+        public int roleId { get; set; }
 
         // Navigation properties
         public ApplicationUser User { get; set; }

@@ -1,12 +1,12 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
 namespace LMIS.Api.Core.Migrations
 {
     /// <inheritdoc />
-    public partial class ChangedIdDatatypeforUsermanagementClasses : Migration
+    public partial class initialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,7 +15,8 @@ namespace LMIS.Api.Core.Migrations
                 name: "applicationUsers",
                 columns: table => new
                 {
-                    UserId = table.Column<Guid>(type: "uuid", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     firstName = table.Column<string>(type: "text", nullable: false),
                     lastName = table.Column<string>(type: "text", nullable: false),
                     Location = table.Column<string>(type: "text", nullable: false),
@@ -33,7 +34,8 @@ namespace LMIS.Api.Core.Migrations
                 name: "roles",
                 columns: table => new
                 {
-                    RoleId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RoleId = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     RoleName = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
@@ -45,9 +47,9 @@ namespace LMIS.Api.Core.Migrations
                 name: "userRoles",
                 columns: table => new
                 {
-                    userId = table.Column<Guid>(type: "uuid", nullable: false),
-                    roleId = table.Column<Guid>(type: "uuid", nullable: false),
-                    userRoleId = table.Column<Guid>(type: "uuid", nullable: false)
+                    userId = table.Column<int>(type: "integer", nullable: false),
+                    roleId = table.Column<int>(type: "integer", nullable: false),
+                    userRoleId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {

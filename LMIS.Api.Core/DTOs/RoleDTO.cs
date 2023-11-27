@@ -9,7 +9,7 @@ namespace LMIS.Api.Core.DTOs
 {
     public class RoleDTO
     {
-        public int RoleId { get; set; }
+        public Guid RoleId { get; set; }
         [Required]
         public string RoleName { get; set; }
     }

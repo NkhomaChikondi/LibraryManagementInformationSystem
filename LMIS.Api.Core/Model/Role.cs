@@ -10,7 +10,7 @@ namespace LMIS.Api.Core.Model
     public class Role
     {
         [Key]
-        public Guid RoleId { get; set; }
+        public int RoleId { get; set; }
         [Required]
         public string RoleName { get; set; }       
 

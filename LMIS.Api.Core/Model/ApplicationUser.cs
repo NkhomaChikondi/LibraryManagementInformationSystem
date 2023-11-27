@@ -10,7 +10,7 @@ namespace LMIS.Api.Core.Model
     public class ApplicationUser
     {
         [Key]
-        public Guid UserId { get; set; }
+        public int UserId { get; set; }
         [Required]
         public string firstName { get; set; }
         [Required]

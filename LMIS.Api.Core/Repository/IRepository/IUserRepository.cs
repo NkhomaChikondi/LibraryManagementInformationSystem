@@ -11,6 +11,11 @@ namespace LMIS.Api.Core.Repository.IRepository
         public interface IUserRepository : IRepository<ApplicationUser>
         {
             void Update(ApplicationUser user);
+             bool IsValidEmail(string email);
+           string HashPassword(string password);
+            
+         string GeneratePassword(ApplicationUser applicationUser);
+        int GeneratePin();
 
         }
     

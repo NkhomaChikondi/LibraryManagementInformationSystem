@@ -9,21 +9,18 @@ namespace LMIS.Api.Core.DTOs
 {
     public class ApplicationUserDTO
     {
+        [Key]
         public int UserId { get; set; }
         [Required]
         public string firstName { get; set; }
         [Required]
         public string lastName { get; set; }
         [Required]
-        public string Location { get; set; }
-        [Required]
-        public string Password { get; set; }
+        public string Location { get; set; }      
         [Required]
         public string Gender { get; set; }
         [Required]
-        public string Email { get; set; }
-        [Required]
-        public int Pin { get; set; }
+        public string Email { get; set; }       
 
         public string RoleName { get; set; }
     }

@@ -43,33 +43,52 @@ namespace LMIS.API.Controllers
             {
                 return BadRequest(ModelState);
             }
+
             var user = _mapper.Map<ApplicationUser>(createUserDTO);
-            // Map the DTO to your entity model or use the provided method in the repository to create a new user                    
+
             try
             {
-                // Create an expression that checks if a role with a specific name exists
-                Expression<Func<Role, bool>> roleExistsExpression = role => role.RoleName == "Administrator";
-                if(await _unitOfWork.Role.ExistsAsync(roleExistsExpression) == false)
+                if (!_unitOfWork.User.IsValidEmail(createUserDTO.Email))
                 {
-                    ModelState.AddModelError(nameof(createUserDTO.RoleName), $"This Role {createUserDTO.RoleName} doees not exists in the system");
-
+                    ModelState.AddModelError(nameof(createUserDTO.Email), $"Invalid email format");
                     return BadRequest(ModelState);
                 }
-                else 
-                {           
-                     await _unitOfWork.User.CreateAsync(user);
-                    _unitOfWork.Save();
 
-                    var createdUserDTO = _mapper.Map<ApplicationUserDTO>(user); // Mapping ApplicationUser to UserDTO
-                    return Ok(createdUserDTO);
-                }                             
+                // Check if the role exists
+                Expression<Func<Role, bool>> roleExistsExpression = role => role.RoleName == "Administrator";
+                if (!await _unitOfWork.Role.ExistsAsync(roleExistsExpression))
+                {
+                    ModelState.AddModelError(nameof(createUserDTO.RoleName), $"The role {createUserDTO.RoleName} does not exist in the system");
+                    return BadRequest(ModelState);
+                }
+
+                // Check if the email already exists
+                Expression<Func<ApplicationUser, bool>> userEmailExistsExpression = userEmail => userEmail.Email == createUserDTO.Email;
+                if (await _unitOfWork.User.ExistsAsync(userEmailExistsExpression))
+                {
+                    ModelState.AddModelError(nameof(createUserDTO.Email), $"This email already exists in the system");
+                    return BadRequest(ModelState);
+                }
+                //generate password
+                var password = _unitOfWork.User.GeneratePassword(user);
+                // Hash the password
+                user.Password = _unitOfWork.User.HashPassword(password);
+
+                // Generate and assign the PIN
+                user.Pin = _unitOfWork.User.GeneratePin();
+
+                await _unitOfWork.User.CreateAsync(user);
+                _unitOfWork.Save();
+
+                var createdUserDTO = _mapper.Map<ApplicationUserDTO>(user);
+                return Ok(createdUserDTO);
             }
             catch (Exception ex)
             {
-                // Handle exceptions or return an appropriate error response
-                return StatusCode(500, "An error occurred while creating the user.");
+                return StatusCode(500, $"An {ex.Message} occurred while creating the user.");
             }
         }
+
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]
