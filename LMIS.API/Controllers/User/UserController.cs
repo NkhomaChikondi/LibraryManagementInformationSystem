@@ -82,7 +82,8 @@ namespace LMIS.API.Controllers.User
 
                 // Generate and assign the PIN
                 user.Pin = _unitOfWork.User.GeneratePin();
-
+                // set the time the user has been created
+                user.CreatedOn = DateTime.UtcNow;   
                 await _unitOfWork.User.CreateAsync(user);
                 _unitOfWork.Save();
 
@@ -147,6 +148,72 @@ namespace LMIS.API.Controllers.User
             // save changes
             _unitOfWork.Save();
             return Ok();
+        }
+
+        [HttpGet]
+        [Route("ConfirmAccount/{email}/{pin}")]
+        public async Task<IActionResult> ConfirmAccount(string email, int pin)
+        {
+            //check if values are not null
+            if (pin < 0 || email == null)
+            {
+                ModelState.AddModelError("Pin", "Pin Cannot be empty");
+
+                return BadRequest("pin cannot be empty");
+            }
+
+            // get user with that email
+            var user = await _unitOfWork.User.GetFirstOrDefaultAsync(user => user.Email == email);
+            if (user == null)
+            {
+                return BadRequest("There is no user with that email");
+            }
+            // check if the pin submitted is equal to the one in the database
+            if(user.Pin != pin)
+            {
+                return BadRequest("You submitted a wrong pin");
+            }
+            // update user
+            user.IsConfirmed = true;
+            _unitOfWork.User.Update(user);
+            _unitOfWork.Save();
+            return Ok(new { response = "Account confirmed" });
+        }
+
+        [HttpGet]
+        [Route("ResendPin/{email}")]
+        // Resending account activation pin
+        public async Task<IActionResult> ResendPin(string email)
+        {
+
+            // check if email is null
+            if (email == null) 
+            {
+                return BadRequest("Email cannot be empty");
+            }
+            // get the user having this email
+            var user = await  _unitOfWork.User.GetFirstOrDefaultAsync(user => user.Email == email);
+            if (user == null) 
+            {
+                return BadRequest("There is no user having this email");
+            }
+
+            var pin = _unitOfWork.User.GeneratePin();
+            var password = _unitOfWork.User.GeneratePassword(user);
+
+            // save new password and pin user details
+            user.Pin = pin;
+            user.Password = password;
+            _unitOfWork.User.Update(user);
+            _unitOfWork.Save();
+
+            // resend the email
+            
+            string pinBody = "Your OTP for LMIS is " + pin + " Your new password is " + password + " <br /> Enter the OTP, email address and the new password to reset your account";
+            this._emailService.SendMail(user.Email, "Account Reset Details", pinBody);
+
+            return Ok("Check your email for the pin");
+
         }
     }
 }

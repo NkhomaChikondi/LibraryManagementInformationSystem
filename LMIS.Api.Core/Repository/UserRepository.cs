@@ -17,6 +17,8 @@ namespace LMIS.Api.Core.Repository
         {
             this._db = db;
         }
+
+       
         public string GeneratePassword(ApplicationUser applicationUser)        
         {
             // Get the first letters of the first and last names

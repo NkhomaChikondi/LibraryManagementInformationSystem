@@ -61,6 +61,11 @@ namespace LMIS.Api.Core.Repository
             return _dbSet.AsNoTracking();
         }
 
+        //public async Task<T> GetByEmailAsync(string email)
+        //{
+        //    return await _dbSet.FindAsync(ema
+        //}
+
         public async Task<T> GetByIdAsync(int id)
         {
             return await _dbSet.FindAsync(id);

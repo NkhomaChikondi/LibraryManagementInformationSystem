@@ -25,7 +25,15 @@ namespace LMIS.Api.Core.Model
         public string Email { get; set; }
         [Required]
         public int Pin { get; set; }
+        public DateTime CreatedOn { get; set; }
+        public bool IsConfirmed { get; set; }
 
         public ICollection<UserRole> userRoles { get; set; }
+
+        public ApplicationUser()
+        {
+            CreatedOn = DateTime.Now;
+            IsConfirmed = false;
+        }
     }
 }

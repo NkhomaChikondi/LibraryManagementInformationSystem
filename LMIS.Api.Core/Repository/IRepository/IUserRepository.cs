@@ -12,11 +12,11 @@ namespace LMIS.Api.Core.Repository.IRepository
         {
             void Update(ApplicationUser user);
              bool IsValidEmail(string email);
-           string HashPassword(string password);
-            
+           string HashPassword(string password);            
          string GeneratePassword(ApplicationUser applicationUser);
-        int GeneratePin();
-
+            int GeneratePin();
+         
+    
         }
     
 }
