@@ -29,6 +29,9 @@ namespace LMIS.Api.Core.Model
         public bool IsConfirmed { get; set; }
 
         public ICollection<UserRole> userRoles { get; set; }
+        public ICollection<Member> members { get; set; }
+
+
 
         public ApplicationUser()
         {

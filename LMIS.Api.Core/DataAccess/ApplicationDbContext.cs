@@ -16,6 +16,8 @@ namespace LMIS.Api.Core.DataAccess
         public DbSet<ApplicationUser> applicationUsers { get; set; }
         public DbSet<Role> roles { get; set; }
         public DbSet<UserRole> userRoles { get; set; }
+        public DbSet<Member> members { get; set; }  
+        public DbSet<MemberType> memberTypes { get; set; }  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,6 +35,16 @@ namespace LMIS.Api.Core.DataAccess
                 .HasOne(ur => ur.Role)
                 .WithMany(r => r.userRoles)
                 .HasForeignKey(ur => ur.roleId);
+
+            modelBuilder.Entity<Member>()
+           .HasOne(b => b.user)    
+           .WithMany(a => a.members)   
+           .HasForeignKey(b => b.userId);
+
+            modelBuilder.Entity<Member>()
+            .HasOne(a => a.memberType)  
+            .WithOne(b => b.member)   
+            .HasForeignKey<MemberType>(b => b.memberId); 
         }
     }
     
