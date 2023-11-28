@@ -3,6 +3,7 @@ using LMIS.Api.Core.DTOs;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Linq.Expressions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -104,16 +105,40 @@ namespace LMIS.API.Controllers
         }
 
         // PUT api/<UserController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
+        [HttpPut("{userId}")]
+        public async Task<IActionResult> UpdateUser(int userId, [FromBody] ApplicationUserDTO updateUserDto)
+    {
+        var user = await _unitOfWork.User.GetByIdAsync(userId);
 
+        if (user == null)
+        {
+           return BadRequest(ModelState);
+        }
+
+        // Update user properties based on the received DTO
+        user.firstName = updateUserDto.firstName;
+        user.lastName = updateUserDto.lastName;
+        user.Location = updateUserDto.Location;
+        user.Gender = updateUserDto.Gender;
+        user.Email = updateUserDto.Email;        
+
+         _unitOfWork.User.Update(user);
+            _unitOfWork.Save();
+
+            // return mapped result
+            return Ok();
         }
 
         // DELETE api/<UserController>/5
+        // DELETE api/<RoleController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
+            //find a role given the id
+            await _unitOfWork.User.DeleteAsync(id);
+            // save changes
+            _unitOfWork.Save();
+            return Ok();
         }
     }
 }
