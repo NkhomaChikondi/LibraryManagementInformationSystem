@@ -1,6 +1,8 @@
 using LMIS.Api.Core.DataAccess;
 using LMIS.Api.Core.Repository;
 using LMIS.Api.Core.Repository.IRepository;
+using LMIS.Api.Services.Services;
+using LMIS.Api.Services.Services.IServices;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-
+builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddDbContext<ApplicationDbContext>(
 options =>
 {

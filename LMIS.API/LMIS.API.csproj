@@ -31,6 +31,7 @@
   <ItemGroup>
     <ProjectReference Include="..\LMIS.Api.Core\LMIS.Api.Core.csproj" />
     <ProjectReference Include="..\LMIS.Api.Data\LMIS.Api.Data.csproj" />
+    <ProjectReference Include="..\LMIS.Api.Services\LMIS.Api.Services.csproj" />
   </ItemGroup>
 
 </Project>

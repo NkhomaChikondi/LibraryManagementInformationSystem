@@ -2,6 +2,7 @@
 using LMIS.Api.Core.DTOs;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
+using LMIS.Api.Services.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Linq.Expressions;
@@ -16,10 +17,14 @@ namespace LMIS.API.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public UserController(IUnitOfWork unitOfWork, IMapper Mapper) 
+        private readonly IEmailService _emailService;   
+        public IConfiguration _configuration { get; }
+        public UserController(IUnitOfWork unitOfWork, IMapper Mapper,IConfiguration configuration, IEmailService emailService) 
         {
            _mapper = Mapper;
             _unitOfWork = unitOfWork;
+            _emailService = emailService;
+            _configuration = configuration;
         }
         // GET: api/<UserController>
         [HttpGet("GetAllAsync")]
@@ -94,6 +99,9 @@ namespace LMIS.API.Controllers
                 };
                 await _unitOfWork.UserRole.CreateAsync(userRole);
                 _unitOfWork.Save();
+                // send an email containing Login details
+                string PasswordBody = "Your account has been created on LMIS. Your password is:  " + password +"  your OTP is:  " + user.Pin + "<br /> Enter the OTP to activate your account\" + \" <br /> You can activate your account by clicking here</a>";
+                _emailService.SendMail(user.Email, "Login Details", PasswordBody);
 
                 var createdUserDTO = _mapper.Map<ApplicationUserDTO>(user);
                 return Ok(createdUserDTO);
