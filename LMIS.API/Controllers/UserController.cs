@@ -55,7 +55,7 @@ namespace LMIS.API.Controllers
                 }
 
                 // Check if the role exists
-                Expression<Func<Role, bool>> roleExistsExpression = role => role.RoleName == "Administrator";
+                Expression<Func<Role, bool>> roleExistsExpression = role => role.RoleName == createUserDTO.RoleName;
                 if (!await _unitOfWork.Role.ExistsAsync(roleExistsExpression))
                 {
                     ModelState.AddModelError(nameof(createUserDTO.RoleName), $"The role {createUserDTO.RoleName} does not exist in the system");
@@ -80,6 +80,20 @@ namespace LMIS.API.Controllers
                 await _unitOfWork.User.CreateAsync(user);
                 _unitOfWork.Save();
 
+                //  get all roles
+                var roles =  _unitOfWork.Role.GetAllAsync();
+                // get a speficic rolle
+                var role = await _unitOfWork.Role.GetFirstOrDefaultAsync(role => role.RoleName == createUserDTO.RoleName);
+
+                // create a new userRole
+                var userRole = new UserRole
+                {
+                    User = user,
+                    Role = role
+                };
+                await _unitOfWork.UserRole.CreateAsync(userRole);
+                _unitOfWork.Save();
+
                 var createdUserDTO = _mapper.Map<ApplicationUserDTO>(user);
                 return Ok(createdUserDTO);
             }
@@ -88,7 +102,6 @@ namespace LMIS.API.Controllers
                 return StatusCode(500, $"An {ex.Message} occurred while creating the user.");
             }
         }
-
 
         // PUT api/<UserController>/5
         [HttpPut("{id}")]

@@ -7,12 +7,9 @@ using System.Threading.Tasks;
 
 namespace LMIS.Api.Core.Repository.IRepository
 {
-    public interface IUserRoleRepository
+    public interface IUserRoleRepository : IRepository<UserRole>
     {
-        public interface IUserRoleRepository : IRepository<UserRole>
-        {
-            void Update(UserRole userRole);
+        void Update(UserRole userRole);
 
-        }
-    }
+    }    
 }
