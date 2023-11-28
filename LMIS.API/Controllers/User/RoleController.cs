@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace LMIS.API.Controllers
+namespace LMIS.API.Controllers.User
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -75,9 +75,9 @@ namespace LMIS.API.Controllers
             // get role by id
             var role = await _unitOfWork.Role.GetByIdAsync(id);
             // check if role is null
-            if(role != null)
+            if (role != null)
             {
-                role.RoleName = value.Trim();   
+                role.RoleName = value.Trim();
 
                 //update the role record
                 _unitOfWork.Role.Update(role);
@@ -85,10 +85,10 @@ namespace LMIS.API.Controllers
                 _unitOfWork.Save();
 
                 // return mapped result
-                return Ok(this._mapper.Map<RoleDTO>(role));
+                return Ok(_mapper.Map<RoleDTO>(role));
             }
             else
-            { 
+            {
                 return BadRequest(ModelState);
             }
 
@@ -99,10 +99,10 @@ namespace LMIS.API.Controllers
         public async Task<ActionResult> Delete(int id)
         {
             //find a role given the id
-             await _unitOfWork.Role.DeleteAsync(id);
+            await _unitOfWork.Role.DeleteAsync(id);
             // save changes
-             _unitOfWork.Save();
-            return Ok();          
+            _unitOfWork.Save();
+            return Ok();
         }
     }
 }

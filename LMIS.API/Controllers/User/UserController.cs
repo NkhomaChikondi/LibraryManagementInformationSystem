@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
-namespace LMIS.API.Controllers
+namespace LMIS.API.Controllers.User
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -17,11 +17,11 @@ namespace LMIS.API.Controllers
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        private readonly IEmailService _emailService;   
+        private readonly IEmailService _emailService;
         public IConfiguration _configuration { get; }
-        public UserController(IUnitOfWork unitOfWork, IMapper Mapper,IConfiguration configuration, IEmailService emailService) 
+        public UserController(IUnitOfWork unitOfWork, IMapper Mapper, IConfiguration configuration, IEmailService emailService)
         {
-           _mapper = Mapper;
+            _mapper = Mapper;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
             _configuration = configuration;
@@ -29,7 +29,7 @@ namespace LMIS.API.Controllers
         // GET: api/<UserController>
         [HttpGet("GetAllAsync")]
         public IActionResult Get()
-        {            
+        {
             var allUsers = _unitOfWork.User.GetAllAsync();
             return Ok(allUsers);
         }
@@ -38,7 +38,7 @@ namespace LMIS.API.Controllers
         [HttpGet("GetUserById{id}")]
         public IActionResult GetUserById(int id)
         {
-           var User = _unitOfWork.User.GetByIdAsync(id);
+            var User = _unitOfWork.User.GetByIdAsync(id);
             return Ok(User);
         }
 
@@ -87,7 +87,7 @@ namespace LMIS.API.Controllers
                 _unitOfWork.Save();
 
                 //  get all roles
-                var roles =  _unitOfWork.Role.GetAllAsync();
+                var roles = _unitOfWork.Role.GetAllAsync();
                 // get a speficic rolle
                 var role = await _unitOfWork.Role.GetFirstOrDefaultAsync(role => role.RoleName == createUserDTO.RoleName);
 
@@ -100,7 +100,7 @@ namespace LMIS.API.Controllers
                 await _unitOfWork.UserRole.CreateAsync(userRole);
                 _unitOfWork.Save();
                 // send an email containing Login details
-                string PasswordBody = "Your account has been created on LMIS. Your password is:  " + password +"  your OTP is:  " + user.Pin + "<br /> Enter the OTP to activate your account\" + \" <br /> You can activate your account by clicking here</a>";
+                string PasswordBody = "Your account has been created on LMIS. Your password is:  " + password + "  your OTP is:  " + user.Pin + "<br /> Enter the OTP to activate your account\" + \" <br /> You can activate your account by clicking here</a>";
                 _emailService.SendMail(user.Email, "Login Details", PasswordBody);
 
                 var createdUserDTO = _mapper.Map<ApplicationUserDTO>(user);
@@ -115,22 +115,22 @@ namespace LMIS.API.Controllers
         // PUT api/<UserController>/5
         [HttpPut("{userId}")]
         public async Task<IActionResult> UpdateUser(int userId, [FromBody] ApplicationUserDTO updateUserDto)
-    {
-        var user = await _unitOfWork.User.GetByIdAsync(userId);
-
-        if (user == null)
         {
-           return BadRequest(ModelState);
-        }
+            var user = await _unitOfWork.User.GetByIdAsync(userId);
 
-        // Update user properties based on the received DTO
-        user.firstName = updateUserDto.firstName;
-        user.lastName = updateUserDto.lastName;
-        user.Location = updateUserDto.Location;
-        user.Gender = updateUserDto.Gender;
-        user.Email = updateUserDto.Email;        
+            if (user == null)
+            {
+                return BadRequest(ModelState);
+            }
 
-         _unitOfWork.User.Update(user);
+            // Update user properties based on the received DTO
+            user.firstName = updateUserDto.firstName;
+            user.lastName = updateUserDto.lastName;
+            user.Location = updateUserDto.Location;
+            user.Gender = updateUserDto.Gender;
+            user.Email = updateUserDto.Email;
+
+            _unitOfWork.User.Update(user);
             _unitOfWork.Save();
 
             // return mapped result
