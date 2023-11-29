@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -17,7 +18,8 @@ namespace LMIS.Api.Core.Model
         public string Status { get; set; }
         public DateTime CreatedOn { get; set; }
         public int userId { get;set; }
-
+        
+        public int MemberTypeId { get; set; }
         public ApplicationUser user { get; set; }
         public MemberType memberType { get; set; }
     }

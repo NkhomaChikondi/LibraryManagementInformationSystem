@@ -42,9 +42,19 @@ namespace LMIS.Api.Core.DataAccess
            .HasForeignKey(b => b.userId);
 
             modelBuilder.Entity<Member>()
-            .HasOne(a => a.memberType)  
-            .WithOne(b => b.member)   
-            .HasForeignKey<MemberType>(b => b.memberId); 
+          .HasOne(m => m.memberType)
+          .WithOne()
+          .HasForeignKey<Member>(m => m.MemberTypeId);
+
+            // seed member type data
+            modelBuilder.Entity<MemberType>().HasData(
+           new MemberType { Id = 1, Name = "Student",CreatedOn= DateTime.UtcNow },
+           new MemberType { Id = 2, Name = "Staff", CreatedOn = DateTime.UtcNow },
+           new MemberType { Id = 3, Name = "Regular Member", CreatedOn = DateTime.UtcNow },
+           new MemberType { Id = 4, Name = "Premium Member", CreatedOn = DateTime.UtcNow },
+           new MemberType { Id = 5, Name = "Guest" , CreatedOn = DateTime.UtcNow },
+           new MemberType { Id = 6, Name = "Senior Citezen", CreatedOn = DateTime.UtcNow },
+           new MemberType { Id = 7, Name = "Corparate Member", CreatedOn = DateTime.UtcNow });           
         }
     }
     

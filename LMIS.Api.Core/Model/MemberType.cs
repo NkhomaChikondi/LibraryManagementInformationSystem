@@ -11,8 +11,6 @@ namespace LMIS.Api.Core.Model
         public int Id { get; set; }
         public string Name { get; set; }
         public DateTime CreatedOn { get; set; }
-        public int memberId { get; set; }
-
-        public Member member { get; set; }
+       
     }
 }
