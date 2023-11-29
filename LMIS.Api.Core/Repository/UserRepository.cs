@@ -126,5 +126,10 @@ namespace LMIS.Api.Core.Repository
         {
             _db.applicationUsers.Update(user);
         }
+       
+        public bool VerifyPassword(string hashedPasswordFromDatabase, string incomingPlainPassword)
+        {
+            return BCrypt.Net.BCrypt.Verify(incomingPlainPassword, hashedPasswordFromDatabase);
+        }
     }
 }

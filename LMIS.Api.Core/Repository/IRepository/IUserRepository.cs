@@ -18,8 +18,10 @@ namespace LMIS.Api.Core.Repository.IRepository
          string GeneratePassword(ApplicationUser applicationUser);
             int GeneratePin();
          Task<LoginTokenDTO> GenerateToken(ApplicationUser applicationUser,IConfiguration configuration,IUnitOfWork unitOfWork);
-         
-    
+        bool VerifyPassword(string hashedPasswordFromDatabase, string incomingPlainPassword);
+
+
+
         }
     
 }

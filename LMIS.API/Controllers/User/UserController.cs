@@ -140,19 +140,15 @@ namespace LMIS.API.Controllers.User
 
         // DELETE api/<UserController>/5
         // DELETE api/<RoleController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             // delete user
             await _unitOfWork.User.DeleteAsync(id);
             // save changes
             _unitOfWork.Save();
-
-            // delete UserRole assigned to the user
-            var userRole = await _unitOfWork.UserRole.GetFirstOrDefaultAsync(u => u.userId == id);
-           await _unitOfWork.UserRole.DeleteAsync(userRole);
            
-            return Ok();
+            return Ok("Deleted Successfully");
         }
 
         [HttpGet]

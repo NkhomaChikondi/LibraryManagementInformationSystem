@@ -45,9 +45,14 @@ namespace LMIS.API.Controllers.User
                 {
                     return BadRequest("Account not confirmed, please check your email for the activation link");
                 }
+                // hash the password
 
+               // loginModel.Password = _unitOfWork.User.HashPassword(loginModel.Password);
+                
                 // check if the password match
-                if(user.Password ==  loginModel.Password)
+                var isMatched = _unitOfWork.User.VerifyPassword(user.Password, loginModel.Password);
+
+                if(isMatched)
                 {
                     // generate token
                     var tokenHandler = new JwtSecurityToken();
@@ -63,29 +68,6 @@ namespace LMIS.API.Controllers.User
         }
 
 
-        // GET api/<AuthController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/<AuthController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<AuthController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<AuthController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
     }
 }
