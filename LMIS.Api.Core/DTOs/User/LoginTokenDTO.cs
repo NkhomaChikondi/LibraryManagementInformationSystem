@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMIS.Api.Core.DTOs
+namespace LMIS.Api.Core.DTOs.User
 {
-    public class LoginDTO
+    public class LoginTokenDTO
     {
         public string UserId { get; set; }
         public string Token { get; set; }

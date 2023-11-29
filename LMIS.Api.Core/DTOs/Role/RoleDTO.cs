@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMIS.Api.Core.DTOs
+namespace LMIS.Api.Core.DTOs.Role
 {
     public class RoleDTO
     {

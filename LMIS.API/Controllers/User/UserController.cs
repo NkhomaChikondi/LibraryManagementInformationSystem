@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using LMIS.Api.Core.DTOs;
+using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
 using LMIS.Api.Services.Services.IServices;

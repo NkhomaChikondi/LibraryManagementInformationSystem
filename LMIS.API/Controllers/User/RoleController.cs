@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using LMIS.Api.Core.DTOs;
+using LMIS.Api.Core.DTOs.Role;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
 using Microsoft.AspNetCore.Identity;

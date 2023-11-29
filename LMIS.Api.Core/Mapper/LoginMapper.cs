@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using LMIS.Api.Core.DTOs.Role;
+using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using System;
 using System.Collections.Generic;
@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace LMIS.Api.Core.Mapper
 {
-    public class RoleMapper :Profile
+    public class LoginMapper : Profile
     {
-        public RoleMapper()
+        public LoginMapper()
         {
-            CreateMap<RoleDTO, Role>().ReverseMap();
+          CreateMap<ApplicationUser,LoginDTO>().ReverseMap();
         }
     }
 }

@@ -1,10 +1,14 @@
 ﻿using LMIS.Api.Core.DataAccess;
+using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
-
+using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,12 +17,15 @@ namespace LMIS.Api.Core.Repository
     public class UserRepository : Repository<ApplicationUser>,IUserRepository
     {
         private ApplicationDbContext _db;
+       
+       
         public UserRepository(ApplicationDbContext db) : base(db)
         {
             this._db = db;
+           
         }
 
-       
+
         public string GeneratePassword(ApplicationUser applicationUser)        
         {
             // Get the first letters of the first and last names
@@ -59,6 +66,45 @@ namespace LMIS.Api.Core.Repository
 
             return pin; 
         }
+
+        public async Task<LoginTokenDTO> GenerateToken(ApplicationUser applicationUser,IConfiguration _configuration,IUnitOfWork _unitOfWork)
+        {
+            //if successful generate the token based on details given. Valid for one day
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_configuration.GetValue<string>("TokenString:TokenKey"));
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                            new Claim(ClaimTypes.NameIdentifier, applicationUser.Email)
+                }),
+                Expires = DateTime.UtcNow.AddMinutes(_configuration.GetValue<double>("TokenString:expiryMinutes")),
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+            // getting user role
+            var role = await _unitOfWork.UserRole.GetFirstOrDefaultAsync(u => u.userId == applicationUser.UserId);
+            var roleData = await _unitOfWork.Role.GetFirstOrDefaultAsync(u => u.RoleId == role.roleId);
+
+
+            // login DTO
+            var userData = new LoginTokenDTO()
+            {
+                Token = tokenString,
+                UserId = applicationUser.UserId.ToString(),
+                FirstName = applicationUser.firstName,
+                LastName = applicationUser.lastName,
+                Role = roleData.RoleName,
+                Email = applicationUser.Email,
+                TokenType = "bearer",
+                TokenExpiryMinutes = (DateTime)tokenDescriptor.Expires,
+
+            };
+            return userData;
+        }
+
         public string HashPassword(string password)
         {
             // Hash the password before storing it

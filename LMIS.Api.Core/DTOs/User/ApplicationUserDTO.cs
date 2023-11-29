@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMIS.Api.Core.DTOs
+namespace LMIS.Api.Core.DTOs.User
 {
     public class ApplicationUserDTO
     {
@@ -16,11 +16,11 @@ namespace LMIS.Api.Core.DTOs
         [Required]
         public string lastName { get; set; }
         [Required]
-        public string Location { get; set; }      
+        public string Location { get; set; }
         [Required]
         public string Gender { get; set; }
         [Required]
-        public string Email { get; set; }       
+        public string Email { get; set; }
 
         public string RoleName { get; set; }
     }

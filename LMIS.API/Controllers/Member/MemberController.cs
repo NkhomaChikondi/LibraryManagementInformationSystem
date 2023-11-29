@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using LMIS.Api.Core.DTOs;
+using LMIS.Api.Core.DTOs.Member;
 using LMIS.Api.Core.Repository.IRepository;
 using LMIS.Api.Services.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
@@ -39,29 +39,29 @@ namespace LMIS.API.Controllers.Member
         }
 
         // POST api/<MemberController>
-        [HttpPost("CreateMember")]
-        public async Task<IActionResult> CreateMember([FromBody] MemberDTO createMemberDTO)
-        {
-            if(!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
+        //[HttpPost("CreateMember")]
+        //public async Task<IActionResult> CreateMember([FromBody] MemberDTO createMemberDTO)
+        //{
+        //    if(!ModelState.IsValid)
+        //    {
+        //        return BadRequest(ModelState);
+        //    }
             
-            // map the dto to member
-            var member = _mapper.Map<MemberDTO>(createMemberDTO);
-            try
-            {
+        //    // map the dto to member
+        //    var member = _mapper.Map<MemberDTO>(createMemberDTO);
+        //    try
+        //    {
 
 
-            }
-            catch (Exception
-            {
+        //    }
+        //    catch (Exception
+        //    {
 
-                throw;
-            }
+        //        throw;
+        //    }
 
 
-        }
+        //}
         
         // PUT api/<MemberController>/5
         [HttpPut("{id}")]
