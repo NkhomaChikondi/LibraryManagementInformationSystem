@@ -35,8 +35,4 @@
     <ProjectReference Include="..\LMIS.Api.Services\LMIS.Api.Services.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\Member\" />
-  </ItemGroup>
-
 </Project>
