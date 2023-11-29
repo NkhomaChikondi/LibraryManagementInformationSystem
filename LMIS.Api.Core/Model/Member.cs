@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace LMIS.Api.Core.Model
 {
     public class Member
     {
+        [Key]
         public int MemberId { get; set; }
         public string Member_Code { get; set; }
         public string First_Name { get; set; }

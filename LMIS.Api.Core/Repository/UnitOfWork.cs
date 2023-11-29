@@ -14,12 +14,17 @@ namespace LMIS.Api.Core.Repository
         public IUserRepository User { get; private set; }
         public IRoleRepository Role { get; private set; }
         public IUserRoleRepository UserRole { get; private set; }
+        public IMemberType memberType { get; set; }
+        public IMember member {  get; set; }
+
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
             User = new UserRepository(_db);
             Role = new RoleRepository(_db);
             UserRole = new UserRoleRepository(_db);
+            member = new MemberRepository(_db);
+            memberType = new MemberTypeRepository(_db);
         }
         public void Save()
         {

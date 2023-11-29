@@ -12,6 +12,8 @@ namespace LMIS.Api.Core.Repository.IRepository
         IUserRepository User { get; }
         IRoleRepository Role { get; }
         IUserRoleRepository UserRole { get; }
+        IMemberType memberType { get; }
+        IMember member { get; }
         void Save();
 
     }

@@ -56,6 +56,5 @@ namespace LMIS.Api.Core.DataAccess
            new MemberType { Id = 6, Name = "Senior Citezen", CreatedOn = DateTime.UtcNow },
            new MemberType { Id = 7, Name = "Corparate Member", CreatedOn = DateTime.UtcNow });           
         }
-    }
-    
+    }    
 }
