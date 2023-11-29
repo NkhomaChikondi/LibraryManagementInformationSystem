@@ -21,8 +21,7 @@ namespace LMIS.Api.Core.Repository
        
         public UserRepository(ApplicationDbContext db) : base(db)
         {
-            this._db = db;
-           
+            this._db = db;           
         }
 
 

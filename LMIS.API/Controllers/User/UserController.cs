@@ -143,10 +143,15 @@ namespace LMIS.API.Controllers.User
         [HttpDelete("{id}")]
         public async Task<ActionResult> Delete(int id)
         {
-            //find a role given the id
+            // delete user
             await _unitOfWork.User.DeleteAsync(id);
             // save changes
             _unitOfWork.Save();
+
+            // delete UserRole assigned to the user
+            var userRole = await _unitOfWork.UserRole.GetFirstOrDefaultAsync(u => u.userId == id);
+           await _unitOfWork.UserRole.DeleteAsync(userRole);
+           
             return Ok();
         }
 
@@ -215,5 +220,6 @@ namespace LMIS.API.Controllers.User
             return Ok("Check your email for the pin");
 
         }
+
     }
 }
