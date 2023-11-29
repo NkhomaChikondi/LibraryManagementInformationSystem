@@ -1,7 +1,9 @@
 ﻿using LMIS.Api.Core.DataAccess;
+using LMIS.Api.Core.DTOs;
 using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -126,7 +128,16 @@ namespace LMIS.Api.Core.Repository
         {
             _db.applicationUsers.Update(user);
         }
-       
+
+        public IEnumerable<ApplicationUser> usersWithRole()
+        {
+          var users =  _db.applicationUsers
+              .Include(u => u.userRoles) 
+                  .ThenInclude(ur => ur.Role) 
+              .ToList();
+            return users;
+        }
+
         public bool VerifyPassword(string hashedPasswordFromDatabase, string incomingPlainPassword)
         {
             return BCrypt.Net.BCrypt.Verify(incomingPlainPassword, hashedPasswordFromDatabase);

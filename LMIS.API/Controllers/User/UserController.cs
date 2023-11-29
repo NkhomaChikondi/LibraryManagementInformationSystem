@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LMIS.Api.Core.DTOs;
 using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
@@ -216,6 +217,19 @@ namespace LMIS.API.Controllers.User
             return Ok("Check your email for the pin");
 
         }
+
+        // GET: api/<UserController>
+        [HttpGet("GetAlUsersWithRolesAsync")]
+        public IActionResult GetAlUsersWithRolesAsync()
+        {
+            var allUsers = _unitOfWork.User.usersWithRole();
+            // map to dto
+            List<UserWithRoleDTO> usersWithRolesDTO = _mapper.Map<IEnumerable<ApplicationUser>, List<UserWithRoleDTO>>(allUsers);
+            return Ok(usersWithRolesDTO);
+        }
+            
+          
+        
 
     }
 }

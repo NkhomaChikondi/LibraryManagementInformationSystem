@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace LMIS.Api.Core.Model
@@ -29,6 +30,7 @@ namespace LMIS.Api.Core.Model
         public bool IsConfirmed { get; set; }
 
         public ICollection<UserRole> userRoles { get; set; }
+        [JsonIgnore]
         public ICollection<Member> members { get; set; }
 
 

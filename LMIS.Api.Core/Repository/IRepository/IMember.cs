@@ -11,5 +11,6 @@ namespace LMIS.Api.Core.Repository.IRepository
     public interface IMember : IRepository<Member>
     {
         void Update(Member member);
+        public string GenerateMemberCode(string firstname, string lastname);
     }
 }

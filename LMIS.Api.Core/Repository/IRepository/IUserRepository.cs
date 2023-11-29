@@ -1,4 +1,5 @@
-﻿using LMIS.Api.Core.DTOs.User;
+﻿using LMIS.Api.Core.DTOs;
+using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -11,7 +12,7 @@ namespace LMIS.Api.Core.Repository.IRepository
 {
 
     public interface IUserRepository : IRepository<ApplicationUser>
-        {
+    {
             void Update(ApplicationUser user);
              bool IsValidEmail(string email);
            string HashPassword(string password);            
@@ -19,9 +20,7 @@ namespace LMIS.Api.Core.Repository.IRepository
             int GeneratePin();
          Task<LoginTokenDTO> GenerateToken(ApplicationUser applicationUser,IConfiguration configuration,IUnitOfWork unitOfWork);
         bool VerifyPassword(string hashedPasswordFromDatabase, string incomingPlainPassword);
-
-
-
-        }
+        IEnumerable<ApplicationUser> usersWithRole();    
+    }
     
 }
