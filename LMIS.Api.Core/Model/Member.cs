@@ -24,6 +24,7 @@ namespace LMIS.Api.Core.Model
         
         public int MemberTypeId { get; set; }
         public ApplicationUser user { get; set; }
+        public ICollection<CheckoutTransaction> checkoutTransactions { get; set; }
         [JsonIgnore]
         public MemberType memberType { get; set; }
     }

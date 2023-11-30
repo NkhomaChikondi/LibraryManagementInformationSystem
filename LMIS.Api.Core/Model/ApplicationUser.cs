@@ -32,7 +32,7 @@ namespace LMIS.Api.Core.Model
         public ICollection<UserRole> userRoles { get; set; }
         [JsonIgnore]
         public ICollection<Member> members { get; set; }
-
+        public ICollection<CheckoutTransaction> checkoutTransactions { get; set; }
 
 
         public ApplicationUser()

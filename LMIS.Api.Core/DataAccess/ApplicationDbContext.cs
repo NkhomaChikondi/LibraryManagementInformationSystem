@@ -46,6 +46,21 @@ namespace LMIS.Api.Core.DataAccess
           .WithOne()
           .HasForeignKey<Member>(m => m.MemberTypeId);
 
+            modelBuilder.Entity<CheckoutTransaction>()
+          .HasOne(b => b.user)
+          .WithMany(a => a.checkoutTransactions)
+          .HasForeignKey(b => b.UserId);
+
+            modelBuilder.Entity<CheckoutTransaction>()
+          .HasOne(b => b.member)
+          .WithMany(a => a.checkoutTransactions)
+          .HasForeignKey(b => b.MemberId);
+
+            modelBuilder.Entity<CheckoutTransaction>()
+         .HasOne(b => b.Inventory)
+         .WithMany(a => a.checkoutTransactions)
+         .HasForeignKey(b => b.BookInventoryId);
+
             // seed member type data
             modelBuilder.Entity<MemberType>().HasData(
            new MemberType { Id = 1, Name = "Student",CreatedOn= DateTime.UtcNow },

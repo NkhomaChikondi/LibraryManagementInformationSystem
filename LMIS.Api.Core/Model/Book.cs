@@ -17,11 +17,12 @@ namespace LMIS.Api.Core.Model
         public string ISBN { get; set; }
         public int userId { get; set; } 
         public string Title { get; set; }
-        public string State { get; set; }
+        public string Condition { get; set; }
         public string ObtainedThrough { get; set; }
         public string Publisher { get; set; }
-        public string Status { get; set; }
-        public string Genre { get; set; }        
+        public bool isAvailable { get; set; }
+        public string Genre { get; set; }
+        public string Location { get; set; }
         public DateTime CreatedOn { get; set; }
     }
 }
