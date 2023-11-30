@@ -3,6 +3,7 @@ using LMIS.Api.Core.DTOs.Member;
 using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
+using LMIS.Api.Services.Services;
 using LMIS.Api.Services.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,11 +45,11 @@ namespace LMIS.API.Controllers.Member
 
         // GET api/<MemberController>/5
         [HttpGet("GetMemberById{id}")]
-        public IActionResult GetMemberById(int id)
+        public  async Task<IActionResult> GetMemberById(int id)
         {
             try
             {
-                var response = _memberService.GetMemberByIdAsync(id);
+                var response = await _memberService.GetMemberByIdAsync(id);
                 if (response == null)
                 {
                     return BadRequest("Failed to get member");
@@ -113,7 +114,23 @@ namespace LMIS.API.Controllers.Member
             }
            
         }
+        [HttpGet]
+        [Route("ResendEmail/{email}")]
+        // Resending account activation pin
+        public async Task<IActionResult> ResendPin(string email)
+        {
+            try
+            {
+                await _memberService.ResendEmail(email);
+                return Ok("Check your email for the member code");
+            }
+            catch (Exception ex)
+            {
 
+                return StatusCode(500, $"An {ex.Message} occurred while resending the email.");
+            }
+
+        }
         // DELETE api/<MemberController>/5
         [HttpDelete("Delete{id}")]
         public void Delete(int id)

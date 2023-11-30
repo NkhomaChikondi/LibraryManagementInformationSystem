@@ -47,7 +47,7 @@ namespace LMIS.API.Controllers.User
                 }
                 // hash the password
 
-               // loginModel.Password = _unitOfWork.User.HashPassword(loginModel.Password);
+             //  loginModel.Password = _unitOfWork.User.HashPassword(loginModel.Password);
                 
                 // check if the password match
                 var isMatched = _unitOfWork.User.VerifyPassword(user.Password, loginModel.Password);

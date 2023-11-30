@@ -54,6 +54,8 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAuthService,AuthService>();
 
 
 // configuring the token and making sure that the user has the correct token all the time

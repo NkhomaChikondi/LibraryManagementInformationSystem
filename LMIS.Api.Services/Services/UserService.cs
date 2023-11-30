@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace LMIS.Api.Services.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -28,7 +28,7 @@ namespace LMIS.Api.Services.Services
             _configuration = configuration;
         }
 
-        public async Task<ApplicationUserDTO> CreateMemberAsync(ApplicationUserDTO createUserDTO)
+        public async Task<ApplicationUserDTO> CreateUserAsync(ApplicationUserDTO createUserDTO)
         {
             try
             {
@@ -93,9 +93,23 @@ namespace LMIS.Api.Services.Services
             }
         }
 
-        public Task DeleteMemberAsync(int memberId)
+        public async Task DeleteUserAsync(int userId)
         {
-            throw new NotImplementedException();
+            try
+            {
+                await _unitOfWork.User.DeleteAsync(userId);
+                // save changes
+                _unitOfWork.Save();
+
+              
+            }
+            catch (Exception)
+            {
+
+
+                return ;
+            }          
+           
         }
 
         public IEnumerable<ApplicationUserDTO> GetAllUsers()
@@ -116,11 +130,11 @@ namespace LMIS.Api.Services.Services
             }
         }
 
-        public ApplicationUserDTO GetUserByIdAsync(int userId)
+        public async Task<ApplicationUserDTO>GetUserByIdAsync(int userId)
         {
             try
             {
-                var user = _unitOfWork.User.GetByIdAsync(userId);
+                var user = await  _unitOfWork.User.GetByIdAsync(userId);
                 // Map the updated member entity to a DTO
                 var getUserDTO = _mapper.Map<ApplicationUserDTO>(user);
                 return getUserDTO;
@@ -132,7 +146,7 @@ namespace LMIS.Api.Services.Services
             }
         }
 
-        public async Task<ApplicationUserDTO> UpdateMemberAsync(ApplicationUserDTO createUserDTO, int userId)
+        public async Task UpdateUserAsync(ApplicationUserDTO createUserDTO, int userId)
         {
             try
             {
@@ -140,9 +154,9 @@ namespace LMIS.Api.Services.Services
 
                 if (user == null)
                 {
-                    return null;
+                    return;
                 }
-
+              
                 // Update user properties based on the received DTO
                 user.firstName = createUserDTO.firstName;
                 user.lastName = createUserDTO.lastName;
@@ -151,16 +165,12 @@ namespace LMIS.Api.Services.Services
                 user.Email = createUserDTO.Email;
 
                 _unitOfWork.User.Update(user);
-                _unitOfWork.Save();
-
-                // Map the updated member entity to a DTO
-                var UpdateUserDTO = _mapper.Map<ApplicationUserDTO>(user);
-                return UpdateUserDTO;
+                _unitOfWork.Save();                
+               
             }
             catch (Exception)
             {
-
-                return null!;
+                return;
             }
         }
 
@@ -212,10 +222,11 @@ namespace LMIS.Api.Services.Services
                 var userDTO = _mapper.Map<ApplicationUserDTO>(user);
                 var pin = _unitOfWork.User.GeneratePin();
                 var password = _unitOfWork.User.GeneratePassword(userDTO);
+                var hashPassword = _unitOfWork.User.HashPassword(password);
 
                 // save new password and pin user details
                 user.Pin = pin;
-                user.Password = password;
+                user.Password = hashPassword;
                 _unitOfWork.User.Update(user);
                 _unitOfWork.Save();
 
@@ -229,7 +240,6 @@ namespace LMIS.Api.Services.Services
             }
             catch (Exception)
             {
-
                 return;
             }
         }

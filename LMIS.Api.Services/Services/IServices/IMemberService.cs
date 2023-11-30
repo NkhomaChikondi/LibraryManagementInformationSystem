@@ -12,8 +12,9 @@ namespace LMIS.Api.Services.Services.IServices
         Task<MemberDTO> CreateMemberAsync(CreateMemberDto createMemberDto, string userIdClaim);
         Task<MemberDTO> UpdateMemberAsync(CreateMemberDto createMemberDto, int memberId);
         Task DeleteMemberAsync(int memberId);
-        MemberDTO GetMemberByIdAsync(int memberId);
+        Task<MemberDTO> GetMemberByIdAsync(int memberId);
         IEnumerable<MemberDTO> GetAllMembers();
+        Task ResendEmail(string email);
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿
 using AutoMapper;
 using LMIS.Api.Core.DTOs.Member;
+using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
 using LMIS.Api.Services.Services.IServices;
@@ -11,6 +12,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -21,11 +23,13 @@ namespace LMIS.Api.Services.Services
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IEmailService _emailService;
 
-        public MemberService(IUnitOfWork unitOfWork, IMapper Mapper)
+        public MemberService(IUnitOfWork unitOfWork, IMapper Mapper, IEmailService emailService)
         {
             _mapper = Mapper;
             _unitOfWork = unitOfWork;
+            _emailService = emailService;
         }
 
         public async Task<MemberDTO> CreateMemberAsync(CreateMemberDto createMemberDto, string userIdClaim)
@@ -55,7 +59,11 @@ namespace LMIS.Api.Services.Services
                 await _unitOfWork.member.CreateAsync(member);
                 _unitOfWork.Save();
 
-                
+                // resend the email
+
+                string pinBody = "Your account type is  " + createMemberDto.MemberTypeName + "  your member code is  " + member_code + " <br /> The member code will be needed each time you visit the library";
+                this._emailService.SendMail(member.Email, "Member Account Details", pinBody);
+
                 var createdMemberDTO = _mapper.Map<MemberDTO>(member);
 
                 return createdMemberDTO;
@@ -87,11 +95,11 @@ namespace LMIS.Api.Services.Services
             }           
         }
 
-        public MemberDTO GetMemberByIdAsync(int memberId)
+        public async Task<MemberDTO> GetMemberByIdAsync(int memberId)
         {
             try
             { 
-                var member = _unitOfWork.member.GetByIdAsync(memberId);
+                var member = await _unitOfWork.member.GetByIdAsync(memberId);
                 // Map the updated member entity to a DTO
                 var getMemberDTO = _mapper.Map<MemberDTO>(member);
                 return getMemberDTO;
@@ -115,7 +123,7 @@ namespace LMIS.Api.Services.Services
                 }
 
                 member.Email = createMemberDto.Email;
-                member.Status = createMemberDto.FirstName;
+                member.First_Name = createMemberDto.FirstName;
                 member.Last_Name = createMemberDto.LastName;
                 member.Phone = createMemberDto.Phone;
 
@@ -132,6 +140,43 @@ namespace LMIS.Api.Services.Services
 
                 return null!;
             }           
+        }
+
+        public async Task ResendEmail(string email)
+        {
+            try
+            {
+                // check if email is null
+                if (email == null)
+                {
+                    return;
+                }
+                // get the user having this r
+                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(r => r.Email == email);
+                if (member == null)
+                {
+                    return;
+                }
+                var memberDTO = _mapper.Map<MemberDTO>(member);
+                
+                var memberCode = _unitOfWork.member.GenerateMemberCode(member.First_Name, member.Last_Name);
+
+               
+                _unitOfWork.member.Update(member);
+                _unitOfWork.Save();
+
+                // resend the email
+                string pinBody = "Your member account has been created in LMIS, your account type is  " + member.memberType + "  your member code is  " + memberCode + " <br /> The member code will be needed each time you visit the library";
+                this._emailService.SendMail(member.Email, "Member Account reset Details", pinBody);
+
+
+                return;
+
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
     }
 }
