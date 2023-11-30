@@ -12,15 +12,16 @@ namespace LMIS.Api.Core.Model
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public int Id { get; set; }
+        public string Id { get; set; }
 
         public string ISBN { get; set; }
+        public int userId { get; set; } 
         public string Title { get; set; }
         public string State { get; set; }
         public string ObtainedThrough { get; set; }
         public string Publisher { get; set; }
         public string Status { get; set; }
         public string Genre { get; set; }        
-        public DateTime CreatedOn { get; set; } = DateTime.UtcNow;
+        public DateTime CreatedOn { get; set; }
     }
 }

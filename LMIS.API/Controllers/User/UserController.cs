@@ -82,7 +82,7 @@ namespace LMIS.API.Controllers.User
         }
 
         // PUT api/<UserController>/5
-        [HttpPut("{userId}")]
+        [HttpPut("Update{userId}")]
         public async Task<IActionResult> UpdateUser(int userId, [FromBody] ApplicationUserDTO updateUserDto)
         {
             try

@@ -21,7 +21,9 @@ var builder = WebApplication.CreateBuilder(args);
 var provider = builder.Configuration["ServerSettings:ServerName"];
 string postgreSQLConnection = builder.Configuration.GetConnectionString("PostgreSQLConnection");
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(
+        options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -56,6 +58,7 @@ builder.Services.AddScoped<IEmailService, EmailService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService,AuthService>();
+builder.Services.AddScoped<IBookService,BookService>();
 
 
 // configuring the token and making sure that the user has the correct token all the time
@@ -111,6 +114,8 @@ options =>
 {
     options.UseNpgsql(builder.Configuration.GetConnectionString("conn"));
 });
+builder.Services.Configure<BookDatabaseSettings>(
+    builder.Configuration.GetSection("BookDatabase"));
 
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 var app = builder.Build();
