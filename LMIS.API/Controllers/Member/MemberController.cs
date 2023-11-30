@@ -3,7 +3,6 @@ using LMIS.Api.Core.DTOs.Member;
 using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
-using LMIS.Api.Core.Services;
 using LMIS.Api.Services.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,17 +15,12 @@ namespace LMIS.API.Controllers.Member
     [Route("api/[controller]")]
     [ApiController]
     public class MemberController : ControllerBase
-    {
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
+    {        
         private readonly IMemberService _memberService;
        
-        public IConfiguration _configuration { get; }
-        public MemberController(IUnitOfWork unitOfWork, IMapper Mapper, IConfiguration configuration, IMemberService memberService)
-        {
-            _mapper = Mapper;
-            _unitOfWork = unitOfWork;            
-            _configuration = configuration;
+        public MemberController( IConfiguration configuration, IMemberService memberService)
+        {                   
+           
             _memberService = memberService;
         }
         // GET: api/<UserController>
@@ -68,8 +62,7 @@ namespace LMIS.API.Controllers.Member
         }
 
         // POST api/<MemberController>
-        [HttpPost("CreateMember")]
-        
+        [HttpPost("CreateMember")]        
         public async Task<IActionResult> CreateMember([FromBody] CreateMemberDto createMemberDTO)
         {
             if (!ModelState.IsValid)
@@ -102,13 +95,27 @@ namespace LMIS.API.Controllers.Member
         }
 
         // PUT api/<MemberController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+      
+        [HttpPut("Update{memberId}")]
+        public async Task<IActionResult> UpdateMember(int memberId, [FromBody] CreateMemberDto updateMemberDto)
         {
+            try
+            {
+                var response = await _memberService.UpdateMemberAsync(updateMemberDto, memberId);
+                if (response == null)
+                    return BadRequest("failed to update member");
+                return Ok(response);
+            }
+            catch (Exception)
+            {
+
+                return StatusCode(500);
+            }
+           
         }
 
         // DELETE api/<MemberController>/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete{id}")]
         public void Delete(int id)
         {
         }

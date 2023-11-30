@@ -16,7 +16,7 @@ namespace LMIS.Api.Core.Repository.IRepository
             void Update(ApplicationUser user);
              bool IsValidEmail(string email);
            string HashPassword(string password);            
-         string GeneratePassword(ApplicationUser applicationUser);
+         string GeneratePassword(ApplicationUserDTO applicationUser);
             int GeneratePin();
          Task<LoginTokenDTO> GenerateToken(ApplicationUser applicationUser,IConfiguration configuration,IUnitOfWork unitOfWork);
         bool VerifyPassword(string hashedPasswordFromDatabase, string incomingPlainPassword);

@@ -27,7 +27,7 @@ namespace LMIS.Api.Core.Repository
         }
 
 
-        public string GeneratePassword(ApplicationUser applicationUser)        
+        public string GeneratePassword(ApplicationUserDTO applicationUser)        
         {
             // Get the first letters of the first and last names
             char firstLetterFirstName = char.ToLower(applicationUser.firstName[0]);

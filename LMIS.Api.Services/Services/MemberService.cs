@@ -1,8 +1,9 @@
-﻿using AutoMapper;
-using AutoMapper.Execution;
+﻿
+using AutoMapper;
 using LMIS.Api.Core.DTOs.Member;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
+using LMIS.Api.Services.Services.IServices;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Extensions.Configuration;
@@ -14,7 +15,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMIS.Api.Core.Services
+namespace LMIS.Api.Services.Services
 {
     public class MemberService : IMemberService
     {
@@ -35,7 +36,7 @@ namespace LMIS.Api.Core.Services
                 var userEmail = userIdClaim;
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(user => user.Email == userEmail);
                 var Membertype = await _unitOfWork.memberType.GetFirstOrDefaultAsync(name => name.Name == createMemberDto.MemberTypeName);
-                var member = new Model.Member()
+                var member = new Member()
                 {
                     First_Name = createMemberDto.FirstName,
                     CreatedOn = DateTime.UtcNow,
@@ -72,39 +73,65 @@ namespace LMIS.Api.Core.Services
 
         public IEnumerable< MemberDTO> GetAllMembers()
         {
-            var allMembers = _unitOfWork.member.GetAllAsync();
-            // Map the updated member entity to a DTO
-            var updatedMemberDTO = _mapper.Map<IEnumerable<MemberDTO>>(allMembers);
+            try
+            {
+                var allMembers = _unitOfWork.member.GetAllAsync();
+                // Map the updated member entity to a DTO
+                var allMembersDTO = _mapper.Map<IEnumerable<MemberDTO>>(allMembers);
 
-            return updatedMemberDTO;
+                return allMembersDTO;
+            }
+            catch (Exception)
+            {
+                return null!;
+            }           
         }
 
         public MemberDTO GetMemberByIdAsync(int memberId)
         {
-            var member = _unitOfWork.member.GetByIdAsync(memberId);
-            // Map the updated member entity to a DTO
-            var getMemberDTO = _mapper.Map<MemberDTO>(member);
-            return getMemberDTO;
-        }
+            try
+            { 
+                var member = _unitOfWork.member.GetByIdAsync(memberId);
+                // Map the updated member entity to a DTO
+                var getMemberDTO = _mapper.Map<MemberDTO>(member);
+                return getMemberDTO;
 
-        public async Task UpdateMemberAsync(CreateMemberDto createMemberDto, int memberId)
-        {
-            var member = await _unitOfWork.member.GetByIdAsync(memberId);
-
-            if(member == null)
-            {
-                return;
             }
-
-            member.Email = createMemberDto.Email;
-            member.Status = createMemberDto.FirstName;
-            member.Last_Name = createMemberDto.LastName;
-            member.Phone = createMemberDto.Phone;
-           
-            _unitOfWork.member.Update(member);
-            _unitOfWork.Save();  
+            catch (Exception)
+            {
+                return null!;
+            }            
         }
 
+        public async Task<MemberDTO> UpdateMemberAsync(CreateMemberDto createMemberDto, int memberId)
+        {
+            try
+            { 
+                 var member = await _unitOfWork.member.GetByIdAsync(memberId);
 
+                if (member == null)
+                {
+                    return null;
+                }
+
+                member.Email = createMemberDto.Email;
+                member.Status = createMemberDto.FirstName;
+                member.Last_Name = createMemberDto.LastName;
+                member.Phone = createMemberDto.Phone;
+
+                _unitOfWork.member.Update(member);
+                _unitOfWork.Save();
+
+                // Map the updated member entity to a DTO
+                var getMemberDTO = _mapper.Map<MemberDTO>(member);
+                return getMemberDTO;
+
+            }
+            catch (Exception)
+            {
+
+                return null!;
+            }           
+        }
     }
 }

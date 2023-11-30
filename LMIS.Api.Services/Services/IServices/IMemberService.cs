@@ -5,16 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LMIS.Api.Core.Services
+namespace LMIS.Api.Services.Services.IServices
 {
     public interface IMemberService
     {
         Task<MemberDTO> CreateMemberAsync(CreateMemberDto createMemberDto, string userIdClaim);
-        Task UpdateMemberAsync(CreateMemberDto createMemberDto, int memberId);
+        Task<MemberDTO> UpdateMemberAsync(CreateMemberDto createMemberDto, int memberId);
         Task DeleteMemberAsync(int memberId);
         MemberDTO GetMemberByIdAsync(int memberId);
         IEnumerable<MemberDTO> GetAllMembers();
-           
 
     }
 }

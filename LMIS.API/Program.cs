@@ -2,7 +2,7 @@ using LMIS.Api.Core.DataAccess;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository;
 using LMIS.Api.Core.Repository.IRepository;
-using LMIS.Api.Core.Services;
+
 using LMIS.Api.Services.Services;
 using LMIS.Api.Services.Services.IServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -28,7 +28,7 @@ builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
     {
-        Title = "LMS",
+        Title = "LMIS",
         Version = "v1"
     });
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
