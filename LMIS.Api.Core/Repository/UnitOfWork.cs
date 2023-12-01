@@ -16,6 +16,7 @@ namespace LMIS.Api.Core.Repository
         public IUserRoleRepository UserRole { get; private set; }
         public IMemberType memberType { get; set; }
         public IMember member {  get; set; }
+        public IBookInventoryRepository BookInventory { get; set; }
 
         public UnitOfWork(ApplicationDbContext db)
         {
@@ -25,6 +26,7 @@ namespace LMIS.Api.Core.Repository
             UserRole = new UserRoleRepository(_db);
             member = new MemberRepository(_db);
             memberType = new MemberTypeRepository(_db);
+            BookInventory = new BookInventoryRepository(_db);
         }
         public void Save()
         {

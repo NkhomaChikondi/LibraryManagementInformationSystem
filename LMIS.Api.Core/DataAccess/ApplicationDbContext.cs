@@ -18,6 +18,8 @@ namespace LMIS.Api.Core.DataAccess
         public DbSet<UserRole> userRoles { get; set; }
         public DbSet<Member> members { get; set; }  
         public DbSet<MemberType> memberTypes { get; set; }  
+        public DbSet<CheckoutTransaction> checkoutTransactions { get; set; }  
+        public DbSet<BookInventory> bookInventories { get; set; }  
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -56,10 +58,10 @@ namespace LMIS.Api.Core.DataAccess
           .WithMany(a => a.checkoutTransactions)
           .HasForeignKey(b => b.MemberId);
 
-            modelBuilder.Entity<CheckoutTransaction>()
-         .HasOne(b => b.Inventory)
-         .WithMany(a => a.checkoutTransactions)
-         .HasForeignKey(b => b.BookInventoryId);
+            modelBuilder.Entity<BookInventory>()
+         .HasOne(b => b.checkoutTransaction)
+         .WithMany(a => a.Inventory)
+         .HasForeignKey(b => b.ChckOutTransId);
 
             // seed member type data
             modelBuilder.Entity<MemberType>().HasData(

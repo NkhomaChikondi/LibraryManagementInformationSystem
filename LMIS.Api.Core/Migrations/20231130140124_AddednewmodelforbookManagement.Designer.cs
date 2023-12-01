@@ -3,6 +3,7 @@ using System;
 using LMIS.Api.Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LMIS.Api.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231130140124_AddednewmodelforbookManagement")]
+    partial class AddednewmodelforbookManagement
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,14 +130,9 @@ namespace LMIS.Api.Core.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("ChckOutTransId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
-
-                    b.HasIndex("ChckOutTransId");
 
                     b.ToTable("bookInventories");
                 });
@@ -172,6 +170,8 @@ namespace LMIS.Api.Core.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BookId");
+
+                    b.HasIndex("BookInventoryId");
 
                     b.HasIndex("MemberId");
 
@@ -254,43 +254,43 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1684),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 1, 23, 735, DateTimeKind.Utc).AddTicks(9060),
                             Name = "Student"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1686),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 1, 23, 735, DateTimeKind.Utc).AddTicks(9062),
                             Name = "Staff"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1687),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 1, 23, 735, DateTimeKind.Utc).AddTicks(9063),
                             Name = "Regular Member"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1688),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 1, 23, 735, DateTimeKind.Utc).AddTicks(9064),
                             Name = "Premium Member"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1688),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 1, 23, 735, DateTimeKind.Utc).AddTicks(9065),
                             Name = "Guest"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1689),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 1, 23, 735, DateTimeKind.Utc).AddTicks(9066),
                             Name = "Senior Citezen"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1690),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 1, 23, 735, DateTimeKind.Utc).AddTicks(9066),
                             Name = "Corparate Member"
                         });
                 });
@@ -341,13 +341,7 @@ namespace LMIS.Api.Core.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LMIS.Api.Core.Model.CheckoutTransaction", "checkoutTransaction")
-                        .WithMany("Inventory")
-                        .HasForeignKey("ChckOutTransId");
-
                     b.Navigation("Book");
-
-                    b.Navigation("checkoutTransaction");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.CheckoutTransaction", b =>
@@ -355,6 +349,12 @@ namespace LMIS.Api.Core.Migrations
                     b.HasOne("LMIS.Api.Core.Model.Book", "book")
                         .WithMany()
                         .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("LMIS.Api.Core.Model.BookInventory", "Inventory")
+                        .WithMany("checkoutTransactions")
+                        .HasForeignKey("BookInventoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -369,6 +369,8 @@ namespace LMIS.Api.Core.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Inventory");
 
                     b.Navigation("book");
 
@@ -424,9 +426,9 @@ namespace LMIS.Api.Core.Migrations
                     b.Navigation("userRoles");
                 });
 
-            modelBuilder.Entity("LMIS.Api.Core.Model.CheckoutTransaction", b =>
+            modelBuilder.Entity("LMIS.Api.Core.Model.BookInventory", b =>
                 {
-                    b.Navigation("Inventory");
+                    b.Navigation("checkoutTransactions");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.Member", b =>

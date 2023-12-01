@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -46,8 +47,26 @@ namespace LMIS.Api.Services.Services
                 return;
 
             newBook.userId = user.UserId;
-            newBook.CreatedOn = DateTime.Now;
+            newBook.CreatedOn = DateTime.UtcNow;
             await _booksCollection.InsertOneAsync(newBook);
+
+            try
+            {
+                var bookInventory = new BookInventory
+                {
+                    Book = newBook,
+                };
+                await _unitOfWork.BookInventory.CreateAsync(bookInventory);
+                _unitOfWork.Save();
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+            // a new inventory item should be created
+          
         }     
          
         public async Task UpdateAsync(string id, Book updatedBook) =>

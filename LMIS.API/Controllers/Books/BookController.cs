@@ -72,10 +72,10 @@ namespace LMIS.API.Controllers.Books
 
                 return CreatedAtAction(nameof(Get), new { id = newBook.ISBN }, newBook);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
 
-                return null;
+                return StatusCode(500, $"An {ex.Message} occurred while creating the book.");
             }            
         }
 

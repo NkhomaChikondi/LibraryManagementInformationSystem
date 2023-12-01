@@ -3,6 +3,7 @@ using System;
 using LMIS.Api.Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LMIS.Api.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231130141055_updateModels")]
+    partial class updateModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,7 +130,7 @@ namespace LMIS.Api.Core.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int?>("ChckOutTransId")
+                    b.Property<int>("ChckOutTransId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -254,43 +257,43 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1684),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 10, 54, 726, DateTimeKind.Utc).AddTicks(5712),
                             Name = "Student"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1686),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 10, 54, 726, DateTimeKind.Utc).AddTicks(5714),
                             Name = "Staff"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1687),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 10, 54, 726, DateTimeKind.Utc).AddTicks(5715),
                             Name = "Regular Member"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1688),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 10, 54, 726, DateTimeKind.Utc).AddTicks(5716),
                             Name = "Premium Member"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1688),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 10, 54, 726, DateTimeKind.Utc).AddTicks(5717),
                             Name = "Guest"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1689),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 10, 54, 726, DateTimeKind.Utc).AddTicks(5718),
                             Name = "Senior Citezen"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedOn = new DateTime(2023, 11, 30, 14, 12, 34, 705, DateTimeKind.Utc).AddTicks(1690),
+                            CreatedOn = new DateTime(2023, 11, 30, 14, 10, 54, 726, DateTimeKind.Utc).AddTicks(5718),
                             Name = "Corparate Member"
                         });
                 });
@@ -343,7 +346,9 @@ namespace LMIS.Api.Core.Migrations
 
                     b.HasOne("LMIS.Api.Core.Model.CheckoutTransaction", "checkoutTransaction")
                         .WithMany("Inventory")
-                        .HasForeignKey("ChckOutTransId");
+                        .HasForeignKey("ChckOutTransId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Book");
 
