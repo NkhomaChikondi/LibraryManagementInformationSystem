@@ -3,6 +3,7 @@ using System;
 using LMIS.Api.Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LMIS.Api.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231201080547_ModifiedBookManagementModelRelationShip")]
+    partial class ModifiedBookManagementModelRelationShip
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -73,12 +76,9 @@ namespace LMIS.Api.Core.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
-                    b.Property<string>("Author")
+                    b.Property<string>("Condition")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<int>("CopyNumber")
-                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
@@ -88,6 +88,10 @@ namespace LMIS.Api.Core.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ISBN")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -102,6 +106,9 @@ namespace LMIS.Api.Core.Migrations
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("isAvailable")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("userId")
                         .HasColumnType("integer");
@@ -122,17 +129,6 @@ namespace LMIS.Api.Core.Migrations
                     b.Property<string>("BookId")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<string>("Condition")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Location")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<bool>("isAvailable")
-                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -182,26 +178,6 @@ namespace LMIS.Api.Core.Migrations
                     b.HasIndex("bookInventoryId");
 
                     b.ToTable("checkoutTransactions");
-                });
-
-            modelBuilder.Entity("LMIS.Api.Core.Model.Genre", b =>
-                {
-                    b.Property<int>("GenreId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("GenreId"));
-
-                    b.Property<int>("MaximumBooksAllowed")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("GenreId");
-
-                    b.ToTable("genres");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.Member", b =>
@@ -278,43 +254,43 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedOn = new DateTime(2023, 12, 1, 11, 18, 7, 467, DateTimeKind.Utc).AddTicks(8403),
+                            CreatedOn = new DateTime(2023, 12, 1, 8, 5, 46, 962, DateTimeKind.Utc).AddTicks(9019),
                             Name = "Student"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedOn = new DateTime(2023, 12, 1, 11, 18, 7, 467, DateTimeKind.Utc).AddTicks(8405),
+                            CreatedOn = new DateTime(2023, 12, 1, 8, 5, 46, 962, DateTimeKind.Utc).AddTicks(9021),
                             Name = "Staff"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedOn = new DateTime(2023, 12, 1, 11, 18, 7, 467, DateTimeKind.Utc).AddTicks(8406),
+                            CreatedOn = new DateTime(2023, 12, 1, 8, 5, 46, 962, DateTimeKind.Utc).AddTicks(9022),
                             Name = "Regular Member"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedOn = new DateTime(2023, 12, 1, 11, 18, 7, 467, DateTimeKind.Utc).AddTicks(8407),
+                            CreatedOn = new DateTime(2023, 12, 1, 8, 5, 46, 962, DateTimeKind.Utc).AddTicks(9023),
                             Name = "Premium Member"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedOn = new DateTime(2023, 12, 1, 11, 18, 7, 467, DateTimeKind.Utc).AddTicks(8407),
+                            CreatedOn = new DateTime(2023, 12, 1, 8, 5, 46, 962, DateTimeKind.Utc).AddTicks(9024),
                             Name = "Guest"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedOn = new DateTime(2023, 12, 1, 11, 18, 7, 467, DateTimeKind.Utc).AddTicks(8408),
+                            CreatedOn = new DateTime(2023, 12, 1, 8, 5, 46, 962, DateTimeKind.Utc).AddTicks(9024),
                             Name = "Senior Citezen"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedOn = new DateTime(2023, 12, 1, 11, 18, 7, 467, DateTimeKind.Utc).AddTicks(8409),
+                            CreatedOn = new DateTime(2023, 12, 1, 8, 5, 46, 962, DateTimeKind.Utc).AddTicks(9025),
                             Name = "Corparate Member"
                         });
                 });

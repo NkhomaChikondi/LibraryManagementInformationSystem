@@ -20,6 +20,8 @@ namespace LMIS.Api.Core.DataAccess
         public DbSet<MemberType> memberTypes { get; set; }  
         public DbSet<CheckoutTransaction> checkoutTransactions { get; set; }  
         public DbSet<BookInventory> bookInventories { get; set; }  
+        public DbSet<Genre> genres { get; set; }  
+        
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,10 +60,10 @@ namespace LMIS.Api.Core.DataAccess
           .WithMany(a => a.checkoutTransactions)
           .HasForeignKey(b => b.MemberId);
 
-            modelBuilder.Entity<BookInventory>()
-         .HasOne(b => b.checkoutTransaction)
-         .WithMany(a => a.Inventory)
-         .HasForeignKey(b => b.ChckOutTransId);
+            modelBuilder.Entity<CheckoutTransaction>()
+         .HasOne(b => b.bookInventory)
+         .WithMany(a => a.checkoutTransactions)
+         .HasForeignKey(b => b.bookInventoryId);
 
             // seed member type data
             modelBuilder.Entity<MemberType>().HasData(

@@ -10,15 +10,13 @@ namespace LMIS.Api.Core.Model
     public class BookInventory
     {
         [Key]
-        public int Id { get; set; }      
-       
+        public int Id { get; set; }          
         public string BookId { get; set; }
+        public string Condition { get; set; }
+        public bool isAvailable { get; set; }
+        public string Location { get; set; }
         public Book Book { get; set; }
-
-        public int? ChckOutTransId { get; set; }
-        public CheckoutTransaction checkoutTransaction { get; set; }
- 
-       
-
+        
+        public ICollection<CheckoutTransaction> checkoutTransactions { get; set; }
     }
 }

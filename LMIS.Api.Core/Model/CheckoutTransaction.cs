@@ -16,12 +16,13 @@ namespace LMIS.Api.Core.Model
         public DateTime ReturnDate { get; set; }
         public int UserId { get; set; }
         public string BookId { get; set; }
-        public int MemberId { get; set; }
-        public int BookInventoryId { get; set; }
-
+        public int MemberId { get; set; }      
         public ApplicationUser user { get; set; }
         public Book book { get; set; }
-        public Member member { get; set; }        
-        public ICollection<BookInventory> Inventory { get; set; }
+        public Member member { get; set; }
+
+        public int bookInventoryId { get; set; }
+        public BookInventory bookInventory { get; set; }
+
     }
 }

@@ -13,16 +13,14 @@ namespace LMIS.Api.Core.Model
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-
         public string ISBN { get; set; }
         public int userId { get; set; } 
-        public string Title { get; set; }
-        public string Condition { get; set; }
+        public string Title { get; set; }        
+        public string Author { get; set; }   
+        public int CopyNumber { get; set; }
         public string ObtainedThrough { get; set; }
-        public string Publisher { get; set; }
-        public bool isAvailable { get; set; }
-        public string Genre { get; set; }
-        public string Location { get; set; }
+        public string Publisher { get; set; }       
+        public string Genre { get; set; }        
         public DateTime CreatedOn { get; set; }
     }
 }
