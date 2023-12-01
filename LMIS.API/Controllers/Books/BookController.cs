@@ -21,7 +21,7 @@ namespace LMIS.API.Controllers.Books
         {
             try
             {
-                var response = await _booksService.GetAsync();
+                var response = await _booksService.GetAllAsync();
                 if (response == null)
                 {
                     return BadRequest("Failed to get all book");

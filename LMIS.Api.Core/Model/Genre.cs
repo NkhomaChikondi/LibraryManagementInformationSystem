@@ -13,5 +13,7 @@ namespace LMIS.Api.Core.Model
         public int GenreId { get; set; }
         public string Name { get; set; }
         public int MaximumBooksAllowed { get; set; }
+        public int userId { get; set; }
+        public ApplicationUser user { get; set; }
     }
 }

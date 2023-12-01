@@ -26,7 +26,7 @@ namespace LMIS.Api.Services.Services
             _booksCollection = mongoDatabase.GetCollection<Book>(bookDatabaseSettings.Value.BooksCollectionName);
              _unitOfWork = unitOfWork;
         }
-        public async Task<List<Book>> GetAsync() =>
+        public async Task<List<Book>> GetAllAsync() =>
         await _booksCollection.Find(_ => true).ToListAsync();
 
         public async Task<Book?> GetAsync(string id) =>
@@ -41,7 +41,7 @@ namespace LMIS.Api.Services.Services
                 return;
             }
             // check through the books and see if there if any book having the same isbn
-            var books = await GetAsync();
+            var books = await GetAllAsync();
             // get the book that has the same isbn as the incoming one
             if (books.Any(book => book.ISBN == newBook.ISBN))
                 return;

@@ -45,6 +45,11 @@ namespace LMIS.Api.Core.DataAccess
            .WithMany(a => a.members)   
            .HasForeignKey(b => b.userId);
 
+            modelBuilder.Entity<Genre>()
+          .HasOne(b => b.user)
+          .WithMany(a => a.genres)
+          .HasForeignKey(b => b.userId);
+
             modelBuilder.Entity<Member>()
           .HasOne(m => m.memberType)
           .WithOne()

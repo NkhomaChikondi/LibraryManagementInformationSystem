@@ -37,9 +37,9 @@ namespace LMIS.API.Controllers.Member
                 }
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, $"An {ex.Message} occurred while getting members");
             }         
         }
 
@@ -89,9 +89,9 @@ namespace LMIS.API.Controllers.Member
 
                 return Ok(response);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, $"An {ex.Message} occurred while creating a member");
             }
         }
 

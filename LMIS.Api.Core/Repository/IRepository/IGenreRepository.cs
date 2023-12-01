@@ -7,9 +7,8 @@ using System.Threading.Tasks;
 
 namespace LMIS.Api.Core.Repository.IRepository
 {
-    public interface IGenre : IRepository<Genre>
+    public interface IGenreRepository : IRepository<Genre>
     {
         void Update(Genre genre);
-
     }
 }

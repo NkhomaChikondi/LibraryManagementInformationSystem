@@ -59,6 +59,7 @@ builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthService,AuthService>();
 builder.Services.AddScoped<IBookService,BookService>();
+builder.Services.AddScoped<IGenreService,GenreService>();
 
 
 // configuring the token and making sure that the user has the correct token all the time
