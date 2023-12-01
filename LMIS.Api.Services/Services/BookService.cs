@@ -1,4 +1,7 @@
-﻿using LMIS.Api.Core.Model;
+﻿using AutoMapper;
+using LMIS.Api.Core.DTOs.Book;
+using LMIS.Api.Core.DTOs.Member;
+using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
 using LMIS.Api.Services.Services.IServices;
 using Microsoft.Extensions.Options;
@@ -16,8 +19,8 @@ namespace LMIS.Api.Services.Services
     {
         private readonly IMongoCollection<Book> _booksCollection;
         private readonly IUnitOfWork _unitOfWork;
-
-        public BookService(IOptions<BookDatabaseSettings> bookDatabaseSettings, IUnitOfWork unitOfWork)
+        private readonly IMapper _mapper;
+        public BookService(IOptions<BookDatabaseSettings> bookDatabaseSettings, IUnitOfWork unitOfWork, IMapper mapper)
         {
             var mongoClient = new MongoClient(bookDatabaseSettings.Value.ConnectionString);
 
@@ -32,7 +35,7 @@ namespace LMIS.Api.Services.Services
         public async Task<Book?> GetAsync(string id) =>
             await _booksCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
 
-        public async Task CreateAsync(Book newBook,string userEmail)
+        public async Task CreateAsync(BookDTO newBook,string userEmail)
         {
             // get the user using the user email
             var user = await _unitOfWork.User.GetFirstOrDefaultAsync( u => u.Email == userEmail);
@@ -42,31 +45,65 @@ namespace LMIS.Api.Services.Services
             }
             // check through the books and see if there if any book having the same isbn
             var books = await GetAllAsync();
+
             // get the book that has the same isbn as the incoming one
             if (books.Any(book => book.ISBN == newBook.ISBN))
                 return;
-
-            newBook.userId = user.UserId;
-            newBook.CreatedOn = DateTime.UtcNow;
-            await _booksCollection.InsertOneAsync(newBook);
-
+            newBook.CopyNumber = 1;
             try
             {
-                var bookInventory = new BookInventory
+                // check if they are books having the same properties as the the incoming one
+                var similarBooks = books.Where(b => b.Title == newBook.Title && b.Author == newBook.Author).ToList();
+                if(similarBooks is not null)
                 {
-                    Book = newBook,
+                   newBook.CopyNumber = similarBooks.Count; 
                 };
-                await _unitOfWork.BookInventory.CreateAsync(bookInventory);
-                _unitOfWork.Save();
-
             }
             catch (Exception)
             {
 
                 throw;
             }
-            // a new inventory item should be created
-          
+           
+            // create a new book object
+            var bookitem = new Book
+            {
+                
+               Title = newBook.Title,
+               Author = newBook.Author,
+               Publisher = newBook.Publisher,
+               CopyNumber = newBook.CopyNumber,
+               ObtainedThrough = newBook.ObtainedThrough,    
+               Genre = newBook.Genre,
+               ISBN = newBook.ISBN,
+               CreatedOn = DateTime.UtcNow,
+               userId = newBook.userId
+            };
+            bookitem.Id = "";
+
+            await _booksCollection.InsertOneAsync(bookitem);
+
+            try
+            {
+                // create a new book inventory
+                var bookInventory = new BookInventory
+                {
+                    Book = bookitem,
+                    Condition = newBook.Condition,
+                    isAvailable = newBook.isAvailable,
+                    Location = newBook.Location,
+                    BookId = bookitem.Id,
+                    checkoutTransactions = null,
+                };
+
+                await _unitOfWork.BookInventory.CreateAsync(bookInventory);
+                _unitOfWork.Save();
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }            
         }     
          
         public async Task UpdateAsync(string id, Book updatedBook) =>

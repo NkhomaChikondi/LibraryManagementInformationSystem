@@ -60,7 +60,7 @@ namespace LMIS.API.Controllers.Genre
 
         // POST api/<GenreController>
         [HttpPost("CreateGenre")]
-        public async Task<IActionResult> CreateMember([FromBody] GenreDTO genre)
+        public async Task<IActionResult> CreateGenre([FromBody] GenreDTO genre)
         {
             if (!ModelState.IsValid)
             {
