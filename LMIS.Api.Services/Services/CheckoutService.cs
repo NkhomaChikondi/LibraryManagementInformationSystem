@@ -18,6 +18,7 @@ namespace LMIS.Api.Services.Services
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
         private readonly IBookService _bookService;
+
         private readonly List<BookDTO> availableBooks = new List<BookDTO>();
         private readonly ILogger<BookDTO> _logger;
 
@@ -27,6 +28,7 @@ namespace LMIS.Api.Services.Services
             _unitOfWork = unitOfWork;
             _emailService = emailService;
             _bookService = bookService;
+           
         }
 
         public async Task<List<BookDTO>> GetSelectedBooks(SearchBookListDTO selectedBooks, string memberCode)
@@ -39,11 +41,14 @@ namespace LMIS.Api.Services.Services
                 {
                     return null;
                 }
+                //check if the member has outstanding books unreturned
+                // code to be implemented
 
                 if (selectedBooks == null || selectedBooks.Books == null || !selectedBooks.Books.Any())
                 {
                     return null;
                 }
+                
                
                 // Loop through the books and check if each of those is available
                 foreach (var book in selectedBooks.Books)
@@ -60,13 +65,16 @@ namespace LMIS.Api.Services.Services
                         var getBook = allBooks.FirstOrDefault(b =>
                             b.Title == book.Title || b.Publisher == book.Publisher || b.Author == book.Author);
 
+                       
                         // Get the book by the book
                         if (getBook != null)
                         {
+                            var getGenre = await _unitOfWork.Genre.GetFirstOrDefaultAsync(genre => genre.Name == getBook.Genre);
+                          
                             var getBookDTO = _mapper.Map<BookDTO>(getBook);
                             availableBooks.Add(getBookDTO);
                         }
-                    }
+                    }   
                     catch (Exception)
                     {
                         return null;
