@@ -75,7 +75,11 @@ namespace LMIS.Api.Core.Repository
         {
             return await _dbSet.FirstOrDefaultAsync(filter);
         }
+        public async Task<T> GetLastOrDefaultAsync(Expression<Func<T, bool>> filter = null)
+        {
+            return await _dbSet.LastOrDefaultAsync(filter);
+        }
 
-       
+
     }
 }

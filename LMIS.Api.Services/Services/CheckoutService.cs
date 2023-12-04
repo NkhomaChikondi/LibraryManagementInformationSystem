@@ -3,6 +3,7 @@ using LMIS.Api.Core.DTOs.Book;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
 using LMIS.Api.Services.Services.IServices;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -19,7 +20,7 @@ namespace LMIS.Api.Services.Services
         private readonly IEmailService _emailService;
         private readonly IBookService _bookService;
 
-        private readonly List<BookDTO> availableBooks = new List<BookDTO>();
+        private  BookDTO availableBook;
         private readonly ILogger<BookDTO> _logger;
 
         public CheckoutService(IUnitOfWork unitOfWork, IMapper Mapper, IEmailService emailService, IBookService bookService)
@@ -31,63 +32,111 @@ namespace LMIS.Api.Services.Services
            
         }
 
-        public async Task<List<BookDTO>> GetSelectedBooks(SearchBookListDTO selectedBooks, string memberCode)
+        public async Task<BookDTO> GetSelectedBooks(SearchBookDTO selectedBook, string memberCode)
         {
             try
-            {
+            {              
                 // Verify the member through the member code
                 var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == memberCode);
                 if (member == null)
                 {
                     return null;
                 }
-                //check if the member has outstanding books unreturned
-                // code to be implemented
-
-                if (selectedBooks == null || selectedBooks.Books == null || !selectedBooks.Books.Any())
+                // check if they dont have any outstanding books not returned
+                // get checkout transaction
+                var lastTransaction = await _unitOfWork.
+                // Check if there are selected books
+                if (selectedBook == null )
                 {
                     return null;
                 }
-                
-               
-                // Loop through the books and check if each of those is available
-                foreach (var book in selectedBooks.Books)
+
+                // Check if the book is available
+                var allBooks = await _bookService.GetAllAsync();
+                var getBook = allBooks.FirstOrDefault(b =>
+                    b.Title == selectedBook.Title);
+
+                if (getBook != null)
                 {
-                    try
-                    {
-                        if (book == null)
-                        {
-                            return null;
-                        }
+                    var getGenre = await _unitOfWork.Genre.GetFirstOrDefaultAsync(genre => genre.Name == getBook.Genre);
 
-                        // Check if the book is available
-                        var allBooks = await _bookService.GetAllAsync();
-                        var getBook = allBooks.FirstOrDefault(b =>
-                            b.Title == book.Title || b.Publisher == book.Publisher || b.Author == book.Author);
-
-                       
-                        // Get the book by the book
-                        if (getBook != null)
-                        {
-                            var getGenre = await _unitOfWork.Genre.GetFirstOrDefaultAsync(genre => genre.Name == getBook.Genre);
-                          
-                            var getBookDTO = _mapper.Map<BookDTO>(getBook);
-                            availableBooks.Add(getBookDTO);
-                        }
-                    }   
-                    catch (Exception)
+                    if (getGenre == null)
                     {
                         return null;
                     }
-                }
 
-                return availableBooks;
-            }
+                    var memberGenres =  _unitOfWork.memberGenre.GetAllAsync();
+                    if(memberGenres == null)
+                    {
+                        // create a new memberGenre
+                        var newMemberGenre = new MemberGenre
+                        {
+                            GenreName = getGenre.Name,
+                            memberCode = memberCode,
+                            Counter = 1
+                        };
+
+                        await _unitOfWork.memberGenre.CreateAsync(newMemberGenre);
+                        _unitOfWork.Save();
+
+                        var getBookDTO = _mapper.Map<BookDTO>(getBook);
+                        availableBook = getBookDTO;
+                        return getBookDTO;
+                        
+                    }
+                    else if (memberGenres != null)
+                    {
+                        var getMemberGenreRecord = memberGenres.FirstOrDefault(m =>
+                        m.memberCode == memberCode && m.GenreName == getGenre.Name);
+                        if (getMemberGenreRecord == null)
+                        {
+                            // create a new memberGenre
+                            var newMemberGenre = new MemberGenre
+                            {
+                                GenreName = getGenre.Name,
+                                memberCode = memberCode,
+                                Counter = 1
+                            };
+
+                            await _unitOfWork.memberGenre.CreateAsync(newMemberGenre);
+                            _unitOfWork.Save();
+
+                            var getBookDTO = _mapper.Map<BookDTO>(getBook);
+                            availableBook = getBookDTO;
+                            return getBookDTO;
+                        }
+                        else if(memberGenres != null)
+                        {
+                            if (getMemberGenreRecord.Counter <= getGenre.MaximumBooksAllowed)
+                            {
+                                var getBookDTO = _mapper.Map<BookDTO>(getBook);                              
+
+                                getMemberGenreRecord.Counter++;
+                                _unitOfWork.memberGenre.Update(getMemberGenreRecord);
+                                _unitOfWork.Save();
+                                availableBook = getBookDTO;
+                                return getBookDTO;
+                            }
+                            else if(getMemberGenreRecord.Counter > getGenre.MaximumBooksAllowed)
+                            {                                   
+                                return null;
+                            }
+
+                        }                              
+                    }                      
+                }
+                return null;   
+            }          
             catch (Exception)
             {
-                throw;
+                      
+                return null;
             }
         }
+       
+             
+            
+
 
 
     }

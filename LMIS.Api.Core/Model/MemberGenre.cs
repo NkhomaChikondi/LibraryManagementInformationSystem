@@ -12,6 +12,7 @@ namespace LMIS.Api.Core.Model
         [Key]
         public int Id { get; set; }
         public string GenreName { get; set; }
-        public int Counter { get; set; }
+        public string  memberCode { get; set; }
+        public int Counter { get; set; } 
     }
 }

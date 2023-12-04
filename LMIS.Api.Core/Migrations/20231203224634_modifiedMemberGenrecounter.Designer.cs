@@ -3,6 +3,7 @@ using System;
 using LMIS.Api.Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LMIS.Api.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231203224634_modifiedMemberGenrecounter")]
+    partial class modifiedMemberGenrecounter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -307,43 +310,43 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedOn = new DateTime(2023, 12, 4, 5, 52, 21, 974, DateTimeKind.Utc).AddTicks(4129),
+                            CreatedOn = new DateTime(2023, 12, 3, 22, 46, 33, 734, DateTimeKind.Utc).AddTicks(2956),
                             Name = "Student"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedOn = new DateTime(2023, 12, 4, 5, 52, 21, 974, DateTimeKind.Utc).AddTicks(4131),
+                            CreatedOn = new DateTime(2023, 12, 3, 22, 46, 33, 734, DateTimeKind.Utc).AddTicks(2958),
                             Name = "Staff"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedOn = new DateTime(2023, 12, 4, 5, 52, 21, 974, DateTimeKind.Utc).AddTicks(4132),
+                            CreatedOn = new DateTime(2023, 12, 3, 22, 46, 33, 734, DateTimeKind.Utc).AddTicks(2959),
                             Name = "Regular Member"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedOn = new DateTime(2023, 12, 4, 5, 52, 21, 974, DateTimeKind.Utc).AddTicks(4133),
+                            CreatedOn = new DateTime(2023, 12, 3, 22, 46, 33, 734, DateTimeKind.Utc).AddTicks(2960),
                             Name = "Premium Member"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedOn = new DateTime(2023, 12, 4, 5, 52, 21, 974, DateTimeKind.Utc).AddTicks(4133),
+                            CreatedOn = new DateTime(2023, 12, 3, 22, 46, 33, 734, DateTimeKind.Utc).AddTicks(2961),
                             Name = "Guest"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedOn = new DateTime(2023, 12, 4, 5, 52, 21, 974, DateTimeKind.Utc).AddTicks(4134),
+                            CreatedOn = new DateTime(2023, 12, 3, 22, 46, 33, 734, DateTimeKind.Utc).AddTicks(2961),
                             Name = "Senior Citezen"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedOn = new DateTime(2023, 12, 4, 5, 52, 21, 974, DateTimeKind.Utc).AddTicks(4135),
+                            CreatedOn = new DateTime(2023, 12, 3, 22, 46, 33, 734, DateTimeKind.Utc).AddTicks(2962),
                             Name = "Corparate Member"
                         });
                 });

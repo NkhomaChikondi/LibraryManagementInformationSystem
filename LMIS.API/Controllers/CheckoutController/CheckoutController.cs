@@ -16,7 +16,7 @@ namespace LMIS.API.Controllers.CheckoutController
             _checkoutService = checkoutService;
         // GET: api/<CheckoutController>
         [HttpPost("GetSerachedBooks")]
-        public async Task<ActionResult<List<BookDTO>>> Get(string memberCode, [FromBody] SearchBookListDTO selectedBooks)
+        public async Task<ActionResult<List<BookDTO>>> Get(string memberCode, [FromBody] SearchBookDTO selectedBooks)
         {
             try
             {
