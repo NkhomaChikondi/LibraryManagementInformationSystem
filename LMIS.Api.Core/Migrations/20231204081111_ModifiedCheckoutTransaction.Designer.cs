@@ -3,6 +3,7 @@ using System;
 using LMIS.Api.Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LMIS.Api.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231204081111_ModifiedCheckoutTransaction")]
+    partial class ModifiedCheckoutTransaction
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -310,76 +313,45 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6434),
+                            CreatedOn = new DateTime(2023, 12, 4, 8, 11, 11, 437, DateTimeKind.Utc).AddTicks(9480),
                             Name = "Student"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6436),
+                            CreatedOn = new DateTime(2023, 12, 4, 8, 11, 11, 437, DateTimeKind.Utc).AddTicks(9481),
                             Name = "Staff"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6437),
+                            CreatedOn = new DateTime(2023, 12, 4, 8, 11, 11, 437, DateTimeKind.Utc).AddTicks(9482),
                             Name = "Regular Member"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6438),
+                            CreatedOn = new DateTime(2023, 12, 4, 8, 11, 11, 437, DateTimeKind.Utc).AddTicks(9483),
                             Name = "Premium Member"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6438),
+                            CreatedOn = new DateTime(2023, 12, 4, 8, 11, 11, 437, DateTimeKind.Utc).AddTicks(9484),
                             Name = "Guest"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6439),
+                            CreatedOn = new DateTime(2023, 12, 4, 8, 11, 11, 437, DateTimeKind.Utc).AddTicks(9484),
                             Name = "Senior Citezen"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6440),
+                            CreatedOn = new DateTime(2023, 12, 4, 8, 11, 11, 437, DateTimeKind.Utc).AddTicks(9485),
                             Name = "Corparate Member"
                         });
-                });
-
-            modelBuilder.Entity("LMIS.Api.Core.Model.Notification", b =>
-                {
-                    b.Property<int>("NotificationId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("NotificationId"));
-
-                    b.Property<int>("Messsage")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("checkoutTransactionId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("memberId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("userId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("NotificationId");
-
-                    b.HasIndex("checkoutTransactionId");
-
-                    b.HasIndex("memberId");
-
-                    b.HasIndex("userId");
-
-                    b.ToTable("GetNotifications");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.Role", b =>
@@ -496,33 +468,6 @@ namespace LMIS.Api.Core.Migrations
                     b.Navigation("user");
                 });
 
-            modelBuilder.Entity("LMIS.Api.Core.Model.Notification", b =>
-                {
-                    b.HasOne("LMIS.Api.Core.Model.CheckoutTransaction", "checkoutTransaction")
-                        .WithMany("notification")
-                        .HasForeignKey("checkoutTransactionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LMIS.Api.Core.Model.Member", "member")
-                        .WithMany("notifications")
-                        .HasForeignKey("memberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LMIS.Api.Core.Model.ApplicationUser", "user")
-                        .WithMany("notifications")
-                        .HasForeignKey("userId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("checkoutTransaction");
-
-                    b.Navigation("member");
-
-                    b.Navigation("user");
-                });
-
             modelBuilder.Entity("LMIS.Api.Core.Model.UserRole", b =>
                 {
                     b.HasOne("LMIS.Api.Core.Model.Role", "Role")
@@ -550,8 +495,6 @@ namespace LMIS.Api.Core.Migrations
 
                     b.Navigation("members");
 
-                    b.Navigation("notifications");
-
                     b.Navigation("userRoles");
                 });
 
@@ -560,16 +503,9 @@ namespace LMIS.Api.Core.Migrations
                     b.Navigation("checkoutTransactions");
                 });
 
-            modelBuilder.Entity("LMIS.Api.Core.Model.CheckoutTransaction", b =>
-                {
-                    b.Navigation("notification");
-                });
-
             modelBuilder.Entity("LMIS.Api.Core.Model.Member", b =>
                 {
                     b.Navigation("checkoutTransactions");
-
-                    b.Navigation("notifications");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.Role", b =>

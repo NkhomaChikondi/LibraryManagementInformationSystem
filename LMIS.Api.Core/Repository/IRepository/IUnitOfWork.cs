@@ -15,6 +15,7 @@ namespace LMIS.Api.Core.Repository.IRepository
         IMemberType memberType { get; }
         IMember member { get; }
         IBookInventoryRepository BookInventory { get; } 
+        ICheckoutTransactionRepository Checkout { get; } 
         IGenreRepository Genre { get; }
         IMemberGenreRepository  memberGenre { get; }
         void Save();

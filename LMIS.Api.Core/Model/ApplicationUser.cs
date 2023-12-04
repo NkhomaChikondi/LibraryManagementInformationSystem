@@ -34,6 +34,7 @@ namespace LMIS.Api.Core.Model
         public ICollection<Member> members { get; set; }
         public ICollection<Genre> genres { get; set; }
         public ICollection<CheckoutTransaction> checkoutTransactions { get; set; }
+        public ICollection<Notification>  notifications { get; set; }
 
 
         public ApplicationUser()

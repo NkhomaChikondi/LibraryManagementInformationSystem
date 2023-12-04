@@ -22,6 +22,7 @@ namespace LMIS.Api.Core.DataAccess
         public DbSet<BookInventory> bookInventories { get; set; }  
         public DbSet<Genre> genres { get; set; }  
         public DbSet<MemberGenre> membersGenres { get; set; }
+        public DbSet<Notification> GetNotifications { get; set; }
         
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -50,6 +51,22 @@ namespace LMIS.Api.Core.DataAccess
           .HasOne(b => b.user)
           .WithMany(a => a.genres)
           .HasForeignKey(b => b.userId);
+
+            modelBuilder.Entity<Notification>()
+          .HasOne(b => b.user)
+          .WithMany(a => a.notifications)
+          .HasForeignKey(b => b.userId);
+
+            modelBuilder.Entity<Notification>()
+      .HasOne(b => b.member)
+      .WithMany(a => a.notifications)
+      .HasForeignKey(b => b.memberId);
+
+            modelBuilder.Entity<Notification>()
+      .HasOne(b => b.checkoutTransaction)
+      .WithMany(a => a.notification)
+      .HasForeignKey(b => b.checkoutTransactionId);
+
 
             modelBuilder.Entity<Member>()
           .HasOne(m => m.memberType)

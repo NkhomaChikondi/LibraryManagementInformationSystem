@@ -1,6 +1,7 @@
 ﻿using LMIS.Api.Core.DTOs.Book;
 using LMIS.Api.Services.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -16,11 +17,17 @@ namespace LMIS.API.Controllers.CheckoutController
             _checkoutService = checkoutService;
         // GET: api/<CheckoutController>
         [HttpPost("GetSerachedBooks")]
-        public async Task<ActionResult<List<BookDTO>>> Get(string memberCode, [FromBody] SearchBookDTO selectedBooks)
+        public async Task<ActionResult<List<BookDTO>>> Get(string memberCode, [FromBody] SearchBookDTO selectedBook)
         {
             try
             {
-                var response = await _checkoutService.GetSelectedBooks(selectedBooks, memberCode);
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("You are not authorized to create member");
+                }
+                var response = await _checkoutService.GetSelectedBooks(selectedBook, memberCode, userIdClaim);
                 if (response == null)
                 {
                     return BadRequest("Failed to get books");
