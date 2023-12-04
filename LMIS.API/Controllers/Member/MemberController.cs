@@ -109,11 +109,11 @@ namespace LMIS.API.Controllers.Member
             }
             catch (Exception)
             {
-
                 return StatusCode(500);
-            }
-           
+            }           
         }
+
+
         [HttpGet]
         [Route("ResendEmail/{email}")]
         // Resending account activation pin
@@ -126,10 +126,8 @@ namespace LMIS.API.Controllers.Member
             }
             catch (Exception ex)
             {
-
                 return StatusCode(500, $"An {ex.Message} occurred while resending the email.");
             }
-
         }
         // DELETE api/<MemberController>/5
         [HttpDelete("Delete{id}")]

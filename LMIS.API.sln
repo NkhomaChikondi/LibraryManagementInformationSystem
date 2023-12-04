@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMIS.API", "LMIS.API\LMIS.API.csproj", "{38CA1923-F8A7-4F71-B695-E1A48F43E27A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMIS.API", "LMIS.API\LMIS.API.csproj", "{38CA1923-F8A7-4F71-B695-E1A48F43E27A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMIS.Api.Core", "LMIS.Api.Core\LMIS.Api.Core.csproj", "{945AB868-BA6F-4CC4-B916-0A828B5D00B0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMIS.Api.Core", "LMIS.Api.Core\LMIS.Api.Core.csproj", "{945AB868-BA6F-4CC4-B916-0A828B5D00B0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMIS.Api.Data", "LMIS.Api.Data\LMIS.Api.Data.csproj", "{05D1560C-5760-4C81-8328-4F9BA3C92D56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMIS.Api.Data", "LMIS.Api.Data\LMIS.Api.Data.csproj", "{05D1560C-5760-4C81-8328-4F9BA3C92D56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMIS.Api.Services", "LMIS.Api.Services\LMIS.Api.Services.csproj", "{6CEDFE0A-4452-48C0-98C1-4C3707C4BDC3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMIS.Api.Services", "LMIS.Api.Services\LMIS.Api.Services.csproj", "{6CEDFE0A-4452-48C0-98C1-4C3707C4BDC3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMIS.Web", "LMIS.Web\LMIS.Web.csproj", "{ABC7A903-46FC-4362-BA96-C99B17575867}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{6CEDFE0A-4452-48C0-98C1-4C3707C4BDC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6CEDFE0A-4452-48C0-98C1-4C3707C4BDC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6CEDFE0A-4452-48C0-98C1-4C3707C4BDC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ABC7A903-46FC-4362-BA96-C99B17575867}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ABC7A903-46FC-4362-BA96-C99B17575867}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ABC7A903-46FC-4362-BA96-C99B17575867}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ABC7A903-46FC-4362-BA96-C99B17575867}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -20,6 +20,7 @@ namespace LMIS.Api.Core.Repository
         public IBookInventoryRepository BookInventory { get; set; }
         public ICheckoutTransactionRepository Checkout { get; set; }
         public IMemberGenreRepository memberGenre { get; set; }
+        public INotificationRepository notification { get; set; }
 
         public UnitOfWork(ApplicationDbContext db)
         {
@@ -33,6 +34,7 @@ namespace LMIS.Api.Core.Repository
             Genre = new GenreRepository(_db);
             memberGenre = new MemberGenreRepository(_db);
             Checkout = new CheckoutTransactionRepository(_db);
+            notification = new NotificationRepository(_db);
         }
         public void Save()
         {

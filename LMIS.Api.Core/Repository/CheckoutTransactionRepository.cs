@@ -21,5 +21,22 @@ namespace LMIS.Api.Core.Repository
         {
             _db.checkoutTransactions.Update(checkoutTransaction);
         }
+
+        public async Task<int> GetOverDueTransaction(Member member)
+        {
+            // get the member having this member 
+            var allMemberTransactions = _db.checkoutTransactions.Where(c => c.member == member).ToList();
+            if (allMemberTransactions.Count > 0)
+            {
+                // get all transactions that are overdue
+                var overdueTransactions = allMemberTransactions.Where(o => o.isReturned == false).ToList();
+
+                if(overdueTransactions.Count > 0)
+                    return overdueTransactions.Count;
+
+                else return 0;
+            }
+            return 0;
+        }
     }
 }

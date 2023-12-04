@@ -9,7 +9,7 @@ namespace LMIS.Api.Core.Model
     public class Notification
     {
         public int NotificationId { get; set; }
-        public int Messsage { get; set; }
+        public string Messsage { get; set; }
 
         public int checkoutTransactionId { get; set; }
         public CheckoutTransaction checkoutTransaction { get; set; }

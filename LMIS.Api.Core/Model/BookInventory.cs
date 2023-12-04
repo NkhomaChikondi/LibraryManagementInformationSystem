@@ -15,8 +15,7 @@ namespace LMIS.Api.Core.Model
         public string Condition { get; set; }
         public bool isAvailable { get; set; }
         public string Location { get; set; }
-        public Book Book { get; set; }
-        
+       
         public ICollection<CheckoutTransaction> checkoutTransactions { get; set; }
     }
 }

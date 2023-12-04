@@ -136,8 +136,6 @@ namespace LMIS.Api.Core.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("BookId");
-
                     b.ToTable("bookInventories");
                 });
 
@@ -161,9 +159,6 @@ namespace LMIS.Api.Core.Migrations
 
                     b.Property<int>("MemberId")
                         .HasColumnType("integer");
-
-                    b.Property<DateTime>("ReturnDate")
-                        .HasColumnType("timestamp with time zone");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
@@ -310,43 +305,43 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6434),
+                            CreatedOn = new DateTime(2023, 12, 4, 12, 21, 51, 867, DateTimeKind.Utc).AddTicks(660),
                             Name = "Student"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6436),
+                            CreatedOn = new DateTime(2023, 12, 4, 12, 21, 51, 867, DateTimeKind.Utc).AddTicks(662),
                             Name = "Staff"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6437),
+                            CreatedOn = new DateTime(2023, 12, 4, 12, 21, 51, 867, DateTimeKind.Utc).AddTicks(663),
                             Name = "Regular Member"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6438),
+                            CreatedOn = new DateTime(2023, 12, 4, 12, 21, 51, 867, DateTimeKind.Utc).AddTicks(664),
                             Name = "Premium Member"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6438),
+                            CreatedOn = new DateTime(2023, 12, 4, 12, 21, 51, 867, DateTimeKind.Utc).AddTicks(665),
                             Name = "Guest"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6439),
+                            CreatedOn = new DateTime(2023, 12, 4, 12, 21, 51, 867, DateTimeKind.Utc).AddTicks(665),
                             Name = "Senior Citezen"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedOn = new DateTime(2023, 12, 4, 8, 47, 31, 432, DateTimeKind.Utc).AddTicks(6440),
+                            CreatedOn = new DateTime(2023, 12, 4, 12, 21, 51, 867, DateTimeKind.Utc).AddTicks(666),
                             Name = "Corparate Member"
                         });
                 });
@@ -359,8 +354,9 @@ namespace LMIS.Api.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("NotificationId"));
 
-                    b.Property<int>("Messsage")
-                        .HasColumnType("integer");
+                    b.Property<string>("Messsage")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("checkoutTransactionId")
                         .HasColumnType("integer");
@@ -418,17 +414,6 @@ namespace LMIS.Api.Core.Migrations
                     b.HasIndex("roleId");
 
                     b.ToTable("userRoles");
-                });
-
-            modelBuilder.Entity("LMIS.Api.Core.Model.BookInventory", b =>
-                {
-                    b.HasOne("LMIS.Api.Core.Model.Book", "Book")
-                        .WithMany()
-                        .HasForeignKey("BookId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Book");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.CheckoutTransaction", b =>
@@ -499,7 +484,7 @@ namespace LMIS.Api.Core.Migrations
             modelBuilder.Entity("LMIS.Api.Core.Model.Notification", b =>
                 {
                     b.HasOne("LMIS.Api.Core.Model.CheckoutTransaction", "checkoutTransaction")
-                        .WithMany("notification")
+                        .WithMany()
                         .HasForeignKey("checkoutTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -558,11 +543,6 @@ namespace LMIS.Api.Core.Migrations
             modelBuilder.Entity("LMIS.Api.Core.Model.BookInventory", b =>
                 {
                     b.Navigation("checkoutTransactions");
-                });
-
-            modelBuilder.Entity("LMIS.Api.Core.Model.CheckoutTransaction", b =>
-                {
-                    b.Navigation("notification");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.Member", b =>

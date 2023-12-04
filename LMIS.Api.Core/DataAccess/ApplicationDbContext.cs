@@ -60,12 +60,7 @@ namespace LMIS.Api.Core.DataAccess
             modelBuilder.Entity<Notification>()
       .HasOne(b => b.member)
       .WithMany(a => a.notifications)
-      .HasForeignKey(b => b.memberId);
-
-            modelBuilder.Entity<Notification>()
-      .HasOne(b => b.checkoutTransaction)
-      .WithMany(a => a.notification)
-      .HasForeignKey(b => b.checkoutTransactionId);
+      .HasForeignKey(b => b.memberId);          
 
 
             modelBuilder.Entity<Member>()

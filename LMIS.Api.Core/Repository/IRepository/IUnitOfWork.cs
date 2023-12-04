@@ -18,6 +18,7 @@ namespace LMIS.Api.Core.Repository.IRepository
         ICheckoutTransactionRepository Checkout { get; } 
         IGenreRepository Genre { get; }
         IMemberGenreRepository  memberGenre { get; }
+        INotificationRepository  notification { get; }
         void Save();
 
     }

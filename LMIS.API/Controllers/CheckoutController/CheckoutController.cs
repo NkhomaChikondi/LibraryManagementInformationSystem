@@ -1,4 +1,8 @@
 ﻿using LMIS.Api.Core.DTOs.Book;
+using LMIS.Api.Core.DTOs.Checkout;
+using LMIS.Api.Core.DTOs.Member;
+using LMIS.Api.Core.Model;
+using LMIS.Api.Services.Services;
 using LMIS.Api.Services.Services.IServices;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -12,9 +16,14 @@ namespace LMIS.API.Controllers.CheckoutController
     public class CheckoutController : ControllerBase
     {
         private readonly ICheckoutService _checkoutService;
+        private string memberCode;
+       
+        private SearchBookDTO book;
+
 
         public CheckoutController(ICheckoutService checkoutService) =>
             _checkoutService = checkoutService;
+
         // GET: api/<CheckoutController>
         [HttpPost("GetSerachedBooks")]
         public async Task<ActionResult<List<BookDTO>>> Get(string memberCode, [FromBody] SearchBookDTO selectedBook)
@@ -32,7 +41,13 @@ namespace LMIS.API.Controllers.CheckoutController
                 {
                     return BadRequest("Failed to get books");
                 }
+
+                this.memberCode = memberCode;
+                
+                book = selectedBook;
+
                 return Ok(response);
+                
             }
             catch (Exception ex)
             {
@@ -41,10 +56,31 @@ namespace LMIS.API.Controllers.CheckoutController
         }
 
         // GET api/<CheckoutController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpPost("CheckoutTransaction{id}")]
+        public async Task<IActionResult> CreateCheckoutTransaction([FromBody] CheckoutDTO createCheckoutTransactionDTO)
         {
-            return "value";
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("You are not authorized to create member");
+                }
+
+                var response =  _checkoutService.CheckOutBook(book, memberCode, userIdClaim);
+
+                if (response == null)
+                {
+                    return BadRequest("Failed to create member");
+                }
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An {ex.Message} occurred while creating a member");
+            }
         }
 
         // POST api/<CheckoutController>

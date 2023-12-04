@@ -87,8 +87,7 @@ namespace LMIS.Api.Services.Services
             {
                 // create a new book inventory
                 var bookInventory = new BookInventory
-                {
-                    Book = bookitem,
+                {                   
                     Condition = newBook.Condition,
                     isAvailable = newBook.isAvailable,
                     Location = newBook.Location,
