@@ -31,7 +31,6 @@ namespace LMIS.API.Controllers.User
             _configuration = configuration;             
         }
 
-
         [AllowAnonymous]
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginDTO loginModel)
