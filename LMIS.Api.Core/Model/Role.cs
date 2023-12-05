@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LMIS.Api.Core.Repository.IRepository;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -7,13 +8,14 @@ using System.Threading.Tasks;
 
 namespace LMIS.Api.Core.Model
 {
-    public class Role
+    public class Role 
     {
         [Key]
         public int RoleId { get; set; }
         [Required]
-        public string RoleName { get; set; }       
-
+        public string RoleName { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTime DeletedDate { get; set; }
         public ICollection<UserRole> userRoles { get; set; }
     }
 }

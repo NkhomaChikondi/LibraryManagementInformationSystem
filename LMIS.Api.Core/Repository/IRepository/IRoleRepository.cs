@@ -10,6 +10,8 @@ namespace LMIS.Api.Core.Repository.IRepository
     public interface IRoleRepository : IRepository<Role>
     {
         void Update(Role role);
+        Task<IEnumerable<Role>> GetAllRoles();
+        Task<bool> SoftDeleteAsync(int id);
 
     }    
 }

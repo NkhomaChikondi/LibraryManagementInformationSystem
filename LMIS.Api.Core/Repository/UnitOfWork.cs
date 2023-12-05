@@ -18,8 +18,7 @@ namespace LMIS.Api.Core.Repository
         public IGenreRepository Genre { get; private set; }
         public IMember member {  get; set; }
         public IBookInventoryRepository BookInventory { get; set; }
-        public ICheckoutTransactionRepository Checkout { get; set; }
-        public IMemberGenreRepository memberGenre { get; set; }
+        public ICheckoutTransactionRepository Checkout { get; set; }       
         public INotificationRepository notification { get; set; }
 
         public UnitOfWork(ApplicationDbContext db)
@@ -31,11 +30,11 @@ namespace LMIS.Api.Core.Repository
             member = new MemberRepository(_db);
             memberType = new MemberTypeRepository(_db);
             BookInventory = new BookInventoryRepository(_db);
-            Genre = new GenreRepository(_db);
-            memberGenre = new MemberGenreRepository(_db);
+            Genre = new GenreRepository(_db);            
             Checkout = new CheckoutTransactionRepository(_db);
             notification = new NotificationRepository(_db);
         }
+
         public void Save()
         {
             try

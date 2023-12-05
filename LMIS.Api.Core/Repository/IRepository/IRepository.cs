@@ -16,7 +16,7 @@ namespace LMIS.Api.Core.Repository.IRepository
        // Task<T> GetLastOrDefaultAsync(Expression<Func<T, bool>> filter = null);
         IQueryable<T> GetAllAsync();
         IQueryable<T> Get(Expression<Func<T, bool>> filter);
-        
+      
         Task DeleteAsync(object id);
         Task DeleteAsync(T entity);
         Task<int> CountAsync(Expression<Func<T, bool>> filter = null);

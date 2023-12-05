@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LMIS.Api.Core.Repository.IRepository;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,8 @@ namespace LMIS.Api.Core.Model
     {
         public int NotificationId { get; set; }
         public string Messsage { get; set; }
-
+        public bool IsDeleted { get; set; }
+        public DateTime DeletedDate { get; set; }
         public int checkoutTransactionId { get; set; }
         public CheckoutTransaction checkoutTransaction { get; set; }
         public int memberId { get; set; }

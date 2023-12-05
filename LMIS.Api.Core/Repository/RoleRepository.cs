@@ -20,5 +20,26 @@ namespace LMIS.Api.Core.Repository
         {
             _db.roles.Update(role);
         }
+        public async Task<bool> SoftDeleteAsync(int id)
+        {
+            var entity = await _db.roles.FindAsync(id);
+
+            if (entity == null || entity.IsDeleted)
+            {
+                return false;
+            }
+
+            entity.IsDeleted = true;
+            entity.DeletedDate = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IEnumerable<Role>> GetAllRoles()
+        {
+            var allEntities = _db.roles.Where(U => U.IsDeleted == false).ToList();
+            return allEntities;
+        }
     }
 }

@@ -260,37 +260,37 @@ namespace LMIS.Api.Services.Services
         }
         public async Task DeleteGenreAsync(int TransId)
         {
-            try
-            {
-                // get all transactions 
-                var allTransactions =  _unitOfWork.Checkout.GetAllAsync();
-                var _transaction = await _unitOfWork.Checkout.GetFirstOrDefaultAsync(g => g.Id == TransId);
-                if (_transaction != null)
-                {
-                    try
-                    {
-                        var books = await _bookService.GetAllAsync();
-                        if (books != null)
-                        {
-                            var selectGenres = books.Where(b => b.Genre == genre.Name).ToList();
-                            if (selectGenres.Count > 0)
-                                return;
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        // Log the exception or handle appropriately
-                        throw;
-                    }
+            //try
+            //{
+            //    // get all transactions 
+            //    var allTransactions =  _unitOfWork.Checkout.GetAllAsync();
+            //    var _transaction = await _unitOfWork.Checkout.GetFirstOrDefaultAsync(g => g.Id == TransId);
+            //    if (_transaction != null)
+            //    {
+            //        try
+            //        {
+            //            var books = await _bookService.GetAllAsync();
+            //            if (books != null)
+            //            {
+            //                var selectGenres = books.Where(b => b.Genre == genre.Name).ToList();
+            //                if (selectGenres.Count > 0)
+            //                    return;
+            //            }
+            //        }
+            //        catch (Exception)
+            //        {
+            //            // Log the exception or handle appropriately
+            //            throw;
+            //        }
 
-                    await _unitOfWork.Genre.DeleteAsync(genreId);
-                    _unitOfWork.Save();
-                }
-            }
-            catch (Exception)
-            {
-                return;
-            }
+            //        await _unitOfWork.Genre.DeleteAsync(genreId);
+            //        _unitOfWork.Save();
+            //    }
+            //}
+            //catch (Exception)
+            //{
+            //    return;
+            //}
         }
 
     }

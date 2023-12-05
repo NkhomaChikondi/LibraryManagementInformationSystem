@@ -61,6 +61,7 @@ builder.Services.AddScoped<IAuthService,AuthService>();
 builder.Services.AddScoped<IBookService,BookService>();
 builder.Services.AddScoped<IGenreService,GenreService>();
 builder.Services.AddScoped<ICheckoutService,CheckoutService>();
+builder.Services.AddScoped<IRoleService,RoleService>();
 
 
 // configuring the token and making sure that the user has the correct token all the time

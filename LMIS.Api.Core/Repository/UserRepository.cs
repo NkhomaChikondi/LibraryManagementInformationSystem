@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -141,6 +142,28 @@ namespace LMIS.Api.Core.Repository
         public bool VerifyPassword(string hashedPasswordFromDatabase, string incomingPlainPassword)
         {
             return BCrypt.Net.BCrypt.Verify(incomingPlainPassword, hashedPasswordFromDatabase);
+        }
+
+        public async Task<bool> SoftDeleteAsync(int id)
+        {
+            var entity = await _db.applicationUsers.FindAsync(id);
+
+            if (entity == null || entity.IsDeleted)
+            {
+                return false; 
+            }
+
+            entity.IsDeleted = true;
+            entity.DeletedDate = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+            return true; 
+        }
+
+        public async Task<IEnumerable <ApplicationUser>> GetAllUsers()
+        {
+            var allUsers = _db.applicationUsers.Where(U => U.IsDeleted == false).ToList();
+            return allUsers;
         }
     }
 }

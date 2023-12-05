@@ -3,6 +3,7 @@ using System;
 using LMIS.Api.Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LMIS.Api.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231205075923_updatedModels")]
+    partial class updatedModels
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -323,7 +326,7 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedOn = new DateTime(2023, 12, 5, 9, 36, 30, 129, DateTimeKind.Utc).AddTicks(9836),
+                            CreatedOn = new DateTime(2023, 12, 5, 7, 59, 23, 157, DateTimeKind.Utc).AddTicks(8489),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Student"
@@ -331,7 +334,7 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 2,
-                            CreatedOn = new DateTime(2023, 12, 5, 9, 36, 30, 129, DateTimeKind.Utc).AddTicks(9838),
+                            CreatedOn = new DateTime(2023, 12, 5, 7, 59, 23, 157, DateTimeKind.Utc).AddTicks(8497),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Staff"
@@ -339,7 +342,7 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 3,
-                            CreatedOn = new DateTime(2023, 12, 5, 9, 36, 30, 129, DateTimeKind.Utc).AddTicks(9865),
+                            CreatedOn = new DateTime(2023, 12, 5, 7, 59, 23, 157, DateTimeKind.Utc).AddTicks(8498),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Regular Member"
@@ -347,7 +350,7 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 4,
-                            CreatedOn = new DateTime(2023, 12, 5, 9, 36, 30, 129, DateTimeKind.Utc).AddTicks(9866),
+                            CreatedOn = new DateTime(2023, 12, 5, 7, 59, 23, 157, DateTimeKind.Utc).AddTicks(8499),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Premium Member"
@@ -355,7 +358,7 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 5,
-                            CreatedOn = new DateTime(2023, 12, 5, 9, 36, 30, 129, DateTimeKind.Utc).AddTicks(9867),
+                            CreatedOn = new DateTime(2023, 12, 5, 7, 59, 23, 157, DateTimeKind.Utc).AddTicks(8499),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Guest"
@@ -363,7 +366,7 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 6,
-                            CreatedOn = new DateTime(2023, 12, 5, 9, 36, 30, 129, DateTimeKind.Utc).AddTicks(9868),
+                            CreatedOn = new DateTime(2023, 12, 5, 7, 59, 23, 157, DateTimeKind.Utc).AddTicks(8500),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Senior Citezen"
@@ -371,7 +374,7 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 7,
-                            CreatedOn = new DateTime(2023, 12, 5, 9, 36, 30, 129, DateTimeKind.Utc).AddTicks(9869),
+                            CreatedOn = new DateTime(2023, 12, 5, 7, 59, 23, 157, DateTimeKind.Utc).AddTicks(8501),
                             DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Corparate Member"

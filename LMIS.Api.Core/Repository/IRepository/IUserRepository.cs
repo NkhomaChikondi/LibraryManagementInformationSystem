@@ -13,12 +13,14 @@ namespace LMIS.Api.Core.Repository.IRepository
 
     public interface IUserRepository : IRepository<ApplicationUser>
     {
-            void Update(ApplicationUser user);
-             bool IsValidEmail(string email);
-           string HashPassword(string password);            
+         void Update(ApplicationUser user);
+         bool IsValidEmail(string email);
+         string HashPassword(string password);            
          string GeneratePassword(ApplicationUserDTO applicationUser);
-            int GeneratePin();
+         int GeneratePin();
          Task<LoginTokenDTO> GenerateToken(ApplicationUser applicationUser,IConfiguration configuration,IUnitOfWork unitOfWork);
+        Task<IEnumerable<ApplicationUser>> GetAllUsers();
+        Task<bool> SoftDeleteAsync(int id);
         bool VerifyPassword(string hashedPasswordFromDatabase, string incomingPlainPassword);
         IEnumerable<ApplicationUser> usersWithRole();    
     }

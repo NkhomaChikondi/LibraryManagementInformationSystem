@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LMIS.Api.Core.Repository.IRepository;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace LMIS.Api.Core.Model
 {
-    public class Member
+    public class Member 
     {
         [Key]
         public int MemberId { get; set; }
@@ -21,7 +22,8 @@ namespace LMIS.Api.Core.Model
         public string Status { get; set; }
         public DateTime CreatedOn { get; set; }
         public int userId { get;set; }
-        
+        public bool IsDeleted { get; set; }
+        public DateTime DeletedDate { get; set; }
         public int MemberTypeId { get; set; }
         public ApplicationUser user { get; set; }
         public ICollection<CheckoutTransaction> checkoutTransactions { get; set; }

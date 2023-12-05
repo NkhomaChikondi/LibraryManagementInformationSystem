@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LMIS.Api.Core.Repository.IRepository;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 namespace LMIS.Api.Core.Model
 {
     public class ApplicationUser
-    {
+    { 
         [Key]
         public int UserId { get; set; }
         [Required]
@@ -28,6 +29,8 @@ namespace LMIS.Api.Core.Model
         public int Pin { get; set; }
         public DateTime CreatedOn { get; set; }
         public bool IsConfirmed { get; set; }
+        public bool IsDeleted { get; set; }
+        public DateTime DeletedDate { get; set; }
 
         public ICollection<UserRole> userRoles { get; set; }
         [JsonIgnore]

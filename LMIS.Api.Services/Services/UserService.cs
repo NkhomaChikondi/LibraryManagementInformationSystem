@@ -67,6 +67,7 @@ namespace LMIS.Api.Services.Services
                     Gender = createUserDTO.Gender,
                     Location = createUserDTO.Location,
                     IsConfirmed = false,
+                    IsDeleted = false,
                     Pin = pin,
                     CreatedOn = DateTime.UtcNow
                 };
@@ -92,21 +93,15 @@ namespace LMIS.Api.Services.Services
             }
         }
 
-
         public async Task DeleteUserAsync(int userId)
         {
             try
             {
-                await _unitOfWork.User.DeleteAsync(userId);
-                // save changes
-                _unitOfWork.Save();
-
-              
+              await _unitOfWork.User.SoftDeleteAsync(userId);
+              return;                      
             }
             catch (Exception)
             {
-
-
                 return ;
             }          
            
@@ -116,7 +111,7 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var allUsers = _unitOfWork.User.GetAllAsync();
+                var allUsers = _unitOfWork.User.GetAllUsers();
                 if (allUsers != null)
                 {
                     var allMembersDTO = _mapper.Map<IEnumerable<ApplicationUserDTO>>(allUsers);
