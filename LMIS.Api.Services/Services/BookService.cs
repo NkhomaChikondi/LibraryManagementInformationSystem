@@ -30,11 +30,12 @@ namespace LMIS.Api.Services.Services
              _unitOfWork = unitOfWork;
         }
         public async Task<List<Book>> GetAllAsync() =>
-        await _booksCollection.Find(_ => true).ToListAsync();
+     await _booksCollection.Find(book => !book.IsDeleted).ToListAsync();
+
 
         public async Task<Book?> GetAsync(string id) =>
-            await _booksCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
-        
+     await _booksCollection.Find(book => book.Id == id && !book.IsDeleted).FirstOrDefaultAsync();
+
         public async Task CreateAsync(BookDTO newBook, string userEmail)
         {
             try
@@ -106,7 +107,15 @@ namespace LMIS.Api.Services.Services
         public async Task UpdateAsync(string id, Book updatedBook) =>
             await _booksCollection.ReplaceOneAsync(x => x.Id == id, updatedBook);
 
-        public async Task RemoveAsync(string id) =>
-            await _booksCollection.DeleteOneAsync(x => x.Id == id);
+        public async Task RemoveAsync(string id)
+        {
+            var book = await GetAsync(id);
+            if (book != null)
+            {
+                book.IsDeleted = true;
+                book.DeletedDate = DateTime.UtcNow;
+                await UpdateAsync(id, book);
+            }
+        }
     }
 }
