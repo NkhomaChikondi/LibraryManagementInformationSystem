@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LMIS.Api.Core.DTOs;
+using LMIS.Api.Core.DTOs.Book;
 using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
@@ -72,7 +73,7 @@ namespace LMIS.API.Controllers.User
             {
                var response = await _userService.CreateUserAsync(createUserDTO);
                 if (response == null)
-                    return BadRequest("Failed to create user");
+                    return BadRequest();
                 return Ok(response);
             }
             catch (Exception ex)
@@ -148,16 +149,16 @@ namespace LMIS.API.Controllers.User
 
         //// GET: api/<UserController>
         //[HttpGet("GetAlUsersWithRolesAsync")]
-        //public IActionResult GetAlUsersWithRolesAsync()
+        //public Task<ActionResult<List<BookDTO>>> GetAlUsersWithRolesAsync()
         //{
-        //    var allUsers = _unitOfWork.User.usersWithRole();
+        //    var allUsers = _userService.
         //    // map to dto
         //    List<UserWithRoleDTO> usersWithRolesDTO = _mapper.Map<IEnumerable<ApplicationUser>, List<UserWithRoleDTO>>(allUsers);
         //    return Ok(usersWithRolesDTO);
         //}
-            
-          
-        
+
+
+
 
     }
 }

@@ -1,6 +1,7 @@
 ﻿using LMIS.Api.Core.DataAccess;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +38,13 @@ namespace LMIS.Api.Core.Repository
                 else return 0;
             }
             return 0;
+        }
+
+        public async Task<CheckoutTransaction> GetLastOrDefault(int memberId)
+        {
+            var allTransactions  = await _db.checkoutTransactions.OrderBy( m => m.Id).Where( m => m.MemberId == memberId).LastOrDefaultAsync();
+            return allTransactions;
+
         }
     }
 }

@@ -13,7 +13,7 @@ namespace LMIS.Api.Core.Repository.IRepository
         Task<T> GetByIdAsync(int id);
        // Task<T> GetByEmailAsync(string email);
         Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter = null);
-        Task<T> GetLastOrDefaultAsync(Expression<Func<T, bool>> filter = null);
+       // Task<T> GetLastOrDefaultAsync(Expression<Func<T, bool>> filter = null);
         IQueryable<T> GetAllAsync();
         IQueryable<T> Get(Expression<Func<T, bool>> filter);
         

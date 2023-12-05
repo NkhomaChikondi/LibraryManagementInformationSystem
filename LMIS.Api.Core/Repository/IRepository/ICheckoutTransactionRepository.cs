@@ -12,6 +12,8 @@ namespace LMIS.Api.Core.Repository.IRepository
     {
         void Update(CheckoutTransaction checkoutTransaction);
         Task<int> GetOverDueTransaction(Member member);
-        
+        Task<CheckoutTransaction> GetLastOrDefault(int memberId);
+
+
     }
 }

@@ -1,10 +1,12 @@
-﻿using AutoMapper;
+﻿using Amazon.Runtime.Internal.Util;
+using AutoMapper;
 using LMIS.Api.Core.DTOs.Member;
 using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
 using LMIS.Api.Services.Services.IServices;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,13 +21,16 @@ namespace LMIS.Api.Services.Services
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
         private readonly IEmailService _emailService;
+        private readonly ILogger<UserService> _logger;
         public IConfiguration _configuration { get; }
-        public UserService(IUnitOfWork unitOfWork, IMapper Mapper, IConfiguration configuration, IEmailService emailService)
+
+        public UserService(IUnitOfWork unitOfWork, IMapper Mapper, IConfiguration configuration, IEmailService emailService,ILogger<UserService> logger)
         {
             _mapper = Mapper;
             _unitOfWork = unitOfWork;
             _emailService = emailService;
             _configuration = configuration;
+            _logger = logger;
         }
 
         public async Task<ApplicationUserDTO> CreateUserAsync(ApplicationUserDTO createUserDTO)
@@ -40,7 +45,8 @@ namespace LMIS.Api.Services.Services
                 // Check if the role exists
                 Expression<Func<Role, bool>> roleExistsExpression = role => role.RoleName == createUserDTO.RoleName;
                 if (!await _unitOfWork.Role.ExistsAsync(roleExistsExpression))
-                {                    
+                {
+                    _logger.LogError("The Role entered does not exist");
                     return null;
                 }
                 // Check if the email already exists
@@ -243,5 +249,6 @@ namespace LMIS.Api.Services.Services
                 return;
             }
         }
+        //public async Task
     }
 }
