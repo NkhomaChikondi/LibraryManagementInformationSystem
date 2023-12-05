@@ -38,22 +38,53 @@ namespace LMIS.Api.Services.Services
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
                 if (user == null)
                     return null;
-
-                var newRole = new Role
+                var roleExist = await _unitOfWork.Role.ExistsAsync(role => role.RoleName == role.RoleName);
+                if (roleExist)
                 {
-                    RoleName = role.RoleName,
-                    IsDeleted = false,
-                };
+                    //check if it is deleted
+                    var getRole = await _unitOfWork.Role.GetFirstOrDefaultAsync(R => R.RoleName == role.RoleName);
+                    if(!getRole.IsDeleted)
+                    {
+                        return null;
+                    }
+                    else 
+                    {
+                        var newRole = new Role
+                        {
+                            RoleName = role.RoleName,
+                            IsDeleted = false,
+                        };
+                        // check if the role exist
+                        await _unitOfWork.Role.CreateAsync(newRole);
+                        _unitOfWork.Save();
 
-                await _unitOfWork.Role.CreateAsync(newRole);
-                _unitOfWork.Save();
+                        var newRoleDto = new RoleDTO
+                        {
+                            RoleName = newRole.RoleName,
+                        };
 
-                var newRoleDto = new RoleDTO
+                        return newRoleDto;
+                    }
+                }
+                else if(!roleExist) 
                 {
-                    RoleName = newRole.RoleName,
-                };
+                    var newRole = new Role
+                    {
+                        RoleName = role.RoleName,
+                        IsDeleted = false,
+                    };
+                    // check if the role exist
+                    await _unitOfWork.Role.CreateAsync(newRole);
+                    _unitOfWork.Save();
 
-                return newRoleDto;
+                    var newRoleDto = new RoleDTO
+                    {
+                        RoleName = newRole.RoleName,
+                    };
+
+                    return newRoleDto;
+                }
+                return null;
             }
             catch (Exception)
             {

@@ -38,6 +38,10 @@ namespace LMIS.API.Controllers.User
         {
             // get user from the database
             var user = await _unitOfWork.User.GetFirstOrDefaultAsync(user => user.Email == loginModel.Email);
+
+            if (user == null || user.IsDeleted)
+                return null;
+
             if (user != null)
             {
                 // checking is the account is confirmed already

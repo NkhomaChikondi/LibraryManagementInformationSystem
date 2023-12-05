@@ -165,5 +165,6 @@ namespace LMIS.Api.Core.Repository
             var allUsers = _db.applicationUsers.Where(U => U.IsDeleted == false).ToList();
             return allUsers;
         }
+       
     }
 }

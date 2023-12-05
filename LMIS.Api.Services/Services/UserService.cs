@@ -224,6 +224,12 @@ namespace LMIS.Api.Services.Services
             }
         }
 
+        public async Task<bool> IsRoleDeleted(string roleName)
+        {
+            var existingRole = await _unitOfWork.Role.GetFirstOrDefaultAsync(r => r.RoleName == roleName);
+            return existingRole?.IsDeleted ?? false;
+        }
+
         //public async Task
     }
 }
