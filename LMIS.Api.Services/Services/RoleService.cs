@@ -119,6 +119,7 @@ namespace LMIS.Api.Services.Services
             try
             {
                 var role = await _unitOfWork.Role.GetByIdAsync(roleId);
+
                 if (role != null)
                 {
                     var getRoleDTO = _mapper.Map<RoleDTO>(role);

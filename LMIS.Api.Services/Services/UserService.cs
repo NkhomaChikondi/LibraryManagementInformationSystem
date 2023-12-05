@@ -132,6 +132,9 @@ namespace LMIS.Api.Services.Services
                 var user = await _unitOfWork.User.GetByIdAsync(userId);
                 if (user != null)
                 {
+                    // check if the user is deleted
+                    if (user.IsDeleted)
+                        return null;
                     var getUserDTO = _mapper.Map<ApplicationUserDTO>(user);
                     return getUserDTO;
                 }
@@ -150,7 +153,7 @@ namespace LMIS.Api.Services.Services
                 var user = await _unitOfWork.User.GetByIdAsync(userId);
 
                 if (user != null)
-                {
+                {                    
                     // Update user properties based on the received DTO
                     user.firstName = createUserDTO.firstName;
                     user.lastName = createUserDTO.lastName;
