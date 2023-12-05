@@ -31,13 +31,14 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var userEmail = userIdClaim;
-                var user = await _unitOfWork.User.GetFirstOrDefaultAsync(user => user.Email == userEmail);
-                if (user == null)
-                {
+                if (genre == null || string.IsNullOrEmpty(userIdClaim))
                     return null;
-                }
-                // create a new genre
+
+                var userEmail = userIdClaim;
+                var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
+                if (user == null)
+                    return null;
+
                 var newGenre = new Genre
                 {
                     Name = genre.Name,
@@ -45,6 +46,7 @@ namespace LMIS.Api.Services.Services
                     user = user,
                     userId = user.UserId
                 };
+
                 await _unitOfWork.Genre.CreateAsync(newGenre);
                 _unitOfWork.Save();
 
@@ -57,40 +59,32 @@ namespace LMIS.Api.Services.Services
                 return newGenreDto;
             }
             catch (Exception)
-            {
-
+            {                
                 return null;
             }
         }
 
+
+      
         public IEnumerable<GenreDTO> GetAllGenres()
         {
             try
             {
                 var allGenres = _unitOfWork.Genre.GetAllAsync();
-                var allgenreDTO = _mapper.Map<IEnumerable<GenreDTO>>(allGenres);
-
-                return allgenreDTO;
+                if (allGenres != null)
+                {
+                    var allGenreDTO = _mapper.Map<IEnumerable<GenreDTO>>(allGenres);
+                    return allGenreDTO;
+                }
+                return null;
             }
             catch (Exception)
             {
-                return null!;
+               
+                return null;
             }
         }
-        public async Task<GenreDTO> GetGenreByIdAsync(int genreId)
-        {
-            try
-            {
-                var genre = await _unitOfWork.Genre.GetByIdAsync(genreId);
 
-                var getGenreDTO = _mapper.Map<GenreDTO>(genre);
-                return getGenreDTO;              
-            }
-            catch (Exception)
-            {
-                return null!;
-            }
-        }
 
         public async Task<GenreDTO> UpdateGenreAsync(GenreDTO genre, int Id)
         {
@@ -147,7 +141,6 @@ namespace LMIS.Api.Services.Services
                         var books = await _bookService.GetAllAsync();
                         if (books != null)
                         {
-                            // get all books having the genre's name
                             var selectGenres = books.Where(b => b.Genre == genre.Name).ToList();
                             if (selectGenres.Count > 0)
                                 return;
@@ -155,18 +148,35 @@ namespace LMIS.Api.Services.Services
                     }
                     catch (Exception)
                     {
-
+                        // Log the exception or handle appropriately
                         throw;
                     }
-                   
+
                     await _unitOfWork.Genre.DeleteAsync(genreId);
                     _unitOfWork.Save();
                 }
             }
             catch (Exception)
-            {
-
+            {                
                 return;
+            }
+        }
+
+        public async Task<GenreDTO> GetGenreByIdAsync(int genreId)
+        {
+            try
+            {
+                var genre = await _unitOfWork.Genre.GetByIdAsync(genreId);
+                if (genre != null)
+                {
+                    var getGenreDTO = _mapper.Map<GenreDTO>(genre);
+                    return getGenreDTO;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
     }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LMIS.Api.Core.DTOs.Book;
+using LMIS.Api.Core.DTOs.Checkout;
 using LMIS.Api.Core.DTOs.Member;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
@@ -186,26 +187,111 @@ namespace LMIS.Api.Services.Services
 
         public async Task ReturnBook(string memberId, string Booktitle)
         {
-            // check if member id is not null
-            if(memberId == null) return;
-            var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == memberCode);
-            if (member == null) return;
+            try
+            {
+                if (string.IsNullOrEmpty(memberId) || string.IsNullOrEmpty(Booktitle))
+                    return;
 
-            // get all checkoutTransaction
-            var  allTransaction = _unitOfWork.Checkout.GetAllAsync();
+                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == memberId);
+                if (member == null)
+                    return;
 
-            if (allTransaction == null && allTransaction.Any()) return;
+                var allTransactions =  _unitOfWork.Checkout.GetAllAsync();
+                if (allTransactions == null || !allTransactions.Any())
+                    return;
 
-            // get the book
-            var books =await _bookService.GetAllAsync();
-            if (books == null) return;
+                var books = await _bookService.GetAllAsync();
+                if (books == null)
+                    return;
 
-            var getBook = books.Where(b => b.Title == Booktitle).FirstOrDefault();
-            if (getBook == null) return;
+                // Convert Booktitle to uppercase
+                Booktitle = Booktitle.ToUpper();
 
-            // check the last id 
-            var getTransaction = 
+                var getBook = books.FirstOrDefault(b => b.Title.ToUpper() == Booktitle);
+                if (getBook == null)
+                    return;
 
+                var getTransaction = allTransactions.FirstOrDefault(T => T.member == member && T.book == getBook && T.isReturned == false);
+                if (getTransaction == null)
+                    return;
+
+                getTransaction.isReturned = true;
+
+                _unitOfWork.Checkout.Update(getTransaction);
+                 _unitOfWork.Save();
+            }
+            catch (Exception)
+            {
+                return;
+            }
         }
+
+        public IEnumerable<CheckoutDTO> GetAllCheckoutTransactions()
+        {
+            try
+            {
+                var allTransactions = _unitOfWork.Checkout.GetAllAsync();
+                // Map the updated member entity to a DTO
+                var allTransactionDTO = _mapper.Map<IEnumerable<CheckoutDTO>>(allTransactions);
+
+                return allTransactionDTO;
+            }
+            catch (Exception)
+            {
+                return null!;
+            }
+        }
+        public async Task<CheckoutDTO> GetCheckoutTransactionByIdAsync(int transId)
+        {
+            try
+            {
+                var _transaction = await _unitOfWork.Checkout.GetByIdAsync(transId);
+                if (_transaction != null)
+                {
+                    var gettransactionDTO = _mapper.Map<CheckoutDTO>(_transaction);
+                    return gettransactionDTO;
+                }
+                return null;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
+        public async Task DeleteGenreAsync(int TransId)
+        {
+            try
+            {
+                // get all transactions 
+                var allTransactions =  _unitOfWork.Checkout.GetAllAsync();
+                var _transaction = await _unitOfWork.Checkout.GetFirstOrDefaultAsync(g => g.Id == TransId);
+                if (_transaction != null)
+                {
+                    try
+                    {
+                        var books = await _bookService.GetAllAsync();
+                        if (books != null)
+                        {
+                            var selectGenres = books.Where(b => b.Genre == genre.Name).ToList();
+                            if (selectGenres.Count > 0)
+                                return;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        // Log the exception or handle appropriately
+                        throw;
+                    }
+
+                    await _unitOfWork.Genre.DeleteAsync(genreId);
+                    _unitOfWork.Save();
+                }
+            }
+            catch (Exception)
+            {
+                return;
+            }
+        }
+
     }
 }

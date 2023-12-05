@@ -36,10 +36,22 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
+                if (createMemberDto == null || string.IsNullOrEmpty(userIdClaim))
+                    return null!;
+
                 var member_code = _unitOfWork.member.GenerateMemberCode(createMemberDto.FirstName, createMemberDto.LastName);
                 var userEmail = userIdClaim;
-                var user = await _unitOfWork.User.GetFirstOrDefaultAsync(user => user.Email == userEmail);
-                var Membertype = await _unitOfWork.memberType.GetFirstOrDefaultAsync(name => name.Name == createMemberDto.MemberTypeName);
+                var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
+
+                if (user == null)
+                    return null!;
+
+                var memberTypeName = createMemberDto.MemberTypeName;
+                var Membertype = await _unitOfWork.memberType.GetFirstOrDefaultAsync(name => name.Name == memberTypeName);
+
+                if (Membertype == null)
+                    return null!;
+
                 var member = new Member()
                 {
                     First_Name = createMemberDto.FirstName,
@@ -48,20 +60,18 @@ namespace LMIS.Api.Services.Services
                     Last_Name = createMemberDto.LastName,
                     Member_Code = member_code,
                     Phone = createMemberDto.Phone,
-                    Status = "Booked",
+                    Status = "None",
                     user = user,
                     memberType = Membertype,
                     MemberTypeId = Membertype.Id,
-                    userId = user.UserId                    
+                    userId = user.UserId
                 };
 
-                
                 await _unitOfWork.member.CreateAsync(member);
                 _unitOfWork.Save();
 
-                // resend the email
-
-                string pinBody = "Your account type is  " + createMemberDto.MemberTypeName + "  your member code is  " + member_code + " <br /> The member code will be needed each time you visit the library";
+                // Resend the email
+                string pinBody = $"Your account type is {memberTypeName}. Your member code is {member_code}.<br />The member code will be needed each time you visit the library.";
                 this._emailService.SendMail(member.Email, "Member Account Details", pinBody);
 
                 var createdMemberDTO = _mapper.Map<MemberDTO>(member);
@@ -69,10 +79,11 @@ namespace LMIS.Api.Services.Services
                 return createdMemberDTO;
             }
             catch (Exception)
-            {
+            {                
                 return null!;
             }
         }
+
 
         public Task DeleteMemberAsync(int memberId)
         {
@@ -94,89 +105,78 @@ namespace LMIS.Api.Services.Services
                 return null!;
             }           
         }
-
         public async Task<MemberDTO> GetMemberByIdAsync(int memberId)
         {
             try
-            { 
+            {
                 var member = await _unitOfWork.member.GetByIdAsync(memberId);
-                // Map the updated member entity to a DTO
-                var getMemberDTO = _mapper.Map<MemberDTO>(member);
-                return getMemberDTO;
-
+                if (member != null)
+                {
+                    var getMemberDTO = _mapper.Map<MemberDTO>(member);
+                    return getMemberDTO;
+                }
+                return null;
             }
             catch (Exception)
-            {
-                return null!;
-            }            
+            {                
+                return null;
+            }
         }
 
         public async Task<MemberDTO> UpdateMemberAsync(CreateMemberDto createMemberDto, int memberId)
         {
             try
-            { 
-                 var member = await _unitOfWork.member.GetByIdAsync(memberId);
+            {
+                var member = await _unitOfWork.member.GetByIdAsync(memberId);
 
-                if (member == null)
+                if (member != null)
                 {
-                    return null;
+                    member.Email = createMemberDto.Email;
+                    member.First_Name = createMemberDto.FirstName;
+                    member.Last_Name = createMemberDto.LastName;
+                    member.Phone = createMemberDto.Phone;
+
+                    _unitOfWork.member.Update(member);
+                    _unitOfWork.Save();
+
+                    var getMemberDTO = _mapper.Map<MemberDTO>(member);
+                    return getMemberDTO;
                 }
 
-                member.Email = createMemberDto.Email;
-                member.First_Name = createMemberDto.FirstName;
-                member.Last_Name = createMemberDto.LastName;
-                member.Phone = createMemberDto.Phone;
-
-                _unitOfWork.member.Update(member);
-                _unitOfWork.Save();
-
-                // Map the updated member entity to a DTO
-                var getMemberDTO = _mapper.Map<MemberDTO>(member);
-                return getMemberDTO;
-
+                return null;
             }
             catch (Exception)
-            {
-
-                return null!;
-            }           
+            {                
+                return null;
+            }
         }
-
         public async Task ResendEmail(string email)
         {
             try
             {
-                // check if email is null
                 if (email == null)
-                {
                     return;
-                }
-                // get the user having this r
+
                 var member = await _unitOfWork.member.GetFirstOrDefaultAsync(r => r.Email == email);
-                if (member == null)
+                if (member != null)
                 {
-                    return;
+                    var memberDTO = _mapper.Map<MemberDTO>(member);
+                    var memberCode = _unitOfWork.member.GenerateMemberCode(member.First_Name, member.Last_Name);
+
+                    _unitOfWork.member.Update(member);
+                    _unitOfWork.Save();
+
+                    string pinBody = $"Your member account has been created in LMIS, your account type is {member.memberType}, your member code is {memberCode}<br /> The member code will be needed each time you visit the library";
+                    this._emailService.SendMail(member.Email, "Member Account reset Details", pinBody);
                 }
-                var memberDTO = _mapper.Map<MemberDTO>(member);
-                
-                var memberCode = _unitOfWork.member.GenerateMemberCode(member.First_Name, member.Last_Name);
-
-               
-                _unitOfWork.member.Update(member);
-                _unitOfWork.Save();
-
-                // resend the email
-                string pinBody = "Your member account has been created in LMIS, your account type is  " + member.memberType + "  your member code is  " + memberCode + " <br /> The member code will be needed each time you visit the library";
-                this._emailService.SendMail(member.Email, "Member Account reset Details", pinBody);
-
 
                 return;
-
             }
             catch (Exception)
             {
                 return;
             }
         }
+
     }
 }
