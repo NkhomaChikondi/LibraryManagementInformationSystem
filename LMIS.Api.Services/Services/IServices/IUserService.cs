@@ -11,11 +11,11 @@ namespace LMIS.Api.Services.Services.IServices
     public interface IUserService
     {
         public Task<BaseResponse<ApplicationUserDTO>> CreateUserAsync(ApplicationUserDTO createUserDTO);
-        Task DeleteUserAsync(int memberId);
-        IEnumerable<ApplicationUserDTO> GetAllUsers();
-        Task<ApplicationUserDTO> GetUserByIdAsync(int userId);
-        Task UpdateUserAsync(ApplicationUserDTO createUserDTO, int userId);
-        Task ConfirmAccount(string email, int pin);
-        Task ResendEmail(string email);
+        Task<BaseResponse<bool>> DeleteUserAsync(int memberId);
+        Task<BaseResponse<IEnumerable<ApplicationUserDTO>>> GetAllUsers();
+        Task<BaseResponse<ApplicationUserDTO>> GetUserByIdAsync(int userId);
+        Task<BaseResponse<bool>> UpdateUserAsync(ApplicationUserDTO createUserDTO, int userId);
+        Task<BaseResponse<bool>> ConfirmAccount(string email, int pin);
+        Task<BaseResponse<bool>> ResendEmail(string email);
     }
 }

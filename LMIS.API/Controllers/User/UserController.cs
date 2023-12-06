@@ -5,6 +5,7 @@ using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
 using LMIS.Api.Services.Services.IServices;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Linq.Expressions;
@@ -15,6 +16,7 @@ namespace LMIS.API.Controllers.User
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
@@ -25,16 +27,16 @@ namespace LMIS.API.Controllers.User
         }
         // GET: api/<UserController>
         [HttpGet("GetAllAsync")]
-        public IActionResult Get()
+        public async Task< IActionResult> Get()
         {
             try
             {
-                var response = _userService.GetAllUsers();
-                if (response == null)
+                var response = await _userService.GetAllUsers();
+                if (response.IsError)
                 {
-                    return BadRequest(" Failed to get all Users");
+                    return BadRequest(response.Message);
                 }
-                return Ok(response);
+                return Ok(response.Result);
             }
             catch (Exception ex)
             {
