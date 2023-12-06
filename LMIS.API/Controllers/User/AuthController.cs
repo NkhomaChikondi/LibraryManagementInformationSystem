@@ -44,10 +44,10 @@ namespace LMIS.API.Controllers.User
             if (user != null)
             {
                 // checking is the account is confirmed already
-                if (user.IsConfirmed == false)
-                {
-                    return BadRequest("Account not confirmed, please check your email for the activation link");
-                }
+                //if (user.IsConfirmed == false)
+                //{
+                //   // return BadRequest("Account not confirmed, please check your email for the activation link");
+                //}
                 // hash the password
 
              //  loginModel.Password = _unitOfWork.User.HashPassword(loginModel.Password);
