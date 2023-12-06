@@ -1,5 +1,7 @@
 ﻿@{
     Layout = null;
+
+    @model LMIS.Web.ViewModels.LoginViewModel
 }
 
 <!DOCTYPE html>
@@ -49,18 +51,21 @@
                     <div class="row gx-4 gx-lg-5 justify-content-center mb-5">
 
 
-                        <form id="contactForm">
+                        <form asp-action="Login" asp-antiforgery="true" method="post">
+                            <div asp-validation-summary="All" class="text-danger"></div>
                             <!-- Name input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="email" type="email" placeholder="Enter your email" />
+                                <input class="form-control" id="Email" type="email" name="Email" placeholder="Enter your email" />
                                 <label for="name">Email</label>
+                                <span asp-validation-for="Email" class="text-danger"></span>
 
                             </div>
 
                             <!-- password  input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control" id="password" type="password" placeholder="*******" />
+                                <input class="form-control" id="Password" type="password" name="Password" placeholder="*******" />
                                 <label for="phone">Password</label>
+                                <span asp-validation-for="Password" class="text-danger"></span>
 
                             </div>
 

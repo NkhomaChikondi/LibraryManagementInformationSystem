@@ -33,7 +33,7 @@ namespace LMIS.API.Controllers.User
 
         [AllowAnonymous]
         [HttpPost("login")]
-        public async Task<ActionResult> Login([FromBody] LoginDTO loginModel)
+        public async Task<ActionResult> Login(LoginDTO loginModel)
         {
             // get user from the database
             var user = await _unitOfWork.User.GetFirstOrDefaultAsync(user => user.Email == loginModel.Email);
