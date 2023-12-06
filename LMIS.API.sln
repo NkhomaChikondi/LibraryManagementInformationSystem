@@ -13,8 +13,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMIS.Api.Services", "LMIS.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LMIS.Web", "LMIS.Web\LMIS.Web.csproj", "{ABC7A903-46FC-4362-BA96-C99B17575867}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LMIS.Test", "LMIS.Test\LMIS.Test.csproj", "{87F892B2-D1EE-4F74-842A-ADEFE3B1C974}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -41,10 +39,6 @@ Global
 		{ABC7A903-46FC-4362-BA96-C99B17575867}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABC7A903-46FC-4362-BA96-C99B17575867}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABC7A903-46FC-4362-BA96-C99B17575867}.Release|Any CPU.Build.0 = Release|Any CPU
-		{87F892B2-D1EE-4F74-842A-ADEFE3B1C974}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{87F892B2-D1EE-4F74-842A-ADEFE3B1C974}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{87F892B2-D1EE-4F74-842A-ADEFE3B1C974}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{87F892B2-D1EE-4F74-842A-ADEFE3B1C974}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

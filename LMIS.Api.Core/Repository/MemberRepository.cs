@@ -66,5 +66,26 @@ namespace LMIS.Api.Core.Repository
             var allEntities = _db.members.Where(U => U.IsDeleted == false).ToList();
             return allEntities;
         }
+        public bool IsPhoneNumberValid(string phoneNumber)
+        {
+            // Remove any non-digit characters
+            string cleanedPhoneNumber = new string(phoneNumber.Where(char.IsDigit).ToArray());
+
+            // Check if the cleaned number is exactly 10 digits and contains only numbers
+            return cleanedPhoneNumber.Length == 10 && cleanedPhoneNumber.All(char.IsDigit);
+        }
+        public bool IsValidEmail(string email)
+        {
+            try
+            {
+                var addr = new System.Net.Mail.MailAddress(email);
+                return addr.Address == email;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
     }
 }

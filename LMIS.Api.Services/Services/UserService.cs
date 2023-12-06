@@ -1,5 +1,6 @@
 ﻿using Amazon.Runtime.Internal.Util;
 using AutoMapper;
+using LMIS.Api.Core.DTOs;
 using LMIS.Api.Core.DTOs.Member;
 using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
@@ -33,12 +34,16 @@ namespace LMIS.Api.Services.Services
             _logger = logger;
         }
 
-        public async Task<ApplicationUserDTO> CreateUserAsync(ApplicationUserDTO createUserDTO)
-        {
+        public async Task<BaseResponse<ApplicationUserDTO>> CreateUserAsync(ApplicationUserDTO createUserDTO)
+        {//ApplicationUserDTO
             try
             {
                 if (!_unitOfWork.User.IsValidEmail(createUserDTO.Email))
-                    return null;
+                    return new BaseResponse<ApplicationUserDTO>() 
+                    {
+                        IsError = true,
+                        Message = "invalid email"
+                    };
 
                 var roleName = createUserDTO.RoleName;
                 if (!await _unitOfWork.Role.ExistsAsync(role => role.RoleName == roleName))
@@ -69,8 +74,11 @@ namespace LMIS.Api.Services.Services
                     IsConfirmed = false,
                     IsDeleted = false,
                     Pin = pin,
-                    CreatedOn = DateTime.UtcNow
+                    CreatedOn = DateTime.UtcNow,
+                    
                 };
+                 await _unitOfWork.User.CreateAsync(user);
+                _unitOfWork.Save();
 
                 var userRole = new UserRole
                 {
@@ -85,10 +93,14 @@ namespace LMIS.Api.Services.Services
                 _emailService.SendMail(user.Email, "Login Details", passwordBody);
 
                 var createdUserDTO = _mapper.Map<ApplicationUserDTO>(user);
-                return createdUserDTO;
+                return new BaseResponse<ApplicationUserDTO>()
+                {
+                    IsError = false,
+                    Result = createdUserDTO,
+                };
             }
             catch (Exception)
-            {                
+            {                    
                 return null!;
             }
         }

@@ -72,9 +72,13 @@ namespace LMIS.API.Controllers.User
             try
             {
                var response = await _userService.CreateUserAsync(createUserDTO);
-                if (response == null)
-                    return BadRequest();
-                return Ok(response);
+
+                if (response.IsError)
+                {
+                    return BadRequest(response.Message);
+                }
+                    
+                return Ok(response.Result);
             }
             catch (Exception ex)
             {

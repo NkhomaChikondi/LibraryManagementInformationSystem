@@ -41,14 +41,22 @@ namespace LMIS.API.Controllers.Books
         [HttpGet("GetBook{id:length(24)}")]
         public async Task<ActionResult<Book>> Get(string id)
         {
-
-            var book = await _booksService.GetAsync(id);
-
-            if (book is null)
+            try
             {
-                return NotFound();
+                var book = await _booksService.GetAsync(id);
+
+                if (book is null)
+                {
+                    return NotFound();
+                }
+                return book;
             }
-            return book;
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"An {ex.Message} occurred while getting books.");
+            }
+
         }
 
         [HttpPost("CreateBook")]
@@ -108,16 +116,25 @@ namespace LMIS.API.Controllers.Books
         [HttpDelete("Delete{id:length(24)}")]
         public async Task<IActionResult> DeleteBook(string id)
         {
-            var book = await _booksService.GetAsync(id);
-
-            if (book is null)
+            try
             {
-                return NotFound();
+                var book = await _booksService.GetAsync(id);
+
+                if (book is null)
+                {
+                    return NotFound();
+                }
+
+                await _booksService.RemoveAsync(id);
+
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+
+                return StatusCode(500, $"An {ex.Message} occurred while deleting the book.");
             }
 
-            await _booksService.RemoveAsync(id);
-
-            return NoContent();
         }
     }
 }

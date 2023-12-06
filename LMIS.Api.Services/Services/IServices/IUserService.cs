@@ -1,4 +1,5 @@
-﻿using LMIS.Api.Core.DTOs.User;
+﻿using LMIS.Api.Core.DTOs;
+using LMIS.Api.Core.DTOs.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace LMIS.Api.Services.Services.IServices
 {
     public interface IUserService
     {
-        public Task<ApplicationUserDTO> CreateUserAsync(ApplicationUserDTO createUserDTO);
+        public Task<BaseResponse<ApplicationUserDTO>> CreateUserAsync(ApplicationUserDTO createUserDTO);
         Task DeleteUserAsync(int memberId);
         IEnumerable<ApplicationUserDTO> GetAllUsers();
         Task<ApplicationUserDTO> GetUserByIdAsync(int userId);
