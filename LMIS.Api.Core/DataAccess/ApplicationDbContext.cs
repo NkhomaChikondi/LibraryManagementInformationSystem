@@ -91,7 +91,12 @@ namespace LMIS.Api.Core.DataAccess
            new MemberType { Id = 4, Name = "Premium Member", CreatedOn = DateTime.UtcNow },
            new MemberType { Id = 5, Name = "Guest" , CreatedOn = DateTime.UtcNow },
            new MemberType { Id = 6, Name = "Senior Citezen", CreatedOn = DateTime.UtcNow },
-           new MemberType { Id = 7, Name = "Corparate Member", CreatedOn = DateTime.UtcNow });           
+           new MemberType { Id = 7, Name = "Corparate Member", CreatedOn = DateTime.UtcNow });
+
+            modelBuilder.Entity<Role>().HasData(
+               new Role { RoleId = 1, RoleName = "Administrator", IsDeleted = false },
+               new Role { RoleId = 2, RoleName = "FrontDesk_Officer", IsDeleted = false },
+               new Role { RoleId = 3, RoleName = "Management", IsDeleted = false });
         }
     }    
 }
