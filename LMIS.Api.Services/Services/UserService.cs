@@ -48,16 +48,32 @@ namespace LMIS.Api.Services.Services
                 var roleName = createUserDTO.RoleName;
                 if (!await _unitOfWork.Role.ExistsAsync(role => role.RoleName == roleName))
                 {
-                    _logger.LogError("The Role entered does not exist");
-                    return null;
+                    return new BaseResponse<ApplicationUserDTO>()
+                    {
+                        IsError = true,
+                        Message = "Role doesnt exist"
+                    };
                 }
 
                 if (await _unitOfWork.User.ExistsAsync(user => user.Email == createUserDTO.Email))
-                    return null;
-
+                {
+                    return new BaseResponse<ApplicationUserDTO>()
+                    {
+                        IsError = true,
+                        Message = "The email is used already, use another one"
+                    };
+                }
+                 
                 var role = await _unitOfWork.Role.GetFirstOrDefaultAsync(r => r.RoleName == roleName);
                 if (role == null)
-                    return null;
+                {
+                    return new BaseResponse<ApplicationUserDTO>()
+                    {
+                        IsError = true,
+                        Message = "Role doesnt exist"
+                    };
+                }
+                   
 
                 var password = _unitOfWork.User.GeneratePassword(createUserDTO);
                 var hashedPassword = _unitOfWork.User.HashPassword(password);
@@ -74,8 +90,7 @@ namespace LMIS.Api.Services.Services
                     IsConfirmed = false,
                     IsDeleted = false,
                     Pin = pin,
-                    CreatedOn = DateTime.UtcNow,
-                    
+                    CreatedOn = DateTime.UtcNow,                   
                 };
                  await _unitOfWork.User.CreateAsync(user);
                 _unitOfWork.Save();
@@ -100,44 +115,69 @@ namespace LMIS.Api.Services.Services
                 };
             }
             catch (Exception)
-            {                    
-                return null!;
+            {
+                return new BaseResponse<ApplicationUserDTO>()
+                {
+                    IsError = true,
+                    Message = "Failed to create a new user "
+                }; 
             }
         }
 
-        public async Task DeleteUserAsync(int userId)
+        public async Task<BaseResponse<bool>> DeleteUserAsync(int userId)
         {
             try
             {
               await _unitOfWork.User.SoftDeleteAsync(userId);
-              return;                      
+                return new ()
+                {                   
+                    IsError = false,
+                    Message = "Deleted Successfully"
+                };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return ;
+                return new()
+                {
+                    IsError = true,
+                    Message = $"Failed to delete a user an {ex.Message} error occured"
+                };
             }          
            
         }
 
-        public IEnumerable<ApplicationUserDTO> GetAllUsers()
+        public async Task<BaseResponse<IEnumerable<ApplicationUserDTO>>> GetAllUsers()
         {
             try
             {
-                var allUsers = _unitOfWork.User.GetAllUsers();
+                var allUsers = await _unitOfWork.User.GetAllUsers();
                 if (allUsers != null)
-                {
+                {                   
                     var allMembersDTO = _mapper.Map<IEnumerable<ApplicationUserDTO>>(allUsers);
-                    return allMembersDTO;
+                    return new ()
+                    {
+                        IsError = false,
+                        Result = allMembersDTO,
+                    };
                 }
-                return null;
+                return new ()
+                {
+                    IsError = true,
+                    Message = $"No users found",
+                };
             }
-            catch (Exception)
-            {                
-                return null;
+            catch (Exception ex)
+            {
+
+                return new ()
+                {
+                    IsError = true,
+                    Message = $"Failed to get users. an {ex.Message} error occured ",
+                };
             }
         }
 
-        public async Task<ApplicationUserDTO> GetUserByIdAsync(int userId)
+        public async Task<BaseResponse<ApplicationUserDTO>> GetUserByIdAsync(int userId)
         {
             try
             {
@@ -146,19 +186,38 @@ namespace LMIS.Api.Services.Services
                 {
                     // check if the user is deleted
                     if (user.IsDeleted)
-                        return null;
+                    {
+                        return new BaseResponse<ApplicationUserDTO>()
+                        {
+                            IsError = true,
+                            Message = "No user found ",
+                        };
+                    }
+                        
                     var getUserDTO = _mapper.Map<ApplicationUserDTO>(user);
-                    return getUserDTO;
+                    return new BaseResponse<ApplicationUserDTO>()
+                    {
+                        IsError = false,
+                       Result = getUserDTO
+                    };                   
                 }
-                return null;
+                return new BaseResponse<ApplicationUserDTO>()
+                {
+                    IsError = true,
+                    Message = $"No user found",
+                };
             }
-            catch (Exception)
-            {               
-                return null;
+            catch (Exception ex)
+            {
+                return new BaseResponse<ApplicationUserDTO>()
+                {
+                    IsError = true,
+                    Message = $"Failed to get users. an {ex.Message} error occured ",
+                };
             }
         }
 
-        public async Task UpdateUserAsync(ApplicationUserDTO createUserDTO, int userId)
+        public async Task<BaseResponse<bool>> UpdateUserAsync(ApplicationUserDTO createUserDTO, int userId)
         {
             try
             {
@@ -175,45 +234,95 @@ namespace LMIS.Api.Services.Services
 
                     _unitOfWork.User.Update(user);
                     _unitOfWork.Save();
+                    return new()
+                    {
+                        IsError = false,
+                        Message = "Updated Successfully"
+                    };
                 }
+                return new()
+                {
+                    IsError = true,
+                    Message = "failed to update user"
+                };
             }
-            catch (Exception)
-            {               
-                return;
+            catch (Exception ex)
+            {
+                return new()
+                {
+                    IsError = true,
+                    Message = $"an {ex.Message} occured, failed to update user"
+                };
             }
         }
 
-        public async Task ConfirmAccount(string email, int pin)
+        public async Task<BaseResponse<bool>> ConfirmAccount(string email, int pin)
         {
             try
             {
                 if (pin < 0 || email == null)
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = $"Check if your email or pin are correct"
+                    };
+                }
+                   
 
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == email);
                 if (user == null || user.Pin != pin)
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = false,
+                        Message = "Your account is confirmed"
+                    };
+                }
+                   
 
                 user.IsConfirmed = true;
                 _unitOfWork.User.Update(user);
                 _unitOfWork.Save();
+                return new()
+                {
+                    IsError = false,
+                    Message = "Your account is confirmed"
+                };
             }
-            catch (Exception)
-            {               
-                return;
+            catch (Exception ex)
+            {
+                return new()
+                {
+                    IsError = true,
+                    Message = $"an {ex.Message} occured, failed to confirm your account"
+                };
             }
         }
 
-        public async Task ResendEmail(string email)
+        public async Task<BaseResponse<bool>> ResendEmail(string email)
         {
             try
             {
                 if (email == null)
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = " Please enter your email"
+                    };
+                }
 
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == email);
                 if (user == null)
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = " Failed to find user with the provided email"
+                    };
+                }
+                   
 
                 var userDTO = _mapper.Map<ApplicationUserDTO>(user);
                 var pin = _unitOfWork.User.GeneratePin();
@@ -228,11 +337,19 @@ namespace LMIS.Api.Services.Services
                 string pinBody = $"Your OTP for LMIS is {pin}. Your new password is {password}<br /> Enter the OTP, email address, and the new password to reset your account";
                 this._emailService.SendMail(user.Email, "Account Reset Details", pinBody);
 
-                return;
+                return new()
+                {
+                    IsError = false,
+                    Message = " Email is resent successfully"
+                };
             }
-            catch (Exception)
-            {               
-                return;
+            catch (Exception ex)
+            {
+                return new()
+                {
+                    IsError = true,
+                    Message = $"an {ex.Message} occured, failed to resend the email"
+                };
             }
         }
 

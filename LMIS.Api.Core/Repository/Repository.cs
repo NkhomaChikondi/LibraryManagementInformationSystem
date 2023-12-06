@@ -26,8 +26,7 @@ namespace LMIS.Api.Core.Repository
 
         public async Task CreateAsync(T entity)
         {
-            await _dbSet.AddAsync(entity);
-           
+            await _dbSet.AddAsync(entity);           
             
         }
 
