@@ -37,15 +37,15 @@ namespace LMIS.Web.Services
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var content = await response.Content.ReadAsStringAsync();
-                    var data = (JObject)JsonConvert.DeserializeObject(content);
+                    TokenData tokenData = await response.Content.ReadFromJsonAsync<TokenData>();
 
-                    var token = data["token"].Value<string>();
-                    var userId = data["userId"].Value<string>();
-                    var roleName = data["role"].Value<string>();
-                    var username = data["username"].Value<string>();
-                    var firstName = data["firstName"].Value<string>();
-                    var lastName = data["lastName"].Value<string>();
+
+
+                    var token = tokenData.Token;
+                    var userId = tokenData.UserId;
+                    var roleName = tokenData.Role;
+                    var firstName = tokenData.FirstName;
+                    var lastName = tokenData.LastName; 
 
 
 
@@ -57,7 +57,6 @@ namespace LMIS.Web.Services
                             Token = token,
                             UserId = userId,
                             RoleName = roleName,
-                            Username = username,
                             FirstName = firstName,
                             LastName = lastName
                         }

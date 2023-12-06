@@ -1,5 +1,6 @@
 using LMIS.Web.Services;
 using LMIS.Web.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 
 
@@ -11,6 +12,18 @@ builder.Services.AddControllersWithViews();
 //configure dependancy injection
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+
+builder.Services.AddHttpContextAccessor();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+{
+    options.LoginPath = "/Home/Index";
+    options.Cookie.Name = "LMISCookie";
+    options.AccessDeniedPath = "/Home/Index";
+});
+builder.Services.AddSession(options => {
+    options.IdleTimeout = TimeSpan.FromMinutes(10);
+});
 
 var app = builder.Build();
 
@@ -29,9 +42,20 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+app.UseSession();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllerRoute(
+      name: "areas",
+      pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+    );
+});
 
-
+app.MapControllerRoute(
+   name: "areas",
+            pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
     name: "default",

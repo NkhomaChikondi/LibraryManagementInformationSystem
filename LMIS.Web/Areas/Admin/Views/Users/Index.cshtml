@@ -1,0 +1,84 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    var api = Configuration.GetSection("Application")["ApiEndPoint"];
+    var endPoint = Configuration.GetSection("Application")["EndPoint"];
+    ViewData["Title"] = "Users";
+    Layout = "_Layout";
+}
+
+<link href="../css/froala_editor.pkgd.min.css" rel="stylesheet" />
+
+
+
+<div class="row">
+    <div class="col-lg-12">
+        <button type="button" class="btn btn-primary btn-rounded btn-fw pull-right" data-toggle="modal" data-target="#create_user_modal">Add User</button>
+
+    </div>
+</div>
+<br />
+<div class="row">
+
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+
+                <h4 class="card-title text-center"> @ViewData["Title"]</h4>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" id="user">
+                        <thead>
+                            <tr>
+                                <th>
+                                    First Name
+                                </th>
+                                <th>
+                                    Surname
+                                </th>
+                                <th>
+                                    Gender
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Location
+                                </th>
+                               
+                                <th>
+                                    Date Added
+                                </th>                              
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+
+    <script>
+
+        var datatable;
+
+    </script>
+    <script src="../js/User.js" asp-append-version="true"></script>
+  
+    
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

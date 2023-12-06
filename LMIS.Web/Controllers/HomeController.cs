@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Security.Claims;
+using NuGet.Common;
 
 namespace LMIS.Web.Controllers
 {
@@ -59,6 +60,10 @@ namespace LMIS.Web.Controllers
                     Response.Cookies.Append("LastName", loginResult.User.LastName, options);
 
                     HttpContext.Session.SetString("token", loginResult.User.Token);
+                    HttpContext.Session.SetString("LastName", loginResult.User.LastName);
+                    HttpContext.Session.SetString("FirstName", loginResult.User.FirstName);
+                    HttpContext.Session.SetString("RoleName", loginResult.User.RoleName);
+                    HttpContext.Session.SetString("userId", loginResult.User.UserId);
 
 
                     var claims = new List<Claim>()
@@ -79,6 +84,21 @@ namespace LMIS.Web.Controllers
 
                     // Set the ClaimsPrincipal as the current user
                     HttpContext.User = principal;
+
+
+                    //redirect to area based on role
+
+                    switch (loginResult.User.RoleName)
+                    {
+                        case "Administrator":
+
+                            return RedirectToAction("Index", "Home", new { Area = "Admin" });
+                            
+
+                        default:
+                            return RedirectToAction("Index", "Home", new { Area = "Admin" });
+                           
+                    }
 
 
                 }
