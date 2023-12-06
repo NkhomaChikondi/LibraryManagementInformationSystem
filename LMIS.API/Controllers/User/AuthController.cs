@@ -61,7 +61,7 @@ namespace LMIS.API.Controllers.User
                     var tokenHandler = new JwtSecurityToken();
                     LoginTokenDTO userData = await _unitOfWork.User.GenerateToken(user,_configuration,_unitOfWork);
                     _unitOfWork.Save();
-                    return Ok(new { TokenData = userData });
+                    return Ok(userData);
                 }
                
                 else

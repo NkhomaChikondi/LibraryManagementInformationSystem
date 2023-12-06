@@ -1,0 +1,13 @@
+﻿body {
+}
+
+.truncate{
+    max-width:500px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.bootstrap-select .dropdown-toggle .filter-option {
+    color: #000000ad !important;
+}
