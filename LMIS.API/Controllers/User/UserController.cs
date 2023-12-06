@@ -105,7 +105,7 @@ namespace LMIS.API.Controllers.User
         }
 
         // DELETE api/<UserController>/5       
-        [HttpDelete("Delete{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             try

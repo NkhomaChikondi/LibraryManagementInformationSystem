@@ -12,6 +12,7 @@ builder.Services.AddControllersWithViews();
 //configure dependancy injection
 
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
+builder.Services.AddScoped<IUserService, UsersService>();
 
 builder.Services.AddHttpContextAccessor();
 

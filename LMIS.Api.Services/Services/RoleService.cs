@@ -96,7 +96,7 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var allRoles = _unitOfWork.Role.GetAllRoles();
+                var allRoles = _unitOfWork.Role.GetAllRoles().Result;
                 if (allRoles != null)
                 {
                     var allRoleDTO = _mapper.Map<IEnumerable<RoleDTO>>(allRoles);
