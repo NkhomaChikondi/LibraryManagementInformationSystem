@@ -21,6 +21,7 @@ namespace LMIS.Api.Core.DataAccess
         public DbSet<CheckoutTransaction> checkoutTransactions { get; set; }  
         public DbSet<BookInventory> bookInventories { get; set; }  
         public DbSet<Genre> genres { get; set; }  
+        public DbSet<Temp_Data> temp_data { get; set; }
      
         public DbSet<Notification> GetNotifications { get; set; }
         

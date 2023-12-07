@@ -9,9 +9,8 @@ namespace LMIS.Api.Core.DTOs.Checkout
     public class CheckoutDTO
     {
         public DateTime CheckOutDate { get; set; }
-        public DateTime DueDate { get; set; }
-        public DateTime ReturnDate { get; set; }
+        public DateTime DueDate { get; set; }        
 
-        public string Books { get; set; }
+       
     }
 }

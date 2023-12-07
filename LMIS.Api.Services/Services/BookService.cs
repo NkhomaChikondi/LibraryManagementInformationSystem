@@ -87,7 +87,6 @@ namespace LMIS.Api.Services.Services
                         isAvailable = newBook.isAvailable,
                         Location = newBook.Location,
                         BookId = bookitem.Id,
-                        checkoutTransactions = null,
                     };
 
                     await _unitOfWork.BookInventory.CreateAsync(bookInventory);
