@@ -15,11 +15,13 @@ function Delete(id) {
 
             }).done(function (data) {
 
+                console.log(data.status)
+
                 if (data.status == "success") {
 
                     toastr.success("user deleted successfully")
 
-                    location.reload();
+                    //location.reload();
                 }
                 else {
                     toastr.success("user could not be deleted")

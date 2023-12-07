@@ -58,7 +58,19 @@ namespace LMIS.Web.Areas.Admin.Controllers
                
                 //send data to api
 
-                await this._userService.CreateUser(model);
+                bool result = await this._userService.CreateUser(model);
+
+                if(result)
+                {
+                    TempData["success_response"] = "user has been created successfully";
+
+                }
+                else
+                {
+                    TempData["error_response"] = "failed to create user";
+
+                }
+
 
                 return RedirectToAction("Index");
             }
@@ -106,7 +118,7 @@ namespace LMIS.Web.Areas.Admin.Controllers
 
 
 
-            return Json(new { status = "success"});
+            return Json(new { status = "success" });
         }
 
         private async Task PopulateViewBags()

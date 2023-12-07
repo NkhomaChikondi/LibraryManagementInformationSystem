@@ -27,7 +27,20 @@
     <div class="col-lg-12 grid-margin stretch-card">
         <div class="card">
             <div class="card-body">
-
+                @if (!string.IsNullOrEmpty(TempData["success_response"] as string))
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["success_response"]
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(TempData["error_response"] as string))
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["error_response"]
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
                 <h4 class="card-title text-center"> @ViewData["Title"]</h4>
 
                 <div class="table-responsive">
