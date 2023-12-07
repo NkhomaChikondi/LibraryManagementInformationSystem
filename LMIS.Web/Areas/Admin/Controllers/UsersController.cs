@@ -1,6 +1,8 @@
 ﻿using LMIS.Web.DTOs.User;
 using LMIS.Web.Models;
 using LMIS.Web.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -129,7 +131,22 @@ namespace LMIS.Web.Areas.Admin.Controllers
             }
         }
 
-      
+        [HttpGet]
+        public async Task<IActionResult> Logout()
+        {
+
+                if (Request.Cookies["token"] != null)
+                {
+                    Response.Cookies.Delete("token");
+                }
+
+                HttpContext.Session.Remove("token");
+
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Index", "Home", new {Area =""});
+
+            
+        }
 
         // POST: UsersController/Delete/5
         [HttpPost]

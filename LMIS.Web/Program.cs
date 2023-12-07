@@ -14,6 +14,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 builder.Services.AddScoped<IUserService, UsersService>();
 builder.Services.AddScoped<IroleService, RolesService>();
+builder.Services.AddScoped<IGenreService, GenreService>();
 
 builder.Services.AddHttpContextAccessor();
 

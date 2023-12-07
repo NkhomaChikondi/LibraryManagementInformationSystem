@@ -1,0 +1,42 @@
+﻿@model LMIS.Web.DTOs.Genre.GenreDTO
+<!-- Modal -->
+
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit Genre Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <hr />
+        <div class="modal-body">
+            <div class="card p-4">
+              
+
+                <form asp-action="Edit" method="Post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="hidden" asp-for="GenreId"/>
+                    <div class="form-group">
+                        <label asp-for="Name"></label>
+                        <input asp-for="Name" placeholder="Genre Name" class="form-control" />
+                        <span asp-validation-for="Name" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MaximumBooksAllowed"></label>
+                        <input asp-for="MaximumBooksAllowed" placeholder="MaximumBooksAllowed" class="form-control" />
+                        <span asp-validation-for="MaximumBooksAllowed" class="text-danger"></span>
+                    </div>
+
+
+                    <hr />
+                    <div class="form-control d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary" id="edit_genre_btn" name="edit_genre_btn">Update Genre</button>
+                    </div>
+                </form>
+            </div>
+          
+        </div>
+       
+    </div>
+</div>

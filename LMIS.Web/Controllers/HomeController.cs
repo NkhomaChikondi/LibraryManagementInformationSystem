@@ -93,7 +93,8 @@ namespace LMIS.Web.Controllers
                         case "Administrator":
 
                             return RedirectToAction("Index", "Home", new { Area = "Admin" });
-                            
+                        case "management":
+                            return RedirectToAction("Index", "Home", new { Area = "Management" });
 
                         default:
                             return RedirectToAction("Index", "Home", new { Area = "Admin" });

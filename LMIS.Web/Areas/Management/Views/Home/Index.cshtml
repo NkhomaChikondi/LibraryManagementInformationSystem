@@ -1,0 +1,10 @@
+﻿@using System.Globalization;
+@{
+    Layout = "_Layout";
+}
+<div class="row">
+    <div class="col-sm-12 mb-4 mb-xl-0">
+        <h4 class="font-weight-bold text-dark">Hi, welcome back!</h4>
+        <p class="font-weight-normal mb-2 text-muted">@DateTime.Now.ToString("MMMM", CultureInfo.InvariantCulture) @DateTime.Now.Day, @DateTime.Now.Year</p>
+    </div>
+</div>

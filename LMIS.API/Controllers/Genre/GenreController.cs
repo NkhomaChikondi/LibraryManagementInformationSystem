@@ -40,7 +40,7 @@ namespace LMIS.API.Controllers.Genre
         }
 
         // GET api/<GenreController>/5
-        [HttpGet("GetGenreById{id}")]
+        [HttpGet("GetGenreById/{id}")]
         public async Task<IActionResult> GetGenreById(int id)
         {
             try
@@ -92,7 +92,7 @@ namespace LMIS.API.Controllers.Genre
         }
 
         // PUT api/<GenreController>/5
-        [HttpPut("Update{genreId}")]
+        [HttpPut("Update/{genreId}")]
         public async Task<IActionResult> UpdateGenre(int genreId, [FromBody] GenreDTO Genre)
         {
             try
@@ -111,7 +111,7 @@ namespace LMIS.API.Controllers.Genre
         }
 
         // DELETE api/<GenreController>/5
-        [HttpDelete("Delete{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

@@ -44,7 +44,7 @@ namespace LMIS.API.Controllers.Member
         }
 
         // GET api/<MemberController>/5
-        [HttpGet("GetMemberById{id}")]
+        [HttpGet("GetMemberById/{id}")]
         public async Task<IActionResult> GetMemberById(int id)
         {
             try
@@ -98,7 +98,7 @@ namespace LMIS.API.Controllers.Member
 
         // PUT api/<MemberController>/5
 
-        [HttpPut("Update{memberId}")]
+        [HttpPut("Update/{memberId}")]
         public async Task<IActionResult> UpdateMember(int memberId, [FromBody] CreateMemberDto updateMemberDto)
         {
             try
@@ -115,7 +115,7 @@ namespace LMIS.API.Controllers.Member
                 return StatusCode(500, $"An {ex.Message} occurred while updating the member.");
             }
         }
-        [HttpDelete("Delete{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<ActionResult> Delete(int id)
         {
             try

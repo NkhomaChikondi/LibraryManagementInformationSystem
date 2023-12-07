@@ -1,0 +1,126 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    var api = Configuration.GetSection("Application")["ApiEndPoint"];
+    var endPoint = Configuration.GetSection("Application")["EndPoint"];
+    ViewData["Title"] = "Members";
+    Layout = "_Layout";
+}
+
+<link href="../css/froala_editor.pkgd.min.css" rel="stylesheet" />
+
+<div class="modal fade" id="create_user_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <partial name="_CreateMemberPartial" />
+</div>
+
+<div class="modal fade" id="edit_user_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <partial name="_EditMemberPartial" />
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <button type="button" class="btn btn-primary btn-rounded btn-fw pull-right" data-toggle="modal" data-target="#create_member_modal">Add Member</button>
+
+    </div>
+</div>
+<br />
+<div class="row">
+
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(TempData["success_response"] as string))
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["success_response"]
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(TempData["error_response"] as string))
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["error_response"]
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                <h4 class="card-title text-center"> @ViewData["Title"]</h4>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" id="user">
+                        <thead>
+                            <tr>
+                                <th>
+                                    First Name
+                                </th>
+                                <th>
+                                    Surname
+                                </th>
+                                <th>
+                                    Email
+                                </th>
+                                <th>
+                                    Member Type
+                                </th>
+                                <th>
+                                    Phone Number
+                                </th>
+                                                          
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ViewBag.usersList as List<LMIS.Web.Models.Member>)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.First_Name
+                                    </td>
+                                    <td>
+                                        @item.Last_Name
+                                    </td>
+                                    <td>
+                                        @item.Email
+                                    </td>
+                                    <td>
+                                        @item.memberType.Name
+                                    </td>
+                                    <td>
+                                        @item.Phone
+                                    </td>
+
+                                    <td>
+                                        <a href='#' onclick=EditForm(@item.MemberId) type='button' class='fa fa-pencil' title='edit'></a> <a href='#' type='button' onclick=Delete(@item.MemberId) title='delete' class='icon-trash'></a>
+                                    </td>
+
+                                </tr>
+                                
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+
+    <script>
+
+        var datatable;
+
+    </script>
+   
+    <script src="~/js/member.js" asp-append-version="true"></script>
+    
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
