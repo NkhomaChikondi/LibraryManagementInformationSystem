@@ -1,0 +1,67 @@
+﻿@model LMIS.Web.DTOs.User.UserDTO
+<!-- Modal -->
+
+<div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Edit User Form</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <hr />
+        <div class="modal-body">
+            <div class="card p-4">
+                <div class="mt-2 mb-2">
+                    <strong>Note:</strong> A default password is used upon account creation
+                </div>
+                <form asp-action="Edit" method="Post">
+                    <div asp-validation-summary="All" class="text-danger"></div>
+                    <input type="hidden" asp-for="userId"/>
+                    <div class="form-group">
+                        <label asp-for="firstName"></label>
+                        <input asp-for="firstName" placeholder="First Name" class="form-control" />
+                        <span asp-validation-for="firstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="lastName"></label>
+                        <input asp-for="lastName" placeholder="Surname" class="form-control" />
+                        <span asp-validation-for="lastName" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="RoleName"></label>
+                        <select asp-for="RoleName" asp-items="@ViewBag.rolesList" class="form-control"></select>
+                        <span asp-validation-for="RoleName" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label asp-for="Gender"></label>
+                        <select asp-for="Gender" asp-items="@ViewBag.genderList" class="form-control"></select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label asp-for="Email"></label>
+                        <input asp-for="Email" placeholder="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Location"></label>
+                        <textarea placeholder="Location" rows="2" name="Location" id="Location" class="form-control">
+                    </textarea>
+                        <span asp-validation-for="Location" class="text-danger"></span>
+                    </div>
+                    <hr />
+                    <div class="form-control d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary" id="update_user_btn" name="update_user_btn">Update User</button>
+                    </div>
+                </form>
+            </div>
+          
+        </div>
+       
+    </div>
+</div>

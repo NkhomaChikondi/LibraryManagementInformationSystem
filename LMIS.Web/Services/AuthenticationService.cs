@@ -12,7 +12,7 @@ namespace LMIS.Web.Services
     {
         private readonly IConfiguration _configuration;
         private HttpClient httpClient;
-        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("http://localhost:4926") });
+        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7258") });
         public AuthenticationService(IConfiguration configuration)
         {
             this._configuration = _configuration;

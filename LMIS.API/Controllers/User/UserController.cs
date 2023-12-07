@@ -46,7 +46,7 @@ namespace LMIS.API.Controllers.User
         }
         
         // GET api/<UserController>/5
-        [HttpGet("GetUserById{id}")]
+        [HttpGet("GetUserById/{id}")]
         public async Task<IActionResult> GetUserById(int id)
         {
             try
@@ -89,7 +89,7 @@ namespace LMIS.API.Controllers.User
         }
 
         // PUT api/<UserController>/5
-        [HttpPut("Update{userId}")]
+        [HttpPut("Update/{userId}")]
         public async Task<IActionResult> UpdateUser(int userId, [FromBody] ApplicationUserDTO updateUserDto)
         {
             try

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using NuGet.Common;
 
 namespace LMIS.Web.Areas.Admin.Controllers
 {
@@ -82,23 +83,49 @@ namespace LMIS.Web.Areas.Admin.Controllers
         }
 
         // GET: UsersController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(int id)
         {
-            return View();
+            //fetch record from the API
+
+            string token = this.GetToken();
+
+            User user = await this._userService.GetUser(id,token);
+
+            if(user != null)
+                return Json(user);
+
+            return Json(null);
         }
 
         // POST: UsersController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(UserDTO model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                string token = GetToken();
+                //send data to api
+
+                bool result = await this._userService.UpdateUser(model,token);
+
+                if (result)
+                {
+                    TempData["success_response"] = "user has been updated successfully";
+
+                }
+                else
+                {
+                    TempData["error_response"] = "failed to update user";
+
+                }
+
+
+                return RedirectToAction("Index");
             }
-            catch
+            else
             {
-                return View();
+                return View("Index", model);
             }
         }
 

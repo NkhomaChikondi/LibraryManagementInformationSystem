@@ -12,5 +12,9 @@ namespace LMIS.Web.Services.Interfaces
         Task<bool> CreateUser(UserDTO userDTO);
 
         Task<bool> DeleteUser(int id, string token);
+
+        Task<User> GetUser(int id, string token);
+
+        Task<bool> UpdateUser(UserDTO userDTO, string token);
     }
 }

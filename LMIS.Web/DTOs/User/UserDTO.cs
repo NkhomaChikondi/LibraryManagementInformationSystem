@@ -4,6 +4,7 @@ namespace LMIS.Web.DTOs.User
 {
     public class UserDTO
     {
+        public int userId { get; set; }
         [Required]
         public string firstName { get; set; }
         [Required]

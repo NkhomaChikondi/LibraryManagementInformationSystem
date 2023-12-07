@@ -8,13 +8,14 @@ using NuGet.Common;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 
 namespace LMIS.Web.Services
 {
     public class UsersService : IUserService
     {
         private HttpClient httpClient;
-        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("http://localhost:4926") });
+        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7258") });
         public async Task<List<User>> GetAllUsers(string token)
         {
             List<User> users = new List<User>();
@@ -46,7 +47,44 @@ namespace LMIS.Web.Services
 
             return users;
         }
+        public async Task<User> GetUser(int id, string token)
+        {
+            User user = null;
 
+            try
+            {
+                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var response = await HttpClient.GetAsync("api/user/GetUserById/"+id);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    // Read the response content as a string
+                    string responseBody = await response.Content.ReadAsStringAsync();
+
+                    // Deserialize the JSON response into a concrete user class
+                    var apiResponse = await response.Content.ReadFromJsonAsync<ApiResponse>();
+
+                    user = System.Text.Json.JsonSerializer.Deserialize<User>(apiResponse.Result);
+
+
+
+                    return user;
+
+
+
+                }
+
+            }
+            catch (Exception ex)
+            {
+
+                return user;
+
+            }
+
+            return user;
+        }
         public async Task<List<Role>> GetAllRoles(string token)
         {
             List<Role> roles = new List<Role>();
@@ -120,6 +158,44 @@ namespace LMIS.Web.Services
             }
         }
 
+        public async Task<bool> UpdateUser(UserDTO userDTO, string token)
+        {
+            try
+            {
+
+                //create a dynamic user input object
+
+
+                //serialize user input
+                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+                var json = JsonConvert.SerializeObject(userDTO);
+
+                var httpContent = new StringContent(json, Encoding.UTF8);
+
+                httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+                var response = await HttpClient.PutAsync("api/user/update/"+userDTO.userId, httpContent);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return true;
+                }
+                else
+                {
+
+                    var errorMessage = await response.Content.ReadAsStringAsync();
+
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return false;
+            }
+        }
+
         public async Task<bool> DeleteUser(int id, string token)
         {
             try
@@ -145,5 +221,8 @@ namespace LMIS.Web.Services
 
             return false;
         }
+
     }
+
+
 }
