@@ -44,7 +44,7 @@ namespace LMIS.API.Controllers.CheckoutController
         }
 
         [HttpGet("GetUserById{id}")]
-        public async Task<IActionResult> GetUserById(int id)
+        public async Task<IActionResult> GetTransactionById(int id)
         {
             try
             {

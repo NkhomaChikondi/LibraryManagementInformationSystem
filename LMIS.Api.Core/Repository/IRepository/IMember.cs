@@ -12,5 +12,9 @@ namespace LMIS.Api.Core.Repository.IRepository
     {
         void Update(Member member);
         public string GenerateMemberCode(string firstname, string lastname);
+        bool IsPhoneNumberValid(string phoneNumber);
+        public bool IsValidEmail(string email);
+        Task<bool> SoftDeleteAsync(int id);
+        Task<IEnumerable<Model.Member>> GetAllRoles();
     }
 }

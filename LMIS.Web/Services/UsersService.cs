@@ -14,7 +14,7 @@ namespace LMIS.Web.Services
     public class UsersService : IUserService
     {
         private HttpClient httpClient;
-        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7258") });
+        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("http://localhost:4926") });
         public async Task<List<User>> GetAllUsers(string token)
         {
             List<User> users = new List<User>();

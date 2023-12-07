@@ -29,15 +29,15 @@ namespace LMIS.Api.Core.Repository
 
             // get  last member
             var lastMember = members.LastOrDefault();
-            if (lastMember != null) 
+            if (lastMember != null)
             {
                 // get id of last member
-                 id = lastMember.MemberId + 1;            
+                id = lastMember.MemberId + 1;
             }
             else
                 id = id + 1;
             // Get the first letters of first name and last name(ensure they are not null or empty)
-             char firstLetterOfFirstName = string.IsNullOrEmpty(firstname) ? 'X' : firstname[0];
+            char firstLetterOfFirstName = string.IsNullOrEmpty(firstname) ? 'X' : firstname[0];
             char firstLetterOfLastName = string.IsNullOrEmpty(lastname) ? 'X' : lastname[0];
 
             // Generate the member code by combining the initials and member ID with leading zeros
@@ -86,6 +86,7 @@ namespace LMIS.Api.Core.Repository
                 return false;
             }
         }
+
 
     }
 }
