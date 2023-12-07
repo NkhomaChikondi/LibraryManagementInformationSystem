@@ -1,4 +1,5 @@
-﻿using LMIS.Api.Core.DTOs.Member;
+﻿using LMIS.Api.Core.DTOs;
+using LMIS.Api.Core.DTOs.Member;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,12 +10,12 @@ namespace LMIS.Api.Services.Services.IServices
 {
     public interface IMemberService
     {
-        Task<MemberDTO> CreateMemberAsync(CreateMemberDto createMemberDto, string userIdClaim);
-        Task<MemberDTO> UpdateMemberAsync(CreateMemberDto createMemberDto, int memberId);
-        Task DeleteMemberAsync(int memberId);
-        Task<MemberDTO> GetMemberByIdAsync(int memberId);
-        IEnumerable<MemberDTO> GetAllMembers();
-        Task ResendEmail(string email);
+        Task<BaseResponse<CreateMemberDto>> CreateMemberAsync(CreateMemberDto createMemberDto, string userIdClaim);
+        Task<BaseResponse<bool>> UpdateMemberAsync(CreateMemberDto createMemberDto, int memberId);
+        Task<BaseResponse<bool>> DeleteMemberAsync(int memberId);
+        Task<BaseResponse<CreateMemberDto>> GetMemberByIdAsync(int memberId);
+        Task<BaseResponse<IEnumerable<CreateMemberDto>>> GetAllMembers();
+        Task<BaseResponse<bool>> ResendEmail(string email);
 
     }
 }

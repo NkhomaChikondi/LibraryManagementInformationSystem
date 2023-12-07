@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LMIS.Api.Core.DTOs;
 using LMIS.Api.Core.DTOs.Book;
 using LMIS.Api.Core.Model;
 using System;
@@ -14,6 +15,7 @@ namespace LMIS.Api.Core.Mapper
         public BookMapper()
         {
             CreateMap<BookDTO,Book>().ReverseMap();
+            CreateMap<CreateBookDTO,Book>().ReverseMap();
         }
 
     }

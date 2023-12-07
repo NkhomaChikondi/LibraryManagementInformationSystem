@@ -24,9 +24,58 @@ namespace LMIS.API.Controllers.CheckoutController
         public CheckoutController(ICheckoutService checkoutService) =>
             _checkoutService = checkoutService;
 
+        [HttpGet("GetAllTransactions")]
+        public async Task<IActionResult> Get()
+        {
+            try
+            {
+                var response = await _checkoutService.GetAllCheckoutTransactions();
+                if (response.IsError)
+                {
+                    return BadRequest(response.Message);
+                }
+                return Ok(response.Result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An {ex.Message} occurred while getting all transactions.");
+            }
+
+        }
+
+        [HttpGet("GetUserById{id}")]
+        public async Task<IActionResult> GetTransactionById(int id)
+        {
+            try
+            {
+                var response = await _checkoutService.GetCheckoutTransactionByIdAsync(id);
+                if(response.IsError)
+                    return BadRequest(response.Message);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An {ex.Message} occurred while getting a transaction.");
+            }
+
+        }
+        [HttpDelete("Delete{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            try
+            {
+                await _checkoutService.DeleteTransactionAsync(id);
+                return Ok("Deleted Successfully");
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An {ex.Message} occurred while updating the user.");
+            }
+        }
+
         // GET: api/<CheckoutController>
-        [HttpPost("GetSerachedBooks")]
-        public async Task<ActionResult<List<BookDTO>>> Get(string memberCode, [FromBody] SearchBookDTO selectedBook)
+        [HttpPost("GetSearchedBooks")]
+        public async Task<IActionResult> Get(string memberCode, [FromBody] SearchBookDTO selectedBook)
         {
             try
             {
@@ -37,16 +86,16 @@ namespace LMIS.API.Controllers.CheckoutController
                     return Unauthorized("You are not authorized to create member");
                 }
                 var response = await _checkoutService.GetSelectedBooks(selectedBook, memberCode, userIdClaim);
-                if (response == null)
+                if (response.IsError)
                 {
-                    return BadRequest("Failed to get books");
+                    return BadRequest(response.Message);
                 }
 
                 this.memberCode = memberCode;
                 
                 book = selectedBook;
 
-                return Ok(response);
+                return Ok(response.Result);
                 
             }
             catch (Exception ex)
@@ -56,8 +105,8 @@ namespace LMIS.API.Controllers.CheckoutController
         }
 
         // GET api/<CheckoutController>/5
-        [HttpPost("CheckoutTransaction{id}")]
-        public async Task<IActionResult> CreateCheckoutTransaction([FromBody] CheckoutDTO createCheckoutTransactionDTO)
+        [HttpPost("CheckoutTransaction")]
+        public async Task<IActionResult> CreateCheckoutTransaction()
         {
             try
             {
@@ -68,37 +117,20 @@ namespace LMIS.API.Controllers.CheckoutController
                     return Unauthorized("You are not authorized to create member");
                 }
 
-                var response =  _checkoutService.CheckOutBook(book, memberCode, userIdClaim);
+                var response = await _checkoutService.CheckOutBook( userIdClaim);
 
-                if (response == null)
+                if (response.IsError)
                 {
-                    return BadRequest("Failed to create member");
+                    return BadRequest(response.Message);
                 }
 
-                return Ok(response);
+                return Ok(response.Result);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"An {ex.Message} occurred while creating a member");
             }
-        }
-
-        // POST api/<CheckoutController>
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/<CheckoutController>/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/<CheckoutController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        }       
+        
     }
 }

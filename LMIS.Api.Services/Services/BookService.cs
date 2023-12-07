@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LMIS.Api.Core.DTOs;
 using LMIS.Api.Core.DTOs.Book;
 using LMIS.Api.Core.DTOs.Member;
 using LMIS.Api.Core.Model;
@@ -27,31 +28,51 @@ namespace LMIS.Api.Services.Services
             var mongoDatabase = mongoClient.GetDatabase(bookDatabaseSettings.Value.DatabaseName);
 
             _booksCollection = mongoDatabase.GetCollection<Book>(bookDatabaseSettings.Value.BooksCollectionName);
-             _unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
         }
-        public async Task<List<Book>> GetAllAsync() =>
-     await _booksCollection.Find(book => !book.IsDeleted).ToListAsync();
+        public async Task<List<Book?>> GetAllAsync() =>      
+           await _booksCollection.Find(book => !book.IsDeleted).ToListAsync();
+      
+    
 
 
         public async Task<Book?> GetAsync(string id) =>
      await _booksCollection.Find(book => book.Id == id && !book.IsDeleted).FirstOrDefaultAsync();
 
-        public async Task CreateAsync(BookDTO newBook, string userEmail)
+        public async Task<BaseResponse<CreateBookDTO>> CreateAsync(CreateBookDTO newBook, string userEmail)
         {
             try
             {
                 if (newBook == null || string.IsNullOrEmpty(userEmail))
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Make sure all book details are entered"
+                    };
+                }
 
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
                 if (user == null)
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "User doesnt exist"
+                    };
+                }
 
                 var books = await GetAllAsync();
                 if (books == null || books.Any(book => book.ISBN == newBook.ISBN))
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "No books in the system"
+                    };
+                }
 
-                newBook.CopyNumber = 1;
+                var CopyNumber = 1;
 
                 // Convert book title to uppercase
                 newBook.Title = newBook.Title.ToUpper();
@@ -59,7 +80,7 @@ namespace LMIS.Api.Services.Services
                 var similarBooks = books.Where(b => b.Title == newBook.Title && b.Author == newBook.Author).ToList();
                 if (similarBooks != null)
                 {
-                    newBook.CopyNumber = similarBooks.Count;
+                    CopyNumber = similarBooks.Count;
                 }
 
                 var bookitem = new Book
@@ -67,12 +88,12 @@ namespace LMIS.Api.Services.Services
                     Title = newBook.Title,
                     Author = newBook.Author,
                     Publisher = newBook.Publisher,
-                    CopyNumber = newBook.CopyNumber,
+                    CopyNumber = CopyNumber,
                     ObtainedThrough = newBook.ObtainedThrough,
                     Genre = newBook.Genre,
                     ISBN = newBook.ISBN,
                     CreatedOn = DateTime.UtcNow,
-                    userId = newBook.userId
+                    userId = user.UserId
                 };
 
                 bookitem.Id = "";
@@ -92,15 +113,38 @@ namespace LMIS.Api.Services.Services
 
                     await _unitOfWork.BookInventory.CreateAsync(bookInventory);
                     _unitOfWork.Save();
+
+                    var createdBookDTO = new CreateBookDTO
+                    {
+                        Title = bookitem.Title,
+                        Author = bookitem.Author,
+                        Publisher = bookitem.Publisher,
+                        Genre = bookitem.Genre,
+                        ISBN = bookitem.ISBN,
+                        ObtainedThrough = bookitem.ObtainedThrough
+                    };
+                    return new()
+                    {
+                        IsError = false,
+                        Result = createdBookDTO,
+                    };
                 }
                 catch (Exception)
                 {
-                    return;
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Failed to create a new book"
+                    };
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return;
+                return new()
+                {
+                    IsError = true,
+                    Message = $"{ex.Message} error occured. Failed to create a new member"
+                };
             }
         }
 

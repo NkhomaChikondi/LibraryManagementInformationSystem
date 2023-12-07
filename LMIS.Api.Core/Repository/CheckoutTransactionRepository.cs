@@ -40,6 +40,29 @@ namespace LMIS.Api.Core.Repository
             return 0;
         }
 
+
+        public async Task<bool> SoftDeleteAsync(int id)
+        {
+            var entity = await _db.checkoutTransactions.FindAsync(id);
+
+            if (entity == null || entity.IsDeleted)
+            {
+                return false;
+            }
+
+            entity.IsDeleted = true;
+            entity.DeletedDate = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<IEnumerable<CheckoutTransaction>> GetAllTransactions()
+        {
+            var alltransactions = _db.checkoutTransactions.Where(U => U.IsDeleted == false).ToList();
+            return alltransactions;
+        }
+
         public async Task<CheckoutTransaction> GetLastOrDefault(int memberId)
         {
             var allTransactions  = await _db.checkoutTransactions.OrderBy( m => m.Id).Where( m => m.MemberId == memberId).LastOrDefaultAsync();

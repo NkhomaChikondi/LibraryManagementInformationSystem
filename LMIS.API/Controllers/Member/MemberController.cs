@@ -16,54 +16,55 @@ namespace LMIS.API.Controllers.Member
     [Route("api/[controller]")]
     [ApiController]
     public class MemberController : ControllerBase
-    {        
+    {
         private readonly IMemberService _memberService;
-       
-        public MemberController( IConfiguration configuration, IMemberService memberService)
-        {                   
-           
+
+        public MemberController(IConfiguration configuration, IMemberService memberService)
+        {
+
             _memberService = memberService;
         }
         // GET: api/<UserController>
         [HttpGet("GetAllAsync")]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                var response = _memberService.GetAllMembers();
-                if (response == null)
+                var response = await _memberService.GetAllMembers();
+                if (response.IsError)
                 {
-                    return BadRequest("Failed to get all member");
+                    return BadRequest(response.Message);
                 }
-                return Ok(response);
+                return Ok(response.Result);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"An {ex.Message} occurred while getting members");
-            }         
+            }
         }
 
         // GET api/<MemberController>/5
         [HttpGet("GetMemberById{id}")]
-        public  async Task<IActionResult> GetMemberById(int id)
+        public async Task<IActionResult> GetMemberById(int id)
         {
             try
             {
                 var response = await _memberService.GetMemberByIdAsync(id);
-                if (response == null)
+                if (response.IsError)
                 {
-                    return BadRequest("Failed to get member");
+                    return BadRequest(response.Message);
                 }
-                return Ok(response);
+                return Ok(response.Result);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500);
+                return StatusCode(500, $"An {ex.Message} occurred while getting the member.");
             }
+
         }
 
         // POST api/<MemberController>
-        [HttpPost("CreateMember")]        
+        [HttpPost("CreateMember")]
         public async Task<IActionResult> CreateMember([FromBody] CreateMemberDto createMemberDTO)
         {
             if (!ModelState.IsValid)
@@ -82,12 +83,12 @@ namespace LMIS.API.Controllers.Member
 
                 var response = await _memberService.CreateMemberAsync(createMemberDTO, userIdClaim);
 
-                if (response == null)
+                if (response.IsError)
                 {
-                    return BadRequest("Failed to create member");
+                    return BadRequest(response.Message);
                 }
 
-                return Ok(response);
+                return Ok(response.Result);
             }
             catch (Exception ex)
             {
@@ -96,23 +97,41 @@ namespace LMIS.API.Controllers.Member
         }
 
         // PUT api/<MemberController>/5
-      
+
         [HttpPut("Update{memberId}")]
         public async Task<IActionResult> UpdateMember(int memberId, [FromBody] CreateMemberDto updateMemberDto)
         {
             try
             {
                 var response = await _memberService.UpdateMemberAsync(updateMemberDto, memberId);
-                if (response == null)
-                    return BadRequest("failed to update member");
-                return Ok(response);
+                if (response.IsError)
+                {
+                    return BadRequest(response.Message);
+                }
+                return Ok(response.Message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return StatusCode(500);
-            }           
+                return StatusCode(500, $"An {ex.Message} occurred while updating the member.");
+            }
         }
-
+        [HttpDelete("Delete{id}")]
+        public async Task<ActionResult> Delete(int id)
+        {
+            try
+            {
+                var response = await _memberService.DeleteMemberAsync(id);
+                if (response.IsError)
+                {
+                    return BadRequest(response.Message);
+                }
+                return Ok(response.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An {ex.Message} occurred while updating the member.");
+            }
+        }
 
         [HttpGet]
         [Route("ResendEmail/{email}")]
@@ -121,18 +140,17 @@ namespace LMIS.API.Controllers.Member
         {
             try
             {
-                await _memberService.ResendEmail(email);
-                return Ok("Check your email for the member code");
+                var response = await _memberService.ResendEmail(email);
+                if (response.IsError)
+                {
+                    return BadRequest(response.Message);
+                }
+                return Ok(response.Message);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"An {ex.Message} occurred while resending the email.");
             }
-        }
-        // DELETE api/<MemberController>/5
-        [HttpDelete("Delete{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

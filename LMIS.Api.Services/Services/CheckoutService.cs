@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using LMIS.Api.Core.DTOs;
 using LMIS.Api.Core.DTOs.Book;
 using LMIS.Api.Core.DTOs.Checkout;
 using LMIS.Api.Core.DTOs.Member;
+using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Core.Repository.IRepository;
 using LMIS.Api.Services.Services.IServices;
@@ -37,7 +39,7 @@ namespace LMIS.Api.Services.Services
             _bookService = bookService;
         }
 
-        public async Task<BookDTO> GetSelectedBooks(SearchBookDTO selectedBook, string memberCode, string userIdClaim)
+        public async Task<BaseResponse<BookDTO>> GetSelectedBooks(SearchBookDTO selectedBook, string memberCode, string userIdClaim)
         {
             try
             {
@@ -46,7 +48,13 @@ namespace LMIS.Api.Services.Services
                 var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == memberCode);
 
                 if (user == null || member == null)
-                    return null;
+                {
+                    return new ()
+                    {
+                        IsError = true,
+                        Message = "Check if the member code is entered correctly"
+                    };
+                }
 
 
                 // check if they dont have any outstanding books not returned
@@ -57,13 +65,17 @@ namespace LMIS.Api.Services.Services
                     // Check if there are selected books
                     if (selectedBook == null)
                     {
-                        return null;
+                        return new ()
+                        {
+                            IsError = true,
+                            Message = "The book is not available"
+                        };
                     }
 
                     // Check if the book is available
                     var allBooks = await _bookService.GetAllAsync();
                     var getBook = allBooks.FirstOrDefault(b =>
-                        b.Title == selectedBook.Title);
+                        b.Title == selectedBook.Title.ToUpper());
 
                     if (getBook != null)
                     {
@@ -71,11 +83,15 @@ namespace LMIS.Api.Services.Services
 
                         if (getGenre == null)
                         {
-                            return null;
+                            return new ()
+                            {
+                                IsError = true,
+                                Message = "failed to get the book "
+                            };
                         }
 
                         // get all transactions that happened today and by this member
-                        var getAllTransactions = _unitOfWork.Checkout.GetAllAsync();
+                        var getAllTransactions = await _unitOfWork.Checkout.GetAllTransactions();
 
                         if (getAllTransactions != null && getAllTransactions.Any())
                         {
@@ -90,19 +106,55 @@ namespace LMIS.Api.Services.Services
                             {
                                 // check if count is more than the maximum limit
                                 if (memberTransactions.Count() >= getGenre.MaximumBooksAllowed)
-                                    return null;
+                                {
+                                    return new ()
+                                    {
+                                        IsError = true,
+                                        Message = "The member has reached his or her maximum borrowing limit"
+                                    };
+                                }
 
                                 var getBookDTO = _mapper.Map<BookDTO>(getBook);
                                 availableBook = getBookDTO;
-                                return getBookDTO;
+                                // store transaction details in the temp_data table
+                                var newTemp_Data = new Temp_Data
+                                {
+                                    BookId = getBook.Id,
+                                    Member_Code = memberCode
+                                }; 
+
+                                await _unitOfWork.temp_DataRepository.CreateAsync(newTemp_Data);
+                                _unitOfWork.Save();
+
+
+                                return new()
+                                {
+                                    IsError = false,
+                                    Result = availableBook
+                                };
+                               
                             }
                         }
-                        else if (getAllTransactions == null && getAllTransactions.Count() == 0)
+                        else if (getAllTransactions == null || getAllTransactions.Count() == 0)
                         {
                             var getBookDTO = _mapper.Map<BookDTO>(getBook);
                             availableBook = getBookDTO;
-                            return getBookDTO;
 
+                            // store transaction details in the temp_data table
+                            var newTemp_Data = new Temp_Data
+                            {
+                                BookId = getBook.Id,
+                                Member_Code = memberCode
+                            };
+                            await _unitOfWork.temp_DataRepository.CreateAsync(newTemp_Data);
+                            _unitOfWork.Save();
+
+                            return new()
+                            {
+                                IsError = false,
+                                Result = availableBook
+                            };
+                            
                         }
                         else
                         {
@@ -130,10 +182,15 @@ namespace LMIS.Api.Services.Services
                                     };
                                     await _unitOfWork.notification.CreateAsync(newNotification);
                                     _unitOfWork.Save();
+
                                 }
                                 catch (Exception ex)
                                 {
-                                    return null;
+                                    return new ()
+                                    {
+                                        IsError = true,
+                                        Message = $"Failed create a new notification "
+                                    };
                                 }
                             }
 
@@ -142,91 +199,197 @@ namespace LMIS.Api.Services.Services
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = $"an {ex.Message} error occured. failed to get a book "
+                };
             }
-            return null;
-        }
-
-        public async Task CheckOutBook(SearchBookDTO book, string memberCode, string userIdClaim)
-        {
-            if (string.IsNullOrEmpty(memberCode) || string.IsNullOrEmpty(userIdClaim))
-                return;
-
-            var getBook = (await _bookService.GetAllAsync())
-                            ?.FirstOrDefault(b => b.Title == book.Title);
-
-            if (getBook == null)
-                return;
-
-            var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userIdClaim);
-            var bookInventory = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == getBook.Id);
-            var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == memberCode);
-
-            if (user == null || bookInventory == null || member == null)
-                return;
-
-            var newCheckoutTransaction = new CheckoutTransaction
+            return new()
             {
-                book = getBook,
-                BookId = getBook.Id,
-                CheckOutDate = DateTime.Today,
-                DueDate = DateTime.Today.AddDays(7),
-                bookInventory = bookInventory,
-                bookInventoryId = bookInventory.Id,
-                isReturned = false,
-                MemberId = member.MemberId,
-                member = member,
-                user = user,
+                IsError = true,
+                Message = $"failed to get a book "
             };
-
-            await _unitOfWork.Checkout.CreateAsync(newCheckoutTransaction);
-            _unitOfWork.Save();
         }
+        public async Task<BaseResponse<bool>> CheckOutBook(string userIdClaim)
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(userIdClaim))
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Failed to identify the member "
+                    };
+                }
 
-        public async Task ReturnBook(string memberId, string Booktitle)
+                // get  the item in temp_data
+                var tempDatas = await _unitOfWork.temp_DataRepository.GetAllCheckoutTransactions();
+                if (tempDatas == null)
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "failed process the transaction"
+                    };
+                }
+
+                // get the last entry
+                var lastEntry = tempDatas.LastOrDefault();
+
+                // get bookId
+
+                var getBook = (await _bookService.GetAllAsync())
+                                ?.FirstOrDefault(b => b.Id == lastEntry?.BookId);
+
+                if (getBook == null)
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Failed to identify the book selected "
+                    };
+                }
+
+                var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userIdClaim);
+                var bookInventory = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == getBook.Id);
+                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == lastEntry.Member_Code);
+
+                if (user == null || bookInventory == null || member == null)
+                {
+
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Failed to process the transaction "
+                    };
+                }
+
+                var newCheckoutTransaction = new CheckoutTransaction
+                {
+
+                    BookId = getBook.Id,
+                    CheckOutDate = DateTime.Today,
+                    DueDate = DateTime.Today.AddDays(7),
+
+                    bookInventoryId = bookInventory.Id,
+                    isReturned = false,
+                    MemberId = member.MemberId,
+
+                    user = user,
+                };
+
+                await _unitOfWork.Checkout.CreateAsync(newCheckoutTransaction);
+                _unitOfWork.Save();
+
+                return new()
+                {
+                    IsError = false,
+                    Message = "The checkout Transaction was successful"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new()
+                {
+                    IsError = true,
+                    Message = $"Failed to delete a user an {ex.Message} error occured"
+                };
+            }
+           
+        }
+        public async Task<BaseResponse<bool>> ReturnBook(string memberId, string Booktitle)
         {
             try
             {
                 if (string.IsNullOrEmpty(memberId) || string.IsNullOrEmpty(Booktitle))
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Check if all details are entered correctly"
+                    };
+                }
 
                 var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == memberId);
                 if (member == null)
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Failed to identify the member "
+                    };
+                }
 
                 var allTransactions =  _unitOfWork.Checkout.GetAllAsync();
                 if (allTransactions == null || !allTransactions.Any())
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Failed to get the transaction "
+                    };
+
+                }
 
                 var books = await _bookService.GetAllAsync();
                 if (books == null)
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Failed to get the transaction "
+                    };
+                }                  
 
                 // Convert Booktitle to uppercase
                 Booktitle = Booktitle.ToUpper();
 
                 var getBook = books.FirstOrDefault(b => b.Title.ToUpper() == Booktitle);
                 if (getBook == null)
-                    return;
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "The book cannot be found "
+                    };
+
+                }
 
                 var getTransaction = allTransactions.FirstOrDefault(T => T.member == member && T.book == getBook && T.isReturned == false);
                 if (getTransaction == null)
-                    return;
+                { 
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Failed to get the transaction "
+                    };
+                }
 
                 getTransaction.isReturned = true;
 
                 _unitOfWork.Checkout.Update(getTransaction);
                  _unitOfWork.Save();
+                return new()
+                {
+                    IsError = false,
+                    Message = "Transaction updated successfully "
+                };
             }
             catch (Exception)
             {
-                return;
+                return new()
+                {
+                    IsError = true,
+                    Message = "An error occured whilst returning a book"
+                };
             }
         }
 
-        public IEnumerable<CheckoutDTO> GetAllCheckoutTransactions()
+        public async Task<BaseResponse<IEnumerable<CheckoutDTO>>> GetAllCheckoutTransactions()
         {
             try
             {
@@ -234,63 +397,79 @@ namespace LMIS.Api.Services.Services
                 // Map the updated member entity to a DTO
                 var allTransactionDTO = _mapper.Map<IEnumerable<CheckoutDTO>>(allTransactions);
 
-                return allTransactionDTO;
+                return new()
+                {
+                    IsError = true,
+                    Result = allTransactionDTO
+                };
+               
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null!;
+
+                return new()
+                {
+                    IsError = true,
+                    Message = $"Failed to get all transactions. an {ex.Message} error occured ",
+                };
             }
         }
-        public async Task<CheckoutDTO> GetCheckoutTransactionByIdAsync(int transId)
+        public async Task<BaseResponse<CheckoutDTO>> GetCheckoutTransactionByIdAsync(int transId)
         {
             try
             {
                 var _transaction = await _unitOfWork.Checkout.GetByIdAsync(transId);
                 if (_transaction != null)
                 {
+                    if(_transaction.IsDeleted)
+                    {
+                        return new()
+                        {
+                            IsError = true,
+                            Message = "No transaction found ",
+                        };
+                    }
                     var gettransactionDTO = _mapper.Map<CheckoutDTO>(_transaction);
-                    return gettransactionDTO;
+                    return new ()
+                    {
+                        IsError = false,
+                        Result = gettransactionDTO
+                    };
                 }
-                return null;
+                return new ()
+                {
+                    IsError = true,
+                    Message = $"No transaction found",
+                };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = $"Failed to get transaction. an {ex.Message} error occured ",
+                };
             }
         }
-        public async Task DeleteGenreAsync(int TransId)
+        public async Task<BaseResponse<bool>> DeleteTransactionAsync(int TransId)
         {
-            //try
-            //{
-            //    // get all transactions 
-            //    var allTransactions =  _unitOfWork.Checkout.GetAllAsync();
-            //    var _transaction = await _unitOfWork.Checkout.GetFirstOrDefaultAsync(g => g.Id == TransId);
-            //    if (_transaction != null)
-            //    {
-            //        try
-            //        {
-            //            var books = await _bookService.GetAllAsync();
-            //            if (books != null)
-            //            {
-            //                var selectGenres = books.Where(b => b.Genre == genre.Name).ToList();
-            //                if (selectGenres.Count > 0)
-            //                    return;
-            //            }
-            //        }
-            //        catch (Exception)
-            //        {
-            //            // Log the exception or handle appropriately
-            //            throw;
-            //        }
-
-            //        await _unitOfWork.Genre.DeleteAsync(genreId);
-            //        _unitOfWork.Save();
-            //    }
-            //}
-            //catch (Exception)
-            //{
-            //    return;
-            //}
+            try
+            {
+                await _unitOfWork.Checkout.SoftDeleteAsync(TransId);
+                return new()
+                {
+                    IsError = false,
+                    Message = "Deleted Successfully"
+                };
+            }
+            catch (Exception ex)
+            {
+                return new()
+                {
+                    IsError = true,
+                    Message = $"Failed to delete a user an {ex.Message} error occured"
+                };
+            }
         }
 
     }

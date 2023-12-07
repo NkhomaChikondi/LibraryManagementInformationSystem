@@ -18,6 +18,7 @@ namespace LMIS.Api.Core.Repository
         public IGenreRepository Genre { get; private set; }
         public IMember member {  get; set; }
         public IBookInventoryRepository BookInventory { get; set; }
+        public ITemp_DataRepository temp_DataRepository { get; set; }
         public ICheckoutTransactionRepository Checkout { get; set; }       
         public INotificationRepository notification { get; set; }
 
@@ -33,6 +34,7 @@ namespace LMIS.Api.Core.Repository
             Genre = new GenreRepository(_db);            
             Checkout = new CheckoutTransactionRepository(_db);
             notification = new NotificationRepository(_db);
+            temp_DataRepository = new Temp_DataRepository(_db);
         }
 
         public void Save()
@@ -45,10 +47,11 @@ namespace LMIS.Api.Core.Repository
             {
 
                 var error = ex.Message;
-                var getError = error;
+              
             }
            
         }
+
 
     }
 }
