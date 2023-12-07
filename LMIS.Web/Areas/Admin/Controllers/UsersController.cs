@@ -1,6 +1,10 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using LMIS.Web.DTOs.User;
+using LMIS.Web.Models;
+using LMIS.Web.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace LMIS.Web.Areas.Admin.Controllers
 {
@@ -8,9 +12,27 @@ namespace LMIS.Web.Areas.Admin.Controllers
     [Area("Admin")]
     public class UsersController : Controller
     {
-        // GET: UsersController
-        public ActionResult Index()
+        private readonly IUserService _userService;
+        public UsersController(IUserService userService)
         {
+            this._userService = userService;
+        }
+        // GET: UsersController
+        public async Task<ActionResult> Index()
+        {
+            string token = null;
+            if (Request.Cookies["token"] != null)
+            {
+                token = Request.Cookies["token"];
+            }
+            //fetch users 
+
+            List<User> usersList = await this._userService.GetAllUsers(token);
+
+            ViewBag.usersList = usersList;
+
+            await PopulateViewBags();
+
             return View();
         }
 
@@ -29,16 +51,22 @@ namespace LMIS.Web.Areas.Admin.Controllers
         // POST: UsersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(UserDTO model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+               
+                //send data to api
+
+                await this._userService.CreateUser(model);
+
+                return RedirectToAction("Index");
             }
-            catch
+            else
             {
-                return View();
+                return View("Index", model);
             }
+           
         }
 
         // GET: UsersController/Edit/5
@@ -62,25 +90,67 @@ namespace LMIS.Web.Areas.Admin.Controllers
             }
         }
 
-        // GET: UsersController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+      
 
         // POST: UsersController/Delete/5
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(int id)
         {
-            try
+
+            string token = GetToken();
+
+            bool result = await this._userService.DeleteUser(id, token);
+
+            if (result == false)
+                return Json(new { status = "failed" });
+
+
+
+            return Json(new { status = "success"});
+        }
+
+        private async Task PopulateViewBags()
+        {
+
+            ViewBag.rolesList = await this.GetRoles();
+            ViewBag.genderList = GetGenderList();
+        }
+
+        private async Task<List<SelectListItem>> GetRoles()
+        {
+            string token = GetToken();
+            
+            List<SelectListItem> roles = new List<SelectListItem>();
+
+            var rolesList =  await this._userService.GetAllRoles(token);
+
+            foreach (var item in rolesList)
             {
-                return RedirectToAction(nameof(Index));
+                roles.Add(new SelectListItem() { Text = item.RoleName, Value = item.RoleName });
             }
-            catch
+
+            return roles;
+        }
+
+        private List<SelectListItem> GetGenderList()
+        {
+            var genderList = new List<SelectListItem>();
+
+            genderList.Add(new SelectListItem() { Text = "Male", Value = "Male" });
+            genderList.Add(new SelectListItem() { Text = "Female", Value = "Female" });
+
+            return genderList;
+        }
+
+        private string GetToken()
+        {
+            string token = string.Empty;
+            if (!string.IsNullOrEmpty(Request.Cookies["token"]))
             {
-                return View();
+                token = Request.Cookies["token"];
             }
+
+            return token;
         }
     }
 }
