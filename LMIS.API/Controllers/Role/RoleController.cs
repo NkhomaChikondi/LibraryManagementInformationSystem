@@ -36,7 +36,7 @@ namespace LMIS.API.Controllers.Role
         }
 
         // GET api/<GenreController>/5
-        [HttpGet("GetRoleById{id}")]
+        [HttpGet("GetRoleById/{id}")]
         public async Task<IActionResult> GetRoleById(int id)
         {
             try
@@ -88,7 +88,7 @@ namespace LMIS.API.Controllers.Role
         }
 
         // PUT api/<GenreController>/5
-        [HttpPut("UpdateRole{roleId}")]
+        [HttpPut("UpdateRole/{roleId}")]
         public async Task<IActionResult> UpdateGenre(int roleId, [FromBody] RoleDTO role)
         {
             try
@@ -107,7 +107,7 @@ namespace LMIS.API.Controllers.Role
         }
 
         // DELETE api/<GenreController>/5
-        [HttpDelete("DeleteRole{id}")]
+        [HttpDelete("DeleteRole/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             try

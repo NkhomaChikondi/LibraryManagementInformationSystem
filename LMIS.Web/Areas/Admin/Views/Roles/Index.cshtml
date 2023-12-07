@@ -1,0 +1,104 @@
+﻿@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
+@{
+    var api = Configuration.GetSection("Application")["ApiEndPoint"];
+    var endPoint = Configuration.GetSection("Application")["EndPoint"];
+    ViewData["Title"] = "Users";
+    Layout = "_Layout";
+}
+
+<link href="../css/froala_editor.pkgd.min.css" rel="stylesheet" />
+
+<div class="modal fade" id="create_role_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <partial name="_CreateRolePartial" />
+</div>
+
+<div class="modal fade" id="edit_role_modal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <partial name="_EditRolePartial" />
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <button type="button" class="btn btn-primary btn-rounded btn-fw pull-right" data-toggle="modal" data-target="#create_role_modal">Add Role</button>
+
+    </div>
+</div>
+<br />
+<div class="row">
+
+    <div class="col-lg-12 grid-margin stretch-card">
+        <div class="card">
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(TempData["success_response"] as string))
+                {
+                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        @TempData["success_response"]
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(TempData["error_response"] as string))
+                {
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        @TempData["error_response"]
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                }
+                <h4 class="card-title text-center"> @ViewData["Title"]</h4>
+
+                <div class="table-responsive">
+                    <table class="table table-hover" id="role">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Role Name
+                                </th>
+                               
+                                                          
+                                <th>
+                                    Action
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in ViewBag.rolesList as List<LMIS.Web.Models.Role>)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.RoleName
+                                    </td>
+
+
+                                    <td>
+                                        <a href='#' onclick=EditForm(@item.RoleId) type='button' class='fa fa-pencil' title='edit'></a> <a href='#' type='button' onclick=Delete(@item.RoleId) title='delete' class='icon-trash'></a>
+                                    </td>
+
+                                </tr>
+                                
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section Scripts{
+
+    <script>
+
+        var datatable;
+
+    </script>
+   
+    <script src="~/js/role.js" asp-append-version="true"></script>
+    
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -38,7 +38,7 @@ namespace LMIS.Api.Services.Services
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
                 if (user == null)
                     return null;
-                var roleExist = await _unitOfWork.Role.ExistsAsync(role => role.RoleName == role.RoleName);
+                var roleExist = await _unitOfWork.Role.ExistsAsync(r => r.RoleName == role.RoleName);
                 if (roleExist)
                 {
                     //check if it is deleted
