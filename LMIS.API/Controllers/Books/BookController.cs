@@ -1,4 +1,5 @@
-﻿using LMIS.Api.Core.DTOs.Book;
+﻿using LMIS.Api.Core.DTOs;
+using LMIS.Api.Core.DTOs.Book;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Services.Services;
 using LMIS.Api.Services.Services.IServices;
@@ -60,7 +61,7 @@ namespace LMIS.API.Controllers.Books
         }
 
         [HttpPost("CreateBook")]
-        public async Task<IActionResult> CreateBook(BookDTO newBook)
+        public async Task<IActionResult> CreateBook(CreateBookDTO newBook)
         {
 
             if (!ModelState.IsValid)
