@@ -8,7 +8,7 @@ namespace LMIS.Api.Core.DTOs.Member
 {
     public class MemberTypeDTO
     {
-        public int MemberTypeId { get; set; }
+       
         public string TypeName { get; set; }
     }
 }

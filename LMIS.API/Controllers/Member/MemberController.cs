@@ -115,6 +115,7 @@ namespace LMIS.API.Controllers.Member
                 return StatusCode(500, $"An {ex.Message} occurred while updating the member.");
             }
         }
+
         [HttpDelete("Delete/{id}")]
         public async Task<ActionResult> Delete(int id)
         {

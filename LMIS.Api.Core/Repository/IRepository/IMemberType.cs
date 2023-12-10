@@ -10,5 +10,8 @@ namespace LMIS.Api.Core.Repository.IRepository
     public interface IMemberType : IRepository<MemberType>
     {
         void Update(MemberType memberType);
+        Task<bool> SoftDeleteAsync(int id);
+        Task<IEnumerable<MemberType>> GetAllMemberType();
+
     }
 }

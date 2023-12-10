@@ -1,24 +1,40 @@
-﻿using LMIS.Api.Core.DataAccess;
-using LMIS.Api.Core.Model;
+﻿
+using LMIS.Api.Core.DataAccess;
 using LMIS.Api.Core.Repository.IRepository;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using LMIS.Api.Core.Repository;
+using LMIS.Api.Core.Model;
 
-namespace LMIS.Api.Core.Repository
+public class MemberTypeRepository : Repository<MemberType>, IMemberType
 {
-    public class MemberTypeRepository : Repository<MemberType>, IMemberType
+    private ApplicationDbContext _db;
+    public MemberTypeRepository(ApplicationDbContext db) : base(db)
     {
-        private ApplicationDbContext _db;
-        public MemberTypeRepository(ApplicationDbContext db) : base(db)
+        this._db = db;
+    }
+    public void Update(MemberType memberType)
+    {
+        _db.memberTypes.Update(memberType);
+    }
+
+    public async Task<bool> SoftDeleteAsync(int id)
+    {
+        var entity = await _db.applicationUsers.FindAsync(id);
+
+        if (entity == null || entity.IsDeleted)
         {
-            this._db = db;
+            return false;
         }
-        public void Update(MemberType memberType)
-        {
-            _db.memberTypes.Update(memberType);
-        }
+
+        entity.IsDeleted = true;
+        entity.DeletedDate = DateTime.UtcNow;
+
+        await _db.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<IEnumerable<MemberType>> GetAllMemberType()
+    {
+        var allMemberType = _db.memberTypes.Where(U => U.IsDeleted == false).ToList();
+        return allMemberType;
     }
 }
