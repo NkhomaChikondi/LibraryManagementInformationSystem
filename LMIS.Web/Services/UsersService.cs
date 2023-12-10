@@ -15,7 +15,7 @@ namespace LMIS.Web.Services
     public class UsersService : IUserService
     {
         private HttpClient httpClient;
-        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7258") });
+        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:32782/") });
         public async Task<List<User>> GetAllUsers(string token)
         {
             List<User> users = new List<User>();
@@ -121,13 +121,13 @@ namespace LMIS.Web.Services
             return roles;
         }
 
-        public async Task<bool> CreateUser(UserDTO userDTO)
+        public async Task<bool> CreateUser(UserDTO userDTO, string token)
         {
             try
             {
 
                 //create a dynamic user input object
-
+                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 //serialize user input
 

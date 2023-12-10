@@ -9,7 +9,7 @@ namespace LMIS.Web.Services.Interfaces
 
         Task<List<Role>> GetAllRoles(string token);
 
-        Task<bool> CreateUser(UserDTO userDTO);
+        Task<bool> CreateUser(UserDTO userDTO, string token);
 
         Task<bool> DeleteUser(int id, string token);
 

@@ -3,6 +3,7 @@ using LMIS.Web.Services.Interfaces;
 using LMIS.Web.ViewModels;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 
@@ -11,11 +12,18 @@ namespace LMIS.Web.Services
     public class AuthenticationService : IAuthenticationService
     {
         private readonly IConfiguration _configuration;
-        private HttpClient httpClient;
-        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7258") });
+       
+        
+        private readonly HttpClient httpClient;
+
         public AuthenticationService(IConfiguration configuration)
         {
-            this._configuration = _configuration;
+            _configuration = configuration;
+            // Initialize HttpClient with base address
+            httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:32782/")
+            };
         }
         public async Task<AuthResult> Login(string email,string password)
         {
@@ -33,13 +41,11 @@ namespace LMIS.Web.Services
 
                 httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
-                var response = await HttpClient.PostAsync("api/auth/login", httpContent);
+                var response = await httpClient.PostAsync("api/auth/login", httpContent);
 
                 if (response.IsSuccessStatusCode)
                 {
                     TokenData tokenData = await response.Content.ReadFromJsonAsync<TokenData>();
-
-
 
                     var token = tokenData.Token;
                     var userId = tokenData.UserId;

@@ -53,15 +53,18 @@ namespace LMIS.Web.Areas.Admin.Controllers
 
         // POST: UsersController/Create
         [HttpPost]
-        [ValidateAntiForgeryToken]
+
         public async Task<ActionResult> Create(UserDTO model)
         {
             if (ModelState.IsValid)
             {
-               
+                //fetch record from the API
+
+                string token = this.GetToken();
+
                 //send data to api
 
-                bool result = await this._userService.CreateUser(model);
+                bool result = await this._userService.CreateUser(model,token);
 
                 if(result)
                 {

@@ -107,8 +107,19 @@ namespace LMIS.Api.Services.Services
                 string passwordBody = $"Your account has been created on LMIS. Your password is: {password}  your OTP is: {user.Pin}<br /> Enter the OTP to activate your account <br /> You can activate your account by clicking here</a>";
                 _emailService.SendMail(user.Email, "Login Details", passwordBody);
 
-                var createdUserDTO = _mapper.Map<ApplicationUserDTO>(user);
-                return new BaseResponse<ApplicationUserDTO>()
+
+                var createdUserDTO = new ApplicationUserDTO
+                {
+                    Email = user.Email,
+                    firstName = user.firstName,
+                    Gender= user.Gender,
+                    lastName = user.lastName,
+                    Location = user.Location,
+                    RoleName = roleName,
+                    
+                };                                      
+                  
+                return new ()
                 {
                     IsError = false,
                     Result = createdUserDTO,
@@ -116,7 +127,7 @@ namespace LMIS.Api.Services.Services
             }
             catch (Exception)
             {
-                return new BaseResponse<ApplicationUserDTO>()
+                return new ()
                 {
                     IsError = true,
                     Message = "Failed to create a new user "

@@ -122,7 +122,16 @@ namespace LMIS.Api.Services.Services
                 string pinBody = $"Your account type is {memberTypeName}. Your member code is {member_code}.<br />The member code will be needed each time you visit the library.";
                 _emailService.SendMail(member.Email, "Member Account Details", pinBody);
 
-                var createdMemberDTO = _mapper.Map<CreateMemberDto>(member);
+                var createdMemberDTO = new CreateMemberDto
+                {
+                    FirstName = createMemberDto.FirstName,
+                    Email = createMemberDto.Email,  
+                    LastName = createMemberDto.LastName,
+                    MemberTypeName = memberTypeName,
+                    Phone = createMemberDto.Phone
+                };
+                
+                //_mapper.Map<CreateMemberDto>(member);
                 return new()
                 {
                     IsError = false,

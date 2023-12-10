@@ -9,9 +9,16 @@ namespace LMIS.Web.Services
 {
     public class MemberService : IMemberService
     {
-        private HttpClient httpClient;
+        private readonly HttpClient httpClient;
 
-        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:7258") });
+        public MemberService()
+        {
+            // Initialize HttpClient with base address
+            httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:32782/")
+            };
+        }
 
         public async Task<List<Member>> GetAllMembers(string token)
         {
@@ -19,9 +26,9 @@ namespace LMIS.Web.Services
 
             try
             {
-                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var response = await HttpClient.GetAsync("api/Member/GetAllAsync");
+                var response = await httpClient.GetAsync("api/Member/GetAllAsync");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -51,9 +58,9 @@ namespace LMIS.Web.Services
 
             try
             {
-                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-                var response = await HttpClient.GetAsync($"api/Member/GetMemberById/{id}");
+                var response = await httpClient.GetAsync($"api/Member/GetMemberById/{id}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -84,10 +91,10 @@ namespace LMIS.Web.Services
                 var json = JsonConvert.SerializeObject(memberDTO);
                 var httpContent = new StringContent(json, Encoding.UTF8);
                 httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 // Send POST request to create a member
-                var response = await HttpClient.PostAsync("api/Member/CreateMember", httpContent);
+                var response = await httpClient.PostAsync("api/Member/CreateMember", httpContent);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -117,10 +124,10 @@ namespace LMIS.Web.Services
                 httpContent.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
                 // Set authorization header
-                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 // Send PUT request to update a member
-                var response = await HttpClient.PutAsync($"api/Member/UpdateMember/{memberDTO.MemberId}", httpContent);
+                var response = await httpClient.PutAsync($"api/Member/UpdateMember/{memberDTO.MemberId}", httpContent);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -145,10 +152,10 @@ namespace LMIS.Web.Services
             try
             {
                 // Set authorization header
-                HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
                 // Send DELETE request to delete a member
-                var response = await HttpClient.DeleteAsync($"api/Member/DeleteMember/{id}");
+                var response = await httpClient.DeleteAsync($"api/Member/DeleteMember/{id}");
 
                 if (response.IsSuccessStatusCode)
                 {
