@@ -10,6 +10,7 @@ using LMIS.Api.Core.Repository.IRepository;
 using LMIS.Api.Services.Services.IServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualBasic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -196,94 +197,102 @@ namespace LMIS.Api.Services.Services
            
         }
 
-       
-        public async Task<BaseResponse<bool>> ReturnBook(string memberId, string Booktitle)
+
+        public async Task<BaseResponse<CheckoutDTO>> ReturnBook(string bookId, string memberCode, string userIdClaim)
         {
             try
             {
-                if (string.IsNullOrEmpty(memberId) || string.IsNullOrEmpty(Booktitle))
+                // Retrieve user and member based on provided identifiers
+                var userEmail = userIdClaim;
+                var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
+                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == memberCode);
+
+                if (user == null || member == null)
                 {
-                    return new()
+                    return new ()
                     {
                         IsError = true,
-                        Message = "Check if all details are entered correctly"
+                        Message = "Check if the member code is entered correctly."
                     };
                 }
 
-                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == memberId);
-                if (member == null)
+                // Find the book inventory for the specified book
+                var bookInventory = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == bookId && !b.IsDeleted);
+
+                if (bookInventory == null || bookInventory.isAvailable)
                 {
-                    return new()
+                    return new ()
                     {
                         IsError = true,
-                        Message = "Failed to identify the member "
+                        Message = "The book is not checked out or does not exist."
                     };
                 }
 
-                var allTransactions =  _unitOfWork.Checkout.GetAllAsync();
-                if (allTransactions == null || !allTransactions.Any())
+                // Retrieve the checkout transaction related to the book
+                var checkoutTransaction = await _unitOfWork.Checkout.GetFirstOrDefaultAsync(t => t.BookId == bookId && !t.isReturned);
+
+                if (checkoutTransaction == null)
                 {
-                    return new()
+                    return new ()
                     {
                         IsError = true,
-                        Message = "Failed to get the transaction "
-                    };
-
-                }
-
-                var books = await _bookService.GetAllAsync();
-                if (books == null)
-                {
-                    return new()
-                    {
-                        IsError = true,
-                        Message = "Failed to get the transaction "
-                    };
-                }                  
-
-                // Convert Booktitle to uppercase
-                Booktitle = Booktitle.ToUpper();
-
-                var getBook = books.FirstOrDefault(b => b.Title.ToUpper() == Booktitle);
-                if (getBook == null)
-                {
-                    return new()
-                    {
-                        IsError = true,
-                        Message = "The book cannot be found "
-                    };
-
-                }
-
-                var getTransaction = allTransactions.FirstOrDefault(T => T.member == member && T.BookId == getBook.Id && T.isReturned == false);
-                if (getTransaction == null)
-                { 
-                    return new()
-                    {
-                        IsError = true,
-                        Message = "Failed to get the transaction "
+                        Message = "No active checkout transaction found for the book."
                     };
                 }
 
-                getTransaction.isReturned = true;
+                // Update checkout transaction to mark the book as returned
+                checkoutTransaction.isReturned = true;
+                _unitOfWork.Checkout.Update(checkoutTransaction);
+                _unitOfWork.Save();
 
-                _unitOfWork.Checkout.Update(getTransaction);
-                 _unitOfWork.Save();
-                return new()
+                // Update book inventory status to mark the book as available
+                bookInventory.isAvailable = true;
+                _unitOfWork.BookInventory.Update(bookInventory);
+                _unitOfWork.Save();
+
+                // get the book having the checkout book id
+                var book = await  _bookService.GetAsync(bookId);
+                // Send return confirmation notification
+                var returnConfirmation = new CheckoutDTO
+                {
+                    book = book.Title,
+                    DueDate = checkoutTransaction.DueDate,
+                };
+
+                if(DateTime.Today > checkoutTransaction.DueDate)
+                {
+                    TimeSpan overdueDuration = DateTime.Today - checkoutTransaction.DueDate;
+                    int daysOverdue = overdueDuration.Days;
+
+                    var OverDuefine = 1000 * daysOverdue;
+
+                    // send the notification to the member via email
+
+                    string overDueBody = "You have " + daysOverdue + "that are over due " + " your over due fine is  MWK" + OverDuefine + " be informed that you will not be able to borrow any book  until these books are returned and the fine is setlled ";
+                    _emailService.SendMail(member.Email, "OverDue Fine", overDueBody);
+                }
+
+                // Send return confirmation email to member/user
+                string returnBody = $"You have successfully returned the book: {returnConfirmation.book}.";
+                _emailService.SendMail(member.Email, "Book Return Confirmation", returnBody);
+
+                return new ()
                 {
                     IsError = false,
-                    Message = "Transaction updated successfully "
+                    Result = returnConfirmation,
+                    Message = "Book return process completed successfully."
                 };
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return new()
+                return new ()
                 {
                     IsError = true,
-                    Message = "An error occured whilst returning a book"
+                    Message = $"An error occurred: {ex.Message}. Book return failed."
                 };
             }
         }
+
 
         public async Task<BaseResponse<IEnumerable<CheckoutDTO>>> GetAllCheckoutTransactions()
         {
