@@ -129,22 +129,7 @@ namespace LMIS.Web.Areas.Admin.Controllers
            // ViewBag.rolesList = await this.GetRoles();
             ViewBag.genderList = GetGenderList();
         }
-
-        //private async Task<List<SelectListItem>> GetRoles()
-        //{
-        //    string token = GetToken();
-
-        //    List<SelectListItem> roles = new List<SelectListItem>();
-
-        //    var rolesList = await this._memberService.GetAllRoles(token);
-
-        //    foreach (var item in rolesList)
-        //    {
-        //        roles.Add(new SelectListItem() { Text = item.RoleName, Value = item.RoleName });
-        //    }
-
-        //    return roles;
-        //}
+       
 
         private List<SelectListItem> GetGenderList()
         {

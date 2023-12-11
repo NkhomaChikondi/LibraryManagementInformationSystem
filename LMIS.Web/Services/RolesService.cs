@@ -12,7 +12,7 @@ namespace LMIS.Web.Services
     {
         private HttpClient httpClient;
 
-        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:32782/") });
+        private HttpClient HttpClient => httpClient ?? (httpClient = new HttpClient() { BaseAddress = new Uri("https://localhost:32784/") });
 
         public async Task<List<Role>> GetAllRoles(string token)
         {

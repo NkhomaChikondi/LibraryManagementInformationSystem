@@ -52,15 +52,16 @@ namespace LMIS.API.Controllers.User
             try
             {
                 var response = await _userService.GetUserByIdAsync(id);
-                if (response == null)
-                    return BadRequest("Failed to get user");
-                return Ok(response);
+
+                if (response.IsError)
+                    return BadRequest(response.Message);
+
+                return Ok(response.Result);
             }
             catch (Exception ex)
             {
                 return StatusCode(500, $"An {ex.Message} occurred while getting a user.");
             }
-        
         }
 
         [HttpPost("CreateUser")]
@@ -142,15 +143,21 @@ namespace LMIS.API.Controllers.User
         {
             try
             {
-                await _userService.ResendEmail(email);
+                var response = await _userService.ResendEmail(email);
+
+                if (response.IsError)
+                {
+                    // Handle error responses from the service
+                    return BadRequest(response.Message);
+                }
+
+                // Handle success response from the service
                 return Ok("Check your email for the pin");
             }
             catch (Exception ex)
             {
-
                 return StatusCode(500, $"An {ex.Message} occurred while resending the email.");
-            }          
-
+            }
         }
 
         //// GET: api/<UserController>

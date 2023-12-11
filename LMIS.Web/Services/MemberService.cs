@@ -16,7 +16,7 @@ namespace LMIS.Web.Services
             // Initialize HttpClient with base address
             httpClient = new HttpClient
             {
-                BaseAddress = new Uri("https://localhost:32782/")
+                BaseAddress = new Uri("https://localhost:32784/")
             };
         }
 

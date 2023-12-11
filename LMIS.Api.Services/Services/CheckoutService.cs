@@ -314,10 +314,28 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var allTransactions = _unitOfWork.Checkout.GetAllAsync();
-                // Map the updated member entity to a DTO
-                var allTransactionDTO = _mapper.Map<IEnumerable<CheckoutDTO>>(allTransactions);
-
+                var allTransactions = await _unitOfWork.Checkout.GetAllTransactions();
+               
+                var allTransactionDTO = new List<CheckoutDTO>();
+                foreach (var item in allTransactions)
+                {
+                    // get book
+                    var books = await _bookService.GetAllAsync();
+                    var book = books.Where(b => b.Id == item.BookId).FirstOrDefault();
+                   
+                    var newTransaction = new CheckoutDTO()
+                    {
+                        book = book.Title,
+                        DueDate = item.DueDate,
+                        CheckOutDate = item.CheckOutDate,
+                    };
+                    allTransactionDTO.Add(newTransaction);
+                }
+                return new()
+                {
+                    IsError = false,
+                    Result = allTransactionDTO,
+                };
                 return new()
                 {
                     IsError = true,
@@ -335,6 +353,7 @@ namespace LMIS.Api.Services.Services
                 };
             }
         }
+     
         public async Task<BaseResponse<CheckoutDTO>> GetCheckoutTransactionByIdAsync(int transId)
         {
             try
