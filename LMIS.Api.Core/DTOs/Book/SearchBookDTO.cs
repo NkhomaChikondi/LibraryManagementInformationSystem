@@ -9,7 +9,7 @@ namespace LMIS.Api.Core.DTOs.Book
     public class SearchBookDTO
     {
         public string Title { get; set; }
-        public string? Author { get; set; }
-        public string? Publisher { get; set; }
+        public string ISBN { get; set; }
+        public string Genre { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using LMIS.Api.Core.DTOs.Checkout;
 using LMIS.Api.Core.DTOs.Member;
 using LMIS.Api.Core.DTOs.User;
 using LMIS.Api.Core.Model;
+using LMIS.Api.Core.Repository;
 using LMIS.Api.Core.Repository.IRepository;
 using LMIS.Api.Services.Services.IServices;
 using Microsoft.AspNetCore.Http;
@@ -39,7 +40,7 @@ namespace LMIS.Api.Services.Services
             _bookService = bookService;
         }
 
-        public async Task<BaseResponse<BookDTO>> GetSelectedBooks(SearchBookDTO selectedBook, string memberCode, string userIdClaim)
+        public async Task<BaseResponse<CheckoutDTO>> CheckoutBook(SearchBookDTO selectedBook, string memberCode, string userIdClaim)
         {
             try
             {
@@ -56,251 +57,146 @@ namespace LMIS.Api.Services.Services
                     };
                 }
 
+                // get all transactions
+                var memberCheckoutTransactions =  _unitOfWork.Checkout.GetAllAsync().Where(m => m.MemberId == member.MemberId).ToList();
 
-                // check if they dont have any outstanding books not returned
-                // get checkout transaction
-                var lastTransaction = await _unitOfWork.Checkout.GetLastOrDefault(member.MemberId);
-                if (lastTransaction == null)
+                // check if there is any outstanding transaction not finalised
+                var outstandingTransaction = memberCheckoutTransactions.Where(t => !t.isReturned && t .CheckOutDate < DateTime.Today).ToList();
+                
+                if(outstandingTransaction.Count > 0 )
                 {
-                    // Check if there are selected books
-                    if (selectedBook == null)
+                    var OverDuefine = 1000 * outstandingTransaction.Count();
+
+                    // send the notification to the member via email
+
+                    string overDueBody = "You have " + outstandingTransaction.Count() + "that are over due " + " your over due fine is  MWK" + OverDuefine + " be informed that you will not be able to borrow any book  until these books are returned and the fine is setlled ";
+                    _emailService.SendMail(member.Email, "OverDue Fine", overDueBody);
+
+                    return new()
                     {
-                        return new ()
+                        IsError = true,
+                        Message = "You have an outstanding book un returned"
+                    };
+                   
+                }
+
+                var Books = await _bookService.GetAllAsync();
+
+                var getBook = Books.Where(B => B.Title == selectedBook.Title.ToUpper() && B.ISBN == selectedBook.ISBN && !B.IsDeleted).FirstOrDefault();
+
+                var getGenre = await _unitOfWork.Genre.GetFirstOrDefaultAsync(genre => genre.Name == getBook.Genre);
+                                
+
+                var memberTransactions = memberCheckoutTransactions
+                             .Where(t => t.member.Equals(member) &&
+                                         t.CheckOutDate.Date == DateTime.Today.Date).ToList();                
+
+                if (memberTransactions.Count() > 0 )
+                {
+                    int genreCount = 0;
+                    foreach (var memberTransaction in memberTransactions)
+                    {
+                        // get book having the book id
+                        var book = Books.Where(b => b.Id == memberTransaction.BookId).FirstOrDefault();
+                        if (book != null)
+                        {
+                            if (book.Genre == getGenre.Name)
+                            {
+                                genreCount++;
+                            }
+                        }
+                    }
+                    // check if count is more than the maximum limit
+                    if (genreCount >= getGenre.MaximumBooksAllowed)
+                    {
+                        return new()
                         {
                             IsError = true,
-                            Message = "The book is not available"
+                            Message = "The member has reached his or her maximum borrowing limit"
+                        };
+                    }
+                }
+
+                    // Find the book inventory for the requested book
+                    var bookInventory = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == getBook.Id && b.isAvailable && !b.IsDeleted);
+
+                    if (bookInventory == null)
+                    {
+                        return new()
+                        {
+                            IsError = true,
+                            Message = "The transaction failed"
                         };
                     }
 
-                    // Check if the book is available
-                    var allBooks = await _bookService.GetAllAsync();
-                    var getBook = allBooks.FirstOrDefault(b =>
-                        b.Title == selectedBook.Title.ToUpper());
+                    // Check if the book is already checked out
+                    var isBookAlreadyCheckedOut = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == getBook.Id && b.isAvailable);
 
-                    if (getBook != null)
+                    if (isBookAlreadyCheckedOut == null )
                     {
-                        var getGenre = await _unitOfWork.Genre.GetFirstOrDefaultAsync(genre => genre.Name == getBook.Genre);
-
-                        if (getGenre == null)
+                        return new()
                         {
-                            return new ()
-                            {
-                                IsError = true,
-                                Message = "failed to get the book "
-                            };
-                        }
-
-                        // get all transactions that happened today and by this member
-                        var getAllTransactions = await _unitOfWork.Checkout.GetAllTransactions();
-
-                        if (getAllTransactions != null && getAllTransactions.Any())
-                        {
-                            var memberTransactions = getAllTransactions
-                             .Where(t => t.member.Equals(member) &&
-                                         t.CheckOutDate.Date == DateTime.Today &&
-                                         t.book != null &&
-                                         t.book.Genre == getGenre.Name)
-                             .ToList();
-
-                            if (memberTransactions.Count() > 0 && memberTransactions != null)
-                            {
-                                // check if count is more than the maximum limit
-                                if (memberTransactions.Count() >= getGenre.MaximumBooksAllowed)
-                                {
-                                    return new ()
-                                    {
-                                        IsError = true,
-                                        Message = "The member has reached his or her maximum borrowing limit"
-                                    };
-                                }
-
-                                var getBookDTO = _mapper.Map<BookDTO>(getBook);
-                                availableBook = getBookDTO;
-                                // store transaction details in the temp_data table
-                                var newTemp_Data = new Temp_Data
-                                {
-                                    BookId = getBook.Id,
-                                    Member_Code = memberCode
-                                }; 
-
-                                await _unitOfWork.temp_DataRepository.CreateAsync(newTemp_Data);
-                                _unitOfWork.Save();
-
-
-                                return new()
-                                {
-                                    IsError = false,
-                                    Result = availableBook
-                                };
-                               
-                            }
-                        }
-                        else if (getAllTransactions == null || getAllTransactions.Count() == 0)
-                        {
-                            var getBookDTO = _mapper.Map<BookDTO>(getBook);
-                            availableBook = getBookDTO;
-
-                            // store transaction details in the temp_data table
-                            var newTemp_Data = new Temp_Data
-                            {
-                                BookId = getBook.Id,
-                                Member_Code = memberCode
-                            };
-                            await _unitOfWork.temp_DataRepository.CreateAsync(newTemp_Data);
-                            _unitOfWork.Save();
-
-                            return new()
-                            {
-                                IsError = false,
-                                Result = availableBook
-                            };
-                            
-                        }
-                        else
-                        {
-                            // check there is any book return overdue
-                            var overDueBooks = getAllTransactions.Where(T => T.isReturned == false).ToList();
-                            if (overDueBooks.Any())
-                            {
-                                var OverDuefine = 1000 * overDueBooks.Count();
-
-                                // send the notification to the member via email
-
-                                string pinBody = "You have " + overDueBooks.Count() + "that are over due " + " your over due fine is  MWK" + OverDuefine + " be informed that you will not be able to borrow any book  until these books are returned and the fine is setlled ";
-                                _emailService.SendMail(member.Email, "OverDue Fine", pinBody);
-
-                                try
-                                {
-                                    // create a new instance of notification
-                                    var newNotification = new Notification
-                                    {
-                                        Messsage = pinBody,
-                                        member = member,
-                                        user = user,
-                                        memberId = member.MemberId,
-                                        userId = user.UserId
-                                    };
-                                    await _unitOfWork.notification.CreateAsync(newNotification);
-                                    _unitOfWork.Save();
-
-                                }
-                                catch (Exception ex)
-                                {
-                                    return new ()
-                                    {
-                                        IsError = true,
-                                        Message = $"Failed create a new notification "
-                                    };
-                                }
-                            }
-
-                        }
-
+                            IsError = true,
+                            Message = "The transaction failed, book is already borrowed"
+                        };
                     }
-                }
-            }
-            catch (Exception ex)
-            {
-                return new()
+
+                    // Update book inventory and create checkout transaction
+                    var currentDate = DateTime.Today.Date;
+                    var dueDate = currentDate.AddDays(7); 
+
+                    var checkoutTransaction = new CheckoutTransaction
+                    {
+                        CheckOutDate = currentDate,
+                        DueDate = dueDate,
+                        UserId = user.UserId,
+                        BookId = getBook.Id,
+                        MemberId = member.MemberId,
+                        isReturned = false,
+                        IsDeleted = false,
+                        bookInventoryId = bookInventory.Id,
+                       
+                    };
+
+                     await _unitOfWork.Checkout.CreateAsync(checkoutTransaction);
+                    _unitOfWork.Save();
+
+                    // Update book inventory status
+                    bookInventory.isAvailable = false; 
+                    bookInventory.checkoutTransactions.Add(checkoutTransaction); 
+
+                    _unitOfWork.BookInventory.Update(bookInventory);
+                    _unitOfWork.Save();
+
+                string pinBody = $"You have borrowed, { getBook.Title} , The book is to be returned on {checkoutTransaction.DueDate}";
+                _emailService.SendMail(member.Email, "Borrowed Book", pinBody);
+
+                var checkoutDetails = new CheckoutDTO
                 {
-                    IsError = true,
-                    Message = $"an {ex.Message} error occured. failed to get a book "
+                     book = getBook.Title,
+                     DueDate = checkoutTransaction.DueDate,
+                     CheckOutDate = checkoutTransaction.DueDate,
                 };
-            }
-            return new()
-            {
-                IsError = true,
-                Message = $"failed to get a book "
-            };
-        }
-        public async Task<BaseResponse<bool>> CheckOutBook(string userIdClaim)
-        {
-            try
-            {
-                if (string.IsNullOrEmpty(userIdClaim))
-                {
-                    return new()
-                    {
-                        IsError = true,
-                        Message = "Failed to identify the member "
-                    };
-                }
-
-                // get  the item in temp_data
-                var tempDatas = await _unitOfWork.temp_DataRepository.GetAllCheckoutTransactions();
-                if (tempDatas == null)
-                {
-                    return new()
-                    {
-                        IsError = true,
-                        Message = "failed process the transaction"
-                    };
-                }
-
-                // get the last entry
-                var lastEntry = tempDatas.LastOrDefault();
-
-                // get bookId
-
-                var getBook = (await _bookService.GetAllAsync())
-                                ?.FirstOrDefault(b => b.Id == lastEntry?.BookId);
-
-                if (getBook == null)
-                {
-                    return new()
-                    {
-                        IsError = true,
-                        Message = "Failed to identify the book selected "
-                    };
-                }
-
-                var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userIdClaim);
-                var bookInventory = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == getBook.Id);
-                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == lastEntry.Member_Code);
-
-                if (user == null || bookInventory == null || member == null)
-                {
-
-                    return new()
-                    {
-                        IsError = true,
-                        Message = "Failed to process the transaction "
-                    };
-                }
-
-                var newCheckoutTransaction = new CheckoutTransaction
-                {
-
-                    BookId = getBook.Id,
-                    CheckOutDate = DateTime.Today,
-                    DueDate = DateTime.Today.AddDays(7),
-
-                    bookInventoryId = bookInventory.Id,
-                    isReturned = false,
-                    MemberId = member.MemberId,
-
-                    user = user,
-                };
-
-                await _unitOfWork.Checkout.CreateAsync(newCheckoutTransaction);
-                _unitOfWork.Save();
-
                 return new()
                 {
                     IsError = false,
-                    Message = "The checkout Transaction was successful"
+                    Result = checkoutDetails,
+                    Message = "transaction is successful"
                 };
+
             }
             catch (Exception ex)
             {
                 return new()
                 {
                     IsError = true,
-                    Message = $"Failed to delete a user an {ex.Message} error occured"
+                    Message = $"an {ex.Message} error occured. Transaction failed "
                 };
             }
            
         }
+
+       
         public async Task<BaseResponse<bool>> ReturnBook(string memberId, string Booktitle)
         {
             try
@@ -359,7 +255,7 @@ namespace LMIS.Api.Services.Services
 
                 }
 
-                var getTransaction = allTransactions.FirstOrDefault(T => T.member == member && T.book == getBook && T.isReturned == false);
+                var getTransaction = allTransactions.FirstOrDefault(T => T.member == member && T.BookId == getBook.Id && T.isReturned == false);
                 if (getTransaction == null)
                 { 
                     return new()

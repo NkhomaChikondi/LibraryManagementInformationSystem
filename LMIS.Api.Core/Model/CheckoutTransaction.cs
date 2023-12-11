@@ -18,10 +18,8 @@ namespace LMIS.Api.Core.Model
         public string BookId { get; set; }
         public int MemberId { get; set; }      
         public bool isReturned {  get; set; } = false;
-        public ApplicationUser user { get; set; }
-        public Book book { get; set; }
+        public ApplicationUser user { get; set; }       
         public Member member { get; set; }
-
         public int bookInventoryId { get; set; }
         public BookInventory bookInventory { get; set; }
         public bool IsDeleted { get; set; }
