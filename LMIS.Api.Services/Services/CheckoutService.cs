@@ -88,7 +88,7 @@ namespace LMIS.Api.Services.Services
                                 
 
                 var memberTransactions = memberCheckoutTransactions
-                             .Where(t => t.member.Equals(member) &&
+                             .Where(t => t.MemberId == member.MemberId &&
                                          t.CheckOutDate.Date == DateTime.Today.Date).ToList();                
 
                 if (memberTransactions.Count() > 0 )
@@ -125,7 +125,7 @@ namespace LMIS.Api.Services.Services
                         return new()
                         {
                             IsError = true,
-                            Message = "The transaction failed"
+                            Message = "The the book is not available"
                         };
                     }
 
@@ -142,7 +142,7 @@ namespace LMIS.Api.Services.Services
                     }
 
                     // Update book inventory and create checkout transaction
-                    var currentDate = DateTime.Today.Date;
+                    var currentDate = DateTime.UtcNow;
                     var dueDate = currentDate.AddDays(7); 
 
                     var checkoutTransaction = new CheckoutTransaction

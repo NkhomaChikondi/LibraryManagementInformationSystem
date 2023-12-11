@@ -68,7 +68,7 @@ namespace LMIS.Api.Services.Services
                     return new()
                     {
                         IsError = true,
-                        Message = "No books in the system"
+                        Message = "The book with the similar ISBN Exist"
                     };
                 }
 
