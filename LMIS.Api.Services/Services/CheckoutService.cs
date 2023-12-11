@@ -198,14 +198,15 @@ namespace LMIS.Api.Services.Services
         }
 
 
-        public async Task<BaseResponse<CheckoutDTO>> ReturnBook(string bookId, string memberCode, string userIdClaim)
+        public async Task<BaseResponse<bool>> ReturnBook(ReturnBookDTO returnBookDTO, string userIdClaim)
         {
             try
             {
                 // Retrieve user and member based on provided identifiers
                 var userEmail = userIdClaim;
+                string lmisBookId = null;
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
-                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == memberCode);
+                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == returnBookDTO.MemberCode);
 
                 if (user == null || member == null)
                 {
@@ -215,9 +216,25 @@ namespace LMIS.Api.Services.Services
                         Message = "Check if the member code is entered correctly."
                     };
                 }
+                try
+                {
+                    // get book using the isbn
+                    var books = await _bookService.GetAllAsync();
+                    var getBook = books.Where(b => b.ISBN == returnBookDTO.ISBN).FirstOrDefault();
+                    lmisBookId = getBook.Id;
+                }
+                catch (Exception)
+                {
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "book not found"
+                    };
+                }
+                
 
                 // Find the book inventory for the specified book
-                var bookInventory = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == bookId && !b.IsDeleted);
+                var bookInventory = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == lmisBookId && !b.IsDeleted);
 
                 if (bookInventory == null || bookInventory.isAvailable)
                 {
@@ -229,7 +246,7 @@ namespace LMIS.Api.Services.Services
                 }
 
                 // Retrieve the checkout transaction related to the book
-                var checkoutTransaction = await _unitOfWork.Checkout.GetFirstOrDefaultAsync(t => t.BookId == bookId && !t.isReturned);
+                var checkoutTransaction = await _unitOfWork.Checkout.GetFirstOrDefaultAsync(t => t.BookId == lmisBookId && !t.isReturned);
 
                 if (checkoutTransaction == null)
                 {
@@ -251,7 +268,7 @@ namespace LMIS.Api.Services.Services
                 _unitOfWork.Save();
 
                 // get the book having the checkout book id
-                var book = await  _bookService.GetAsync(bookId);
+                var book = await  _bookService.GetAsync(lmisBookId);
                 // Send return confirmation notification
                 var returnConfirmation = new CheckoutDTO
                 {
@@ -278,8 +295,7 @@ namespace LMIS.Api.Services.Services
 
                 return new ()
                 {
-                    IsError = false,
-                    Result = returnConfirmation,
+                    IsError = false,                    
                     Message = "Book return process completed successfully."
                 };
             }

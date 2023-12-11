@@ -74,7 +74,7 @@ namespace LMIS.API.Controllers.CheckoutController
         }
 
         // GET: api/<CheckoutController>
-        [HttpPost("GetSearchedBooks")]
+        [HttpPost("CheckoutBook")]
         public async Task<IActionResult> Get(string memberCode, [FromBody] SearchBookDTO selectedBook)
         {
             try
@@ -104,33 +104,34 @@ namespace LMIS.API.Controllers.CheckoutController
             }
         }
 
-        //// GET api/<CheckoutController>/5
-        //[HttpPost("CheckoutTransaction")]
-        //public async Task<IActionResult> CreateCheckoutTransaction()
-        //{
-        //    try
-        //    {
-        //        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        [HttpPost("returnBook")]
+        public async Task<IActionResult> ReturnBook([FromBody] ReturnBookDTO selectedBook)
+        {
+            try
+            {
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
-        //        if (userIdClaim == null)
-        //        {
-        //            return Unauthorized("You are not authorized to create member");
-        //        }
+                if (userIdClaim == null)
+                {
+                    return Unauthorized("You are not authorized to create member");
+                }
 
-        //        //var response = await _checkoutService.CheckoutBook( userIdClaim);
+                var response = await _checkoutService.ReturnBook(selectedBook, userIdClaim);
+                if (response.IsError)
+                {
+                    return BadRequest(response.Message);
+                }
+                
+                return Ok(response.Message);
 
-        //        //if (response.IsError)
-        //        //{
-        //        //    return BadRequest(response.Message);
-        //        //}
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while getting books: {ex.Message}");
+            }
+        }
 
-        //        //return Ok(response.Result);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return StatusCode(500, $"An {ex.Message} occurred while creating a member");
-        //    }
-        //}       
         
+
     }
 }

@@ -11,7 +11,7 @@ namespace LMIS.Api.Services.Services.IServices
 
         Task<BaseResponse<CheckoutDTO>> CheckoutBook(SearchBookDTO selectedBook, string memberCode, string userIdClaim);
 
-        Task<BaseResponse<CheckoutDTO>> ReturnBook(string bookId, string memberCode, string userIdClaim);
+        Task<BaseResponse<bool>> ReturnBook(ReturnBookDTO returnBookDTO, string userIdClaim);
         Task<BaseResponse<IEnumerable<CheckoutDTO>>> GetAllCheckoutTransactions();
         Task<BaseResponse<CheckoutDTO>> GetCheckoutTransactionByIdAsync(int transId);
         Task<BaseResponse<bool>> DeleteTransactionAsync(int TransId);
