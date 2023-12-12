@@ -56,7 +56,7 @@ namespace LMIS.Test
         }        
 
         [Fact]
-        public async Task ResendPin_ReturnsCorrectResponse_WhenResendEmailCalled()
+        public void ResendPin_ReturnsCorrectResponse_WhenResendEmailCalled()
         {
             // Arrange
             string userEmail = "chikondinkhoma51@gmail.com";
