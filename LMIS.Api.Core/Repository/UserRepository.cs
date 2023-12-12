@@ -31,8 +31,8 @@ namespace LMIS.Api.Core.Repository
         public string GeneratePassword(ApplicationUserDTO applicationUser)        
         {
             // Get the first letters of the first and last names
-            char firstLetterFirstName = char.ToLower(applicationUser.firstName[0]);
-            char firstLetterLastName = char.ToLower(applicationUser.lastName[0]);
+            char firstLetterFirstName = char.ToLower(applicationUser.FrstName[0]);
+            char firstLetterLastName = char.ToLower(applicationUser.LastName[0]);
 
             // Generate random letters, numbers, and special characters
             Random random = new Random();

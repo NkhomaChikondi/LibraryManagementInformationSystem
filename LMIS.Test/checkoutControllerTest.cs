@@ -10,6 +10,10 @@ using System.Text;
 using System.Threading.Tasks;
 using LMIS.Api.Core.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using LMIS.Api.Core.Model;
+using Org.BouncyCastle.Crypto.Macs;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace LMIS.Test
 {
@@ -24,17 +28,21 @@ namespace LMIS.Test
                                .ReturnsAsync(new BaseResponse<IEnumerable<CheckoutDTO>>
                                {
                                    IsError = false,
-                                   Result = new List<CheckoutDTO>()
+                                   Result = new List<CheckoutDTO>
                                    {
-                                       new CheckoutDTO {DueDate = DateTime.Today.AddDays(2),CheckOutDate = DateTime.Now,book = "6576b94b850a650d57ab87d5" },
-                                       new CheckoutDTO {DueDate = DateTime.Today.AddDays(3),CheckOutDate = DateTime.Now,book = "6576bb5d850a650d57ab87d6" },
+                               new CheckoutDTO { CheckOutDate = DateTime.Now, DueDate = DateTime.Now.AddDays(2), Book = "TITLE" }
                                    }
                                });
 
             var controller = new CheckoutController(mockCheckoutService.Object);
 
             // Act
-            var result = await controller.Get();            
+            var result = await controller.Get();
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var transactions = Assert.IsAssignableFrom<IEnumerable<CheckoutDTO>>(okResult.Value);
+            Assert.NotNull(transactions);
         }
 
         [Fact]
@@ -43,12 +51,17 @@ namespace LMIS.Test
             // Arrange
             var mockCheckoutService = new Mock<ICheckoutService>();
             // Setup mock service behavior
-
+            mockCheckoutService.Setup(service => service.GetCheckoutTransactionByIdAsync(9))
+               .ReturnsAsync(new BaseResponse<CheckoutDTO>());
             var controller = new CheckoutController(mockCheckoutService.Object);
 
             // Act
-            var result = await controller.GetTransactionById(9); 
+            var result = await controller.GetTransactionById(9);
 
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var transaction = Assert.IsType<BaseResponse<CheckoutDTO>>(okResult.Value);
+            Assert.NotNull(transaction);
         }
 
         [Fact]
@@ -61,7 +74,9 @@ namespace LMIS.Test
             var controller = new CheckoutController(mockCheckoutService.Object);
 
             // Act
-            var result = await controller.Delete(1);             
+            var result = await controller.Delete(1);           
+           
+            Assert.NotNull(result);
         }
 
        
@@ -70,13 +85,43 @@ namespace LMIS.Test
         {
             // Arrange
             var mockCheckoutService = new Mock<ICheckoutService>();
-            // Setup mock service behavior
+            mockCheckoutService.Setup(service => service.ReturnBook(It.IsAny<ReturnBookDTO>(), It.IsAny<string>()))
+                               .ReturnsAsync(new BaseResponse<bool>
+                               {
+                                   IsError = false,
+                                   Result = true,
+                                   Message = "Success"
+                               });
 
             var controller = new CheckoutController(mockCheckoutService.Object);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, "Chikondinkhoma51@gmail.com")
+            };
+
+            var identity = new ClaimsIdentity(claims, "TestAuthType");
+            var claimsPrincipal = new ClaimsPrincipal(identity);
+
+            // Set the User property on the ControllerContext
+            controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new DefaultHttpContext { User = claimsPrincipal }
+            };
+
+            var ReturnRequest = new ReturnBookDTO
+            {
+                ISBN = "khjdsdh",
+                MemberCode = "hN0001"
+            };
 
             // Act
-            var result = await controller.ReturnBook(new ReturnBookDTO()); 
-           
+            var result = await controller.ReturnBook(ReturnRequest);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var response = Assert.IsAssignableFrom<bool>(okResult.Value);
+            Assert.NotNull(response);             
         }
+
     }
 }

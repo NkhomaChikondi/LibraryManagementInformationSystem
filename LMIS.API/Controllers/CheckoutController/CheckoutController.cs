@@ -122,7 +122,7 @@ namespace LMIS.API.Controllers.CheckoutController
                     return BadRequest(response.Message);
                 }
                 
-                return Ok(response.Message);
+                return Ok(response.Result);
 
             }
             catch (Exception ex)

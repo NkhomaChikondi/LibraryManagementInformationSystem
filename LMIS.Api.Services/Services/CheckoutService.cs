@@ -155,7 +155,7 @@ namespace LMIS.Api.Services.Services
 
                         var checkoutDetails = new CheckoutDTO
                         {
-                            book = getBook.Title,
+                            Book = getBook.Title,
                             DueDate = checkoutTransaction.DueDate,
                             CheckOutDate = checkoutTransaction.DueDate,
                         };
@@ -259,7 +259,7 @@ namespace LMIS.Api.Services.Services
 
                 var returnConfirmation = new CheckoutDTO
                 {
-                    book = book?.Title ?? "Book Not Found",
+                    Book = book?.Title ?? "Book Not Found",
                     DueDate = checkoutTransaction.DueDate,
                 };
 
@@ -274,7 +274,7 @@ namespace LMIS.Api.Services.Services
                     _emailService.SendMail(member.Email, "Overdue Fine", overdueBody);
                 }
 
-                string returnBody = $"You have successfully returned the book: {returnConfirmation.book}.";
+                string returnBody = $"You have successfully returned the book: {returnConfirmation.Book}.";
                 _emailService.SendMail(member.Email, "Book Return Confirmation", returnBody);
 
                 return new BaseResponse<bool>
@@ -311,7 +311,7 @@ namespace LMIS.Api.Services.Services
                     {
                         var newTransaction = new CheckoutDTO()
                         {
-                            book = book.Title ?? "Book Not Found",
+                            Book = book.Title ?? "Book Not Found",
                             DueDate = item.DueDate,
                             CheckOutDate = item.CheckOutDate,
                         };
