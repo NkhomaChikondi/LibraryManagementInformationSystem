@@ -14,11 +14,11 @@ namespace LMIS.Api.Core.Model
         public bool IsDeleted { get; set; }
         public DateTime DeletedDate { get; set; }
         public int checkoutTransactionId { get; set; }
-        public CheckoutTransaction checkoutTransaction { get; set; }
-        public int memberId { get; set; }
-        public Member member { get; set; }
+        public CheckoutTransaction CheckoutTransaction { get; set; }
+        public int MemberId { get; set; }
+        public Member Member { get; set; }
 
-        public int userId { get; set; }
-        public ApplicationUser user { get; set; }
+        public int UserId { get; set; }
+        public ApplicationUser User { get; set; }
     }
 }

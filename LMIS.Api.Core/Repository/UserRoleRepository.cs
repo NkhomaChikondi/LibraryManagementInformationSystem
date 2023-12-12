@@ -18,7 +18,7 @@ namespace LMIS.Api.Core.Repository
         }
         public void Update(UserRole userRole)
         {
-            _db.userRoles.Update(userRole);
+            _db.UserRoles.Update(userRole);
         }
 
         public void Delete(UserRole userRole)

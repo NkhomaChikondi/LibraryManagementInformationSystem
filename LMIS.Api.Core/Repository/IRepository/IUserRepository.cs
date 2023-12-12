@@ -22,7 +22,7 @@ namespace LMIS.Api.Core.Repository.IRepository
         Task<IEnumerable<ApplicationUser>> GetAllUsers();
         Task<bool> SoftDeleteAsync(int id);
         bool VerifyPassword(string hashedPasswordFromDatabase, string incomingPlainPassword);
-        IEnumerable<ApplicationUser> usersWithRole();    
+        IEnumerable<ApplicationUser> UsersWithRole();    
     }
     
 }

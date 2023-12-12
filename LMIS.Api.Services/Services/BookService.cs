@@ -105,10 +105,10 @@ namespace LMIS.Api.Services.Services
                     var bookInventory = new BookInventory
                     {
                         Condition = newBook.Condition,
-                        isAvailable = newBook.isAvailable,
+                        IsAvailable = newBook.isAvailable,
                         Location = newBook.Location,
                         BookId = bookitem.Id,
-                        checkoutTransactions = null,
+                        CheckoutTransactions = null,
                     };
 
                     await _unitOfWork.BookInventory.CreateAsync(bookInventory);

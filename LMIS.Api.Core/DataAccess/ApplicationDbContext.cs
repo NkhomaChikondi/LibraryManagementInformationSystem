@@ -13,76 +13,75 @@ namespace LMIS.Api.Core.DataAccess
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
-        public DbSet<ApplicationUser> applicationUsers { get; set; }
-        public DbSet<Role> roles { get; set; }
-        public DbSet<UserRole> userRoles { get; set; }
-        public DbSet<Member> members { get; set; }  
-        public DbSet<MemberType> memberTypes { get; set; }  
-        public DbSet<CheckoutTransaction> checkoutTransactions { get; set; }  
-        public DbSet<BookInventory> bookInventories { get; set; }  
-        public DbSet<Genre> genres { get; set; }  
-        public DbSet<Temp_Data> temp_data { get; set; }
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<Role> Roles { get; set; }
+        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<Member> Members { get; set; }  
+        public DbSet<MemberType> MemberTypes { get; set; }  
+        public DbSet<CheckoutTransaction> CheckoutTransactions { get; set; }  
+        public DbSet<BookInventory> BookInventories { get; set; }  
+        public DbSet<Genre> Genres { get; set; }       
      
-        public DbSet<Notification> GetNotifications { get; set; }
+        public DbSet<Notification> Notifications { get; set; }
         
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure composite primary key for UserRole
             modelBuilder.Entity<UserRole>()
-                .HasKey(ur => new { ur.userId, ur.roleId });
+                .HasKey(ur => new { ur.UserId, ur.RoleId });
 
             // Configure foreign keys
             modelBuilder.Entity<UserRole>()
                 .HasOne(ur => ur.User)
-                .WithMany(u => u.userRoles)
-                .HasForeignKey(ur => ur.userId);
+                .WithMany(u => u.UserRoles)
+                .HasForeignKey(ur => ur.UserId);
 
             modelBuilder.Entity<UserRole>()
                 .HasOne(ur => ur.Role)
-                .WithMany(r => r.userRoles)
-                .HasForeignKey(ur => ur.roleId);
+                .WithMany(r => r.UserRoles)
+                .HasForeignKey(ur => ur.RoleId);
 
             modelBuilder.Entity<Member>()
-           .HasOne(b => b.user)    
-           .WithMany(a => a.members)   
-           .HasForeignKey(b => b.userId);
+           .HasOne(b => b.User)    
+           .WithMany(a => a.Members)   
+           .HasForeignKey(b => b.UserId);
 
             modelBuilder.Entity<Genre>()
           .HasOne(b => b.user)
-          .WithMany(a => a.genres)
+          .WithMany(a => a.Genres)
           .HasForeignKey(b => b.userId);
 
             modelBuilder.Entity<Notification>()
-          .HasOne(b => b.user)
-          .WithMany(a => a.notifications)
-          .HasForeignKey(b => b.userId);
+          .HasOne(b => b.User)
+          .WithMany(a => a.Notifications)
+          .HasForeignKey(b => b.UserId);
 
             modelBuilder.Entity<Notification>()
-      .HasOne(b => b.member)
-      .WithMany(a => a.notifications)
-      .HasForeignKey(b => b.memberId);          
+      .HasOne(b => b.Member)
+      .WithMany(a => a.Notifications)
+      .HasForeignKey(b => b.MemberId);          
 
 
             modelBuilder.Entity<Member>()
-          .HasOne(m => m.memberType)
+          .HasOne(m => m.MemberType)
           .WithOne()
           .HasForeignKey<Member>(m => m.MemberTypeId);
 
             modelBuilder.Entity<CheckoutTransaction>()
-          .HasOne(b => b.user)
-          .WithMany(a => a.checkoutTransactions)
+          .HasOne(b => b.User)
+          .WithMany(a => a.CheckoutTransactions)
           .HasForeignKey(b => b.UserId);
 
             modelBuilder.Entity<CheckoutTransaction>()
-          .HasOne(b => b.member)
-          .WithMany(a => a.checkoutTransactions)
+          .HasOne(b => b.Member)
+          .WithMany(a => a.CheckoutTransactions)
           .HasForeignKey(b => b.MemberId);
 
             modelBuilder.Entity<CheckoutTransaction>()
-         .HasOne(b => b.bookInventory)
-         .WithMany(a => a.checkoutTransactions)
-         .HasForeignKey(b => b.bookInventoryId);
+         .HasOne(b => b.BookInventory)
+         .WithMany(a => a.CheckoutTransactions)
+         .HasForeignKey(b => b.BookInventoryId);
 
             // seed member type data
             modelBuilder.Entity<MemberType>().HasData(

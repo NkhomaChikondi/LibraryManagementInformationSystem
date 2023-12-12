@@ -46,7 +46,7 @@ namespace LMIS.Api.Services.Services
                     };
                 }
 
-                var member_code = _unitOfWork.member.GenerateMemberCode(createMemberDto.FirstName, createMemberDto.LastName);
+                var member_code = _unitOfWork.Member.GenerateMemberCode(createMemberDto.FirstName, createMemberDto.LastName);
 
                 var userEmail = userIdClaim;
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
@@ -61,7 +61,7 @@ namespace LMIS.Api.Services.Services
                 }
 
                 // verify if the email is valid
-                if (!_unitOfWork.member.IsValidEmail(createMemberDto.Email))
+                if (!_unitOfWork.Member.IsValidEmail(createMemberDto.Email))
                 {
                     return new()
                     {
@@ -69,7 +69,7 @@ namespace LMIS.Api.Services.Services
                         Message = "Invalid email"
                     };
                 }
-                if (await _unitOfWork.member.ExistsAsync(m => m.Email == createMemberDto.Email))
+                if (await _unitOfWork.Member.ExistsAsync(m => m.Email == createMemberDto.Email))
                 {
                     return new()
                     {
@@ -78,7 +78,7 @@ namespace LMIS.Api.Services.Services
                     };
                 }
                 // Verify if the phone number is valid
-                if (!_unitOfWork.member.IsPhoneNumberValid(createMemberDto.Phone))
+                if (!_unitOfWork.Member.IsPhoneNumberValid(createMemberDto.Phone))
                 {
                     return new()
                     {
@@ -89,7 +89,7 @@ namespace LMIS.Api.Services.Services
 
 
                 var memberTypeName = createMemberDto.MemberTypeName;
-                var Membertype = await _unitOfWork.memberType.GetFirstOrDefaultAsync(name => name.Name == memberTypeName);
+                var Membertype = await _unitOfWork.MemberType.GetFirstOrDefaultAsync(name => name.Name == memberTypeName);
 
                 if (Membertype == null)
                 {
@@ -102,20 +102,20 @@ namespace LMIS.Api.Services.Services
 
                 var member = new Member()
                 {
-                    First_Name = createMemberDto.FirstName,
+                    FirstName = createMemberDto.FirstName,
                     CreatedOn = DateTime.UtcNow,
                     Email = createMemberDto.Email,
-                    Last_Name = createMemberDto.LastName,
-                    Member_Code = member_code,
+                    LastName = createMemberDto.LastName,
+                    MemberCode = member_code,
                     Phone = createMemberDto.Phone,
                     Status = "None",
-                    user = user,
-                    memberType = Membertype,
+                    User = user,
+                    MemberType = Membertype,
                     MemberTypeId = Membertype.Id,
-                    userId = user.UserId
+                    UserId = user.UserId
                 };
 
-                await _unitOfWork.member.CreateAsync(member);
+                await _unitOfWork.Member.CreateAsync(member);
                 _unitOfWork.Save();
 
                 // Resend the email
@@ -151,7 +151,7 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                await _unitOfWork.member.SoftDeleteAsync(memberId);
+                await _unitOfWork.Member.SoftDeleteAsync(memberId);
                 return new()
                 {
                     IsError = false,
@@ -173,18 +173,18 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var allMembers = await _unitOfWork.member.GetAllRoles();
+                var allMembers = await _unitOfWork.Member.GetAllRoles();
                 if (allMembers != null)
                 {
                     var allMembersDTO = new List<CreateMemberDto>();
                     foreach (var item in allMembers)
                     {
                         // get member type from the member id
-                        var memberType = await _unitOfWork.memberType.GetFirstOrDefaultAsync(m => m.Id == item.MemberId);
+                        var memberType = await _unitOfWork.MemberType.GetFirstOrDefaultAsync(m => m.Id == item.MemberId);
                         var newMember = new CreateMemberDto()
                         {
-                            FirstName = item.First_Name,
-                            LastName = item.Last_Name,
+                            FirstName = item.FirstName,
+                            LastName = item.LastName,
                             Email = item.Email,
                             Phone = item.Phone,
                             MemberTypeName = memberType.Name,
@@ -216,7 +216,7 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var member = await _unitOfWork.member.GetByIdAsync(memberId);
+                var member = await _unitOfWork.Member.GetByIdAsync(memberId);
                 if (member != null)
                 {
                     if (member.IsDeleted)
@@ -228,11 +228,11 @@ namespace LMIS.Api.Services.Services
                         };
                     }
                     // get member type from the member id
-                    var memberType = await _unitOfWork.memberType.GetFirstOrDefaultAsync(m => m.Id == member.MemberId);
+                    var memberType = await _unitOfWork.MemberType.GetFirstOrDefaultAsync(m => m.Id == member.MemberId);
                     var getMemberDTO = new CreateMemberDto
                     {
-                        FirstName = member.First_Name,
-                        LastName = member.Last_Name,
+                        FirstName = member.FirstName,
+                        LastName = member.LastName,
                         Email = member.Email,
                         Phone = member.Phone,
                         MemberTypeName = memberType.Name,
@@ -263,16 +263,16 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var member = await _unitOfWork.member.GetByIdAsync(memberId);
+                var member = await _unitOfWork.Member.GetByIdAsync(memberId);
 
                 if (member != null)
                 {
                     member.Email = createMemberDto.Email;
-                    member.First_Name = createMemberDto.FirstName;
-                    member.Last_Name = createMemberDto.LastName;
+                    member.FirstName = createMemberDto.FirstName;
+                    member.LastName = createMemberDto.LastName;
                     member.Phone = createMemberDto.Phone;
 
-                    _unitOfWork.member.Update(member);
+                    _unitOfWork.Member.Update(member);
                     _unitOfWork.Save();
 
                     return new()
@@ -310,17 +310,17 @@ namespace LMIS.Api.Services.Services
                     };
                 }
 
-                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(r => r.Email == email);
+                var member = await _unitOfWork.Member.GetFirstOrDefaultAsync(r => r.Email == email);
                 if (member != null)
                 {
 
                     var memberDTO = _mapper.Map<MemberDTO>(member);
-                    var memberCode = _unitOfWork.member.GenerateMemberCode(member.First_Name, member.Last_Name);
+                    var memberCode = _unitOfWork.Member.GenerateMemberCode(member.FirstName, member.LastName);
 
-                    _unitOfWork.member.Update(member);
+                    _unitOfWork.Member.Update(member);
                     _unitOfWork.Save();
 
-                    string pinBody = $"Your member account has been created in LMIS, your account type is {member.memberType}, your member code is {memberCode}<br /> The member code will be needed each time you visit the library";
+                    string pinBody = $"Your member account has been created in LMIS, your account type is {member.MemberType}, your member code is {memberCode}<br /> The member code will be needed each time you visit the library";
                     this._emailService.SendMail(member.Email, "Member Account reset Details", pinBody);
 
                     return new()

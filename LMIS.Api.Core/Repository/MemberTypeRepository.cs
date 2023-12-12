@@ -13,12 +13,12 @@ public class MemberTypeRepository : Repository<MemberType>, IMemberType
     }
     public void Update(MemberType memberType)
     {
-        _db.memberTypes.Update(memberType);
+        _db.MemberTypes.Update(memberType);
     }
 
     public async Task<bool> SoftDeleteAsync(int id)
     {
-        var entity = await _db.applicationUsers.FindAsync(id);
+        var entity = await _db.ApplicationUsers.FindAsync(id);
 
         if (entity == null || entity.IsDeleted)
         {
@@ -34,7 +34,7 @@ public class MemberTypeRepository : Repository<MemberType>, IMemberType
 
     public async Task<IEnumerable<MemberType>> GetAllMemberType()
     {
-        var allMemberType = _db.memberTypes.Where(U => U.IsDeleted == false).ToList();
+        var allMemberType = _db.MemberTypes.Where(U => U.IsDeleted == false).ToList();
         return allMemberType;
     }
 }

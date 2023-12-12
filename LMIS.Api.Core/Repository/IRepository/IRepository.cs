@@ -11,15 +11,15 @@ namespace LMIS.Api.Core.Repository.IRepository
     {
         Task CreateAsync(T entity);
         Task<T> GetByIdAsync(int id);
-       // Task<T> GetByEmailAsync(string email);
-        Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>> filter = null);
-       // Task<T> GetLastOrDefaultAsync(Expression<Func<T, bool>> filter = null);
+      
+        Task<T> GetFirstOrDefaultAsync(Expression<Func<T, bool>>? filter = null);
+      
         IQueryable<T> GetAllAsync();
         IQueryable<T> Get(Expression<Func<T, bool>> filter);
       
         Task DeleteAsync(object id);
         Task DeleteAsync(T entity);
-        Task<int> CountAsync(Expression<Func<T, bool>> filter = null);
+        Task<int> CountAsync(Expression<Func<T, bool>>? filter = null);
         Task<bool> ExistsAsync(Expression<Func<T, bool>> filter);
 
     }

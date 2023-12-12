@@ -14,13 +14,12 @@ namespace LMIS.Api.Core.Repository
         public IUserRepository User { get; private set; }
         public IRoleRepository Role { get; private set; }
         public IUserRoleRepository UserRole { get; private set; }
-        public IMemberType memberType { get; set; }
+        public IMemberType MemberType { get; set; }
         public IGenreRepository Genre { get; private set; }
-        public IMember member {  get; set; }
-        public IBookInventoryRepository BookInventory { get; set; }
-        public ITemp_DataRepository temp_DataRepository { get; set; }
+        public IMember Member {  get; set; }
+        public IBookInventoryRepository BookInventory { get; set; }      
         public ICheckoutTransactionRepository Checkout { get; set; }       
-        public INotificationRepository notification { get; set; }
+        public INotificationRepository Notification { get; set; }
 
         public UnitOfWork(ApplicationDbContext db)
         {
@@ -28,13 +27,13 @@ namespace LMIS.Api.Core.Repository
             User = new UserRepository(_db);
             Role = new RoleRepository(_db);
             UserRole = new UserRoleRepository(_db);
-            member = new MemberRepository(_db);
-            memberType = new MemberTypeRepository(_db);
+            Member = new MemberRepository(_db);
+            MemberType = new MemberTypeRepository(_db);
             BookInventory = new BookInventoryRepository(_db);
             Genre = new GenreRepository(_db);            
             Checkout = new CheckoutTransactionRepository(_db);
-            notification = new NotificationRepository(_db);
-            temp_DataRepository = new Temp_DataRepository(_db);
+            Notification = new NotificationRepository(_db);
+           
         }
 
         public void Save()
@@ -46,7 +45,7 @@ namespace LMIS.Api.Core.Repository
             catch (Exception ex)
             {
 
-                var error = ex.Message;
+                throw new Exception($"Failed to save, an {ex.Message} occured");
               
             }
            

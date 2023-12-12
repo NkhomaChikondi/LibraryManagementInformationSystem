@@ -19,7 +19,7 @@ namespace LMIS.Api.Core.Repository
         }
         public void Update(Notification notification)
         {
-            _db.GetNotifications.Update(notification);
+            _db.Notifications.Update(notification);
         }
     }
 }

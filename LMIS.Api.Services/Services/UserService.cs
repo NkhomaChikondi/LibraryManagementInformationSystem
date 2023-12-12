@@ -83,8 +83,8 @@ namespace LMIS.Api.Services.Services
                 {
                     Email = createUserDTO.Email,
                     Password = hashedPassword,
-                    firstName = createUserDTO.firstName,
-                    lastName = createUserDTO.lastName,
+                    FirstName = createUserDTO.firstName,
+                    LastName = createUserDTO.lastName,
                     Gender = createUserDTO.Gender,
                     Location = createUserDTO.Location,
                     IsConfirmed = false,
@@ -111,9 +111,9 @@ namespace LMIS.Api.Services.Services
                 var createdUserDTO = new ApplicationUserDTO
                 {
                     Email = user.Email,
-                    firstName = user.firstName,
+                    firstName = user.FirstName,
                     Gender= user.Gender,
-                    lastName = user.lastName,
+                    lastName = user.LastName,
                     Location = user.Location,
                     RoleName = roleName,
                     
@@ -237,8 +237,8 @@ namespace LMIS.Api.Services.Services
                 if (user != null)
                 {                    
                     // Update user properties based on the received DTO
-                    user.firstName = createUserDTO.firstName;
-                    user.lastName = createUserDTO.lastName;
+                    user.FirstName = createUserDTO.firstName;
+                    user.LastName = createUserDTO.lastName;
                     user.Location = createUserDTO.Location;
                     user.Gender = createUserDTO.Gender;
                     user.Email = createUserDTO.Email;

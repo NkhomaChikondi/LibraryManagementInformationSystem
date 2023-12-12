@@ -14,21 +14,31 @@ namespace LMIS.Api.Core.Model
     {
         [Key]
         public int MemberId { get; set; }
-        public string Member_Code { get; set; }
-        public string First_Name { get; set; }
-        public string Last_Name { get; set; }
+        
+        public string MemberCode { get; set; }
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
+        [Required]
         public string Email { get; set; }
+        [Required]
         public string Phone { get; set; }
+        [Required]
         public string Status { get; set; }
+        [Required]
         public DateTime CreatedOn { get; set; }
-        public int userId { get;set; }
+       
+        public int UserId { get;set; }
+        
         public bool IsDeleted { get; set; }
-        public DateTime DeletedDate { get; set; }
+       
+        public DateTime? DeletedDate { get; set; }
         public int MemberTypeId { get; set; }
-        public ApplicationUser user { get; set; }
-        public ICollection<CheckoutTransaction> checkoutTransactions { get; set; }
-        public ICollection<Notification> notifications { get; set; }
+        public ApplicationUser User { get; set; }
+        public ICollection<CheckoutTransaction> CheckoutTransactions { get; set; }
+        public ICollection<Notification> Notifications { get; set; }
         [JsonIgnore]
-        public MemberType memberType { get; set; }
+        public MemberType MemberType { get; set; }
     }
 }

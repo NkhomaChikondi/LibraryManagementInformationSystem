@@ -12,14 +12,14 @@ namespace LMIS.Api.Core.Model
     public class UserRole  {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int userRoleId { get; set; }      
+        public int UserRoleId { get; set; }      
         
-        public int userId { get; set; }
+        public int UserId { get; set; }
         
         public ApplicationUser User { get; set; }
-        public int roleId { get; set; }
+        public int RoleId { get; set; }
         public Role Role { get; set; }
         public bool IsDeleted { get; set ; }
-        public DateTime DeletedDate { get; set ; }
+        public DateTime? DeletedDate { get; set ; }
     }
 }

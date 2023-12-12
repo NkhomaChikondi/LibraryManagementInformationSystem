@@ -18,7 +18,7 @@ namespace LMIS.Api.Core.Repository
         }
         public void Update(Genre genre)
         {
-            _db.genres.Update(genre);
+            _db.Genres.Update(genre);
         }
     }
 }

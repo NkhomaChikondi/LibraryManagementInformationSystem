@@ -18,11 +18,11 @@ namespace LMIS.Api.Core.Repository
         }
         public void Update(Role role)
         {
-            _db.roles.Update(role);
+            _db.Roles.Update(role);
         }
         public async Task<bool> SoftDeleteAsync(int id)
         {
-            var entity = await _db.roles.FindAsync(id);
+            var entity = await _db.Roles.FindAsync(id);
 
             if (entity == null || entity.IsDeleted)
             {
@@ -38,7 +38,7 @@ namespace LMIS.Api.Core.Repository
 
         public async Task<IEnumerable<Role>> GetAllRoles()
         {
-            var allEntities = _db.roles.Where(U => U.IsDeleted == false).ToList();
+            var allEntities = _db.Roles.Where(U => U.IsDeleted == false).ToList();
             return allEntities;
         }
     }

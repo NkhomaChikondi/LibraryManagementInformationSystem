@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace LMIS.Api.Core.Repository
 {
-    public class UserRepository : Repository<ApplicationUser>,IUserRepository
+    public class UserRepository : Repository<ApplicationUser>, IUserRepository
     {
         private ApplicationDbContext _db;
        
@@ -87,8 +87,8 @@ namespace LMIS.Api.Core.Repository
             var tokenString = tokenHandler.WriteToken(token);
 
             // getting user role
-            var role = await _unitOfWork.UserRole.GetFirstOrDefaultAsync(u => u.userId == applicationUser.UserId);
-            var roleData = await _unitOfWork.Role.GetFirstOrDefaultAsync(u => u.RoleId == role.roleId);
+            var role = await _unitOfWork.UserRole.GetFirstOrDefaultAsync(u => u.UserId == applicationUser.UserId);
+            var roleData = await _unitOfWork.Role.GetFirstOrDefaultAsync(u => u.RoleId == role.RoleId);
 
 
             // login DTO
@@ -96,8 +96,8 @@ namespace LMIS.Api.Core.Repository
             {
                 Token = tokenString,
                 UserId = applicationUser.UserId.ToString(),
-                FirstName = applicationUser.firstName,
-                LastName = applicationUser.lastName,
+                FirstName = applicationUser.FirstName,
+                LastName = applicationUser.LastName,
                 Role = roleData.RoleName,
                 Email = applicationUser.Email,
                 TokenType = "bearer",
@@ -127,13 +127,13 @@ namespace LMIS.Api.Core.Repository
         }
         public void Update(ApplicationUser user)
         {
-            _db.applicationUsers.Update(user);
+            _db.ApplicationUsers.Update(user);
         }
 
-        public IEnumerable<ApplicationUser> usersWithRole()
+        public IEnumerable<ApplicationUser> UsersWithRole()
         {
-          var users =  _db.applicationUsers
-              .Include(u => u.userRoles) 
+          var users =  _db.ApplicationUsers
+              .Include(u => u.UserRoles) 
                   .ThenInclude(ur => ur.Role) 
               .ToList();
             return users;
@@ -146,7 +146,7 @@ namespace LMIS.Api.Core.Repository
 
         public async Task<bool> SoftDeleteAsync(int id)
         {
-            var entity = await _db.applicationUsers.FindAsync(id);
+            var entity = await _db.ApplicationUsers.FindAsync(id);
 
             if (entity == null || entity.IsDeleted)
             {
@@ -162,7 +162,7 @@ namespace LMIS.Api.Core.Repository
 
         public async Task<IEnumerable <ApplicationUser>> GetAllUsers()
         {
-            var allUsers = _db.applicationUsers.Where(U => U.IsDeleted == false).ToList();
+            var allUsers =  _db.ApplicationUsers.Where(U => U.IsDeleted == false).ToList();
             return allUsers;
         }
        

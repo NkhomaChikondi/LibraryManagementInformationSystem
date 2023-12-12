@@ -58,7 +58,7 @@ namespace LMIS.Api.Services.Services
                     Name = createMemberTypeDTO.TypeName,
                     CreatedOn = DateTime.UtcNow,
                 };
-                await _unitOfWork.memberType.CreateAsync(newMemberType);
+                await _unitOfWork.MemberType.CreateAsync(newMemberType);
                 _unitOfWork.Save();
 
                 var createdMemberTypeDTO = new MemberTypeDTO
@@ -86,7 +86,7 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                await _unitOfWork.memberType.SoftDeleteAsync(MemberTypeId);
+                await _unitOfWork.MemberType.SoftDeleteAsync(MemberTypeId);
                 return new()
                 {
                     IsError = false,
@@ -108,7 +108,7 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var allMemberTypes = await _unitOfWork.memberType.GetAllMemberType();
+                var allMemberTypes = await _unitOfWork.MemberType.GetAllMemberType();
                 if (allMemberTypes != null)
                 {
                     var allMembersDTO = new List<MemberTypeDTO>();
@@ -148,7 +148,7 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var memberType = await _unitOfWork.memberType.GetByIdAsync(memberTypeId);
+                var memberType = await _unitOfWork.MemberType.GetByIdAsync(memberTypeId);
                 if (memberType != null)
                 {
                     if (memberType.IsDeleted)
@@ -191,13 +191,13 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var memberType = await _unitOfWork.memberType.GetByIdAsync(memberTypeId);
+                var memberType = await _unitOfWork.MemberType.GetByIdAsync(memberTypeId);
 
                 if (memberType != null)
                 {
                     memberType.Name = memberTypeDTO.TypeName;
 
-                    _unitOfWork.memberType.Update(memberType);
+                    _unitOfWork.MemberType.Update(memberType);
                     _unitOfWork.Save();
 
                     return new()

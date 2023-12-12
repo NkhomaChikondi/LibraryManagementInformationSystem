@@ -47,7 +47,7 @@ namespace LMIS.Api.Services.Services
             {
                 var userEmail = userIdClaim;
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
-                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == memberCode);
+                var member = await _unitOfWork.Member.GetFirstOrDefaultAsync(m => m.MemberCode == memberCode);
 
                 if (user == null || member == null)
                 {
@@ -62,7 +62,7 @@ namespace LMIS.Api.Services.Services
                 var memberCheckoutTransactions =  _unitOfWork.Checkout.GetAllAsync().Where(m => m.MemberId == member.MemberId).ToList();
 
                 // check if there is any outstanding transaction not finalised
-                var outstandingTransaction = memberCheckoutTransactions.Where(t => !t.isReturned && t .CheckOutDate < DateTime.Today).ToList();
+                var outstandingTransaction = memberCheckoutTransactions.Where(t => !t.IsReturned && t .CheckOutDate < DateTime.Today).ToList();
                 
                 if(outstandingTransaction.Count > 0 )
                 {
@@ -119,7 +119,7 @@ namespace LMIS.Api.Services.Services
                 }
 
                     // Find the book inventory for the requested book
-                    var bookInventory = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == getBook.Id && b.isAvailable && !b.IsDeleted);
+                    var bookInventory = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == getBook.Id && b.IsAvailable && !b.IsDeleted);
 
                     if (bookInventory == null)
                     {
@@ -131,7 +131,7 @@ namespace LMIS.Api.Services.Services
                     }
 
                     // Check if the book is already checked out
-                    var isBookAlreadyCheckedOut = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == getBook.Id && b.isAvailable);
+                    var isBookAlreadyCheckedOut = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == getBook.Id && b.IsAvailable);
 
                     if (isBookAlreadyCheckedOut == null )
                     {
@@ -153,9 +153,9 @@ namespace LMIS.Api.Services.Services
                         UserId = user.UserId,
                         BookId = getBook.Id,
                         MemberId = member.MemberId,
-                        isReturned = false,
+                        IsReturned = false,
                         IsDeleted = false,
-                        bookInventoryId = bookInventory.Id,
+                        BookInventoryId = bookInventory.Id,
                        
                     };
 
@@ -163,8 +163,8 @@ namespace LMIS.Api.Services.Services
                     _unitOfWork.Save();
 
                     // Update book inventory status
-                    bookInventory.isAvailable = false; 
-                    bookInventory.checkoutTransactions.Add(checkoutTransaction); 
+                    bookInventory.IsAvailable = false; 
+                    bookInventory.CheckoutTransactions.Add(checkoutTransaction); 
 
                     _unitOfWork.BookInventory.Update(bookInventory);
                     _unitOfWork.Save();
@@ -206,7 +206,7 @@ namespace LMIS.Api.Services.Services
                 var userEmail = userIdClaim;
                 string lmisBookId = null;
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
-                var member = await _unitOfWork.member.GetFirstOrDefaultAsync(m => m.Member_Code == returnBookDTO.MemberCode);
+                var member = await _unitOfWork.Member.GetFirstOrDefaultAsync(m => m.MemberCode == returnBookDTO.MemberCode);
 
                 if (user == null || member == null)
                 {
@@ -236,7 +236,7 @@ namespace LMIS.Api.Services.Services
                 // Find the book inventory for the specified book
                 var bookInventory = await _unitOfWork.BookInventory.GetFirstOrDefaultAsync(b => b.BookId == lmisBookId && !b.IsDeleted);
 
-                if (bookInventory == null || bookInventory.isAvailable)
+                if (bookInventory == null || bookInventory.IsAvailable)
                 {
                     return new ()
                     {
@@ -246,7 +246,7 @@ namespace LMIS.Api.Services.Services
                 }
 
                 // Retrieve the checkout transaction related to the book
-                var checkoutTransaction = await _unitOfWork.Checkout.GetFirstOrDefaultAsync(t => t.BookId == lmisBookId && !t.isReturned);
+                var checkoutTransaction = await _unitOfWork.Checkout.GetFirstOrDefaultAsync(t => t.BookId == lmisBookId && !t.IsReturned);
 
                 if (checkoutTransaction == null)
                 {
@@ -258,12 +258,12 @@ namespace LMIS.Api.Services.Services
                 }
 
                 // Update checkout transaction to mark the book as returned
-                checkoutTransaction.isReturned = true;
+                checkoutTransaction.IsReturned = true;
                 _unitOfWork.Checkout.Update(checkoutTransaction);
                 _unitOfWork.Save();
 
                 // Update book inventory status to mark the book as available
-                bookInventory.isAvailable = true;
+                bookInventory.IsAvailable = true;
                 _unitOfWork.BookInventory.Update(bookInventory);
                 _unitOfWork.Save();
 

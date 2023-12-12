@@ -17,13 +17,13 @@ namespace LMIS.Api.Core.Model
         public int UserId { get; set; }
         public string BookId { get; set; }
         public int MemberId { get; set; }      
-        public bool isReturned {  get; set; } = false;
-        public ApplicationUser user { get; set; }       
-        public Member member { get; set; }
-        public int bookInventoryId { get; set; }
-        public BookInventory bookInventory { get; set; }
+        public bool IsReturned {  get; set; } = false;
+        public ApplicationUser User { get; set; }       
+        public Member Member { get; set; }
+        public int BookInventoryId { get; set; }
+        public BookInventory BookInventory { get; set; }
         public bool IsDeleted { get; set; }
-        public DateTime DeletedDate { get; set; }
+        public DateTime? DeletedDate { get; set; }
 
     }
 }

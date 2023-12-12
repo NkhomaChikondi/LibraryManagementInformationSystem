@@ -19,7 +19,7 @@ namespace LMIS.Api.Core.Repository
         }
         public void Update(BookInventory bookInventory)
         {
-            _db.bookInventories.Update(bookInventory);
+            _db.BookInventories.Update(bookInventory);
         }
     }
 }

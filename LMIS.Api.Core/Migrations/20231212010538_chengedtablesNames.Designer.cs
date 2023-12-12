@@ -3,6 +3,7 @@ using System;
 using LMIS.Api.Core.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LMIS.Api.Core.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231212010538_chengedtablesNames")]
+    partial class chengedtablesNames
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,10 +43,6 @@ namespace LMIS.Api.Core.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("text");
@@ -53,10 +52,6 @@ namespace LMIS.Api.Core.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("Location")
                         .IsRequired()
@@ -68,6 +63,14 @@ namespace LMIS.Api.Core.Migrations
 
                     b.Property<int>("Pin")
                         .HasColumnType("integer");
+
+                    b.Property<string>("firstName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("lastName")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.HasKey("UserId");
 
@@ -93,15 +96,15 @@ namespace LMIS.Api.Core.Migrations
                     b.Property<DateTime>("DeletedDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<bool>("IsAvailable")
-                        .HasColumnType("boolean");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Location")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("isAvailable")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -120,13 +123,10 @@ namespace LMIS.Api.Core.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("BookInventoryId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CheckOutDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DeletedDate")
+                    b.Property<DateTime>("DeletedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<DateTime>("DueDate")
@@ -135,22 +135,25 @@ namespace LMIS.Api.Core.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<bool>("IsReturned")
-                        .HasColumnType("boolean");
-
                     b.Property<int>("MemberId")
                         .HasColumnType("integer");
 
                     b.Property<int>("UserId")
                         .HasColumnType("integer");
 
-                    b.HasKey("Id");
+                    b.Property<int>("bookInventoryId")
+                        .HasColumnType("integer");
 
-                    b.HasIndex("BookInventoryId");
+                    b.Property<bool>("isReturned")
+                        .HasColumnType("boolean");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("MemberId");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("bookInventoryId");
 
                     b.ToTable("CheckoutTransactions");
                 });
@@ -197,30 +200,30 @@ namespace LMIS.Api.Core.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DeletedDate")
+                    b.Property<DateTime>("DeletedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FirstName")
+                    b.Property<string>("First_Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("MemberCode")
+                    b.Property<string>("Last_Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("MemberTypeId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("Member_Code")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -230,7 +233,7 @@ namespace LMIS.Api.Core.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("userId")
                         .HasColumnType("integer");
 
                     b.HasKey("MemberId");
@@ -238,7 +241,7 @@ namespace LMIS.Api.Core.Migrations
                     b.HasIndex("MemberTypeId")
                         .IsUnique();
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("userId");
 
                     b.ToTable("Members");
                 });
@@ -254,7 +257,7 @@ namespace LMIS.Api.Core.Migrations
                     b.Property<DateTime>("CreatedOn")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<DateTime?>("DeletedDate")
+                    b.Property<DateTime>("DeletedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -272,49 +275,56 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             Id = 1,
-                            CreatedOn = new DateTime(2023, 12, 12, 1, 18, 2, 270, DateTimeKind.Utc).AddTicks(3516),
+                            CreatedOn = new DateTime(2023, 12, 12, 1, 5, 37, 795, DateTimeKind.Utc).AddTicks(2358),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Student"
                         },
                         new
                         {
                             Id = 2,
-                            CreatedOn = new DateTime(2023, 12, 12, 1, 18, 2, 270, DateTimeKind.Utc).AddTicks(3519),
+                            CreatedOn = new DateTime(2023, 12, 12, 1, 5, 37, 795, DateTimeKind.Utc).AddTicks(2359),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Staff"
                         },
                         new
                         {
                             Id = 3,
-                            CreatedOn = new DateTime(2023, 12, 12, 1, 18, 2, 270, DateTimeKind.Utc).AddTicks(3520),
+                            CreatedOn = new DateTime(2023, 12, 12, 1, 5, 37, 795, DateTimeKind.Utc).AddTicks(2361),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Regular Member"
                         },
                         new
                         {
                             Id = 4,
-                            CreatedOn = new DateTime(2023, 12, 12, 1, 18, 2, 270, DateTimeKind.Utc).AddTicks(3520),
+                            CreatedOn = new DateTime(2023, 12, 12, 1, 5, 37, 795, DateTimeKind.Utc).AddTicks(2361),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Premium Member"
                         },
                         new
                         {
                             Id = 5,
-                            CreatedOn = new DateTime(2023, 12, 12, 1, 18, 2, 270, DateTimeKind.Utc).AddTicks(3521),
+                            CreatedOn = new DateTime(2023, 12, 12, 1, 5, 37, 795, DateTimeKind.Utc).AddTicks(2362),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Guest"
                         },
                         new
                         {
                             Id = 6,
-                            CreatedOn = new DateTime(2023, 12, 12, 1, 18, 2, 270, DateTimeKind.Utc).AddTicks(3522),
+                            CreatedOn = new DateTime(2023, 12, 12, 1, 5, 37, 795, DateTimeKind.Utc).AddTicks(2363),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Senior Citezen"
                         },
                         new
                         {
                             Id = 7,
-                            CreatedOn = new DateTime(2023, 12, 12, 1, 18, 2, 270, DateTimeKind.Utc).AddTicks(3523),
+                            CreatedOn = new DateTime(2023, 12, 12, 1, 5, 37, 795, DateTimeKind.Utc).AddTicks(2364),
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             Name = "Corparate Member"
                         });
@@ -334,26 +344,26 @@ namespace LMIS.Api.Core.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("MemberId")
-                        .HasColumnType("integer");
-
                     b.Property<string>("Messsage")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("checkoutTransactionId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("checkoutTransactionId")
+                    b.Property<int>("memberId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("userId")
                         .HasColumnType("integer");
 
                     b.HasKey("NotificationId");
 
-                    b.HasIndex("MemberId");
-
-                    b.HasIndex("UserId");
-
                     b.HasIndex("checkoutTransactionId");
+
+                    b.HasIndex("memberId");
+
+                    b.HasIndex("userId");
 
                     b.ToTable("Notifications");
                 });
@@ -366,7 +376,7 @@ namespace LMIS.Api.Core.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("RoleId"));
 
-                    b.Property<DateTime?>("DeletedDate")
+                    b.Property<DateTime>("DeletedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsDeleted")
@@ -384,18 +394,21 @@ namespace LMIS.Api.Core.Migrations
                         new
                         {
                             RoleId = 1,
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             RoleName = "Administrator"
                         },
                         new
                         {
                             RoleId = 2,
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             RoleName = "FrontDesk_Officer"
                         },
                         new
                         {
                             RoleId = 3,
+                            DeletedDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             IsDeleted = false,
                             RoleName = "Management"
                         });
@@ -403,62 +416,62 @@ namespace LMIS.Api.Core.Migrations
 
             modelBuilder.Entity("LMIS.Api.Core.Model.UserRole", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<int>("userId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("RoleId")
+                    b.Property<int>("roleId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("DeletedDate")
+                    b.Property<DateTime>("DeletedDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<int>("UserRoleId")
+                    b.Property<int>("userRoleId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("UserRoleId"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("userRoleId"));
 
-                    b.HasKey("UserId", "RoleId");
+                    b.HasKey("userId", "roleId");
 
-                    b.HasIndex("RoleId");
+                    b.HasIndex("roleId");
 
                     b.ToTable("UserRoles");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.CheckoutTransaction", b =>
                 {
-                    b.HasOne("LMIS.Api.Core.Model.BookInventory", "BookInventory")
-                        .WithMany("CheckoutTransactions")
-                        .HasForeignKey("BookInventoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LMIS.Api.Core.Model.Member", "Member")
-                        .WithMany("CheckoutTransactions")
+                    b.HasOne("LMIS.Api.Core.Model.Member", "member")
+                        .WithMany("checkoutTransactions")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LMIS.Api.Core.Model.ApplicationUser", "User")
-                        .WithMany("CheckoutTransactions")
+                    b.HasOne("LMIS.Api.Core.Model.ApplicationUser", "user")
+                        .WithMany("checkoutTransactions")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("BookInventory");
+                    b.HasOne("LMIS.Api.Core.Model.BookInventory", "bookInventory")
+                        .WithMany("checkoutTransactions")
+                        .HasForeignKey("bookInventoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Member");
+                    b.Navigation("bookInventory");
 
-                    b.Navigation("User");
+                    b.Navigation("member");
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.Genre", b =>
                 {
                     b.HasOne("LMIS.Api.Core.Model.ApplicationUser", "user")
-                        .WithMany("Genres")
+                        .WithMany("genres")
                         .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -468,61 +481,61 @@ namespace LMIS.Api.Core.Migrations
 
             modelBuilder.Entity("LMIS.Api.Core.Model.Member", b =>
                 {
-                    b.HasOne("LMIS.Api.Core.Model.MemberType", "MemberType")
+                    b.HasOne("LMIS.Api.Core.Model.MemberType", "memberType")
                         .WithOne()
                         .HasForeignKey("LMIS.Api.Core.Model.Member", "MemberTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LMIS.Api.Core.Model.ApplicationUser", "User")
-                        .WithMany("Members")
-                        .HasForeignKey("UserId")
+                    b.HasOne("LMIS.Api.Core.Model.ApplicationUser", "user")
+                        .WithMany("members")
+                        .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("MemberType");
+                    b.Navigation("memberType");
 
-                    b.Navigation("User");
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.Notification", b =>
                 {
-                    b.HasOne("LMIS.Api.Core.Model.Member", "Member")
-                        .WithMany("Notifications")
-                        .HasForeignKey("MemberId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LMIS.Api.Core.Model.ApplicationUser", "User")
-                        .WithMany("Notifications")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("LMIS.Api.Core.Model.CheckoutTransaction", "CheckoutTransaction")
+                    b.HasOne("LMIS.Api.Core.Model.CheckoutTransaction", "checkoutTransaction")
                         .WithMany()
                         .HasForeignKey("checkoutTransactionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("CheckoutTransaction");
+                    b.HasOne("LMIS.Api.Core.Model.Member", "member")
+                        .WithMany("notifications")
+                        .HasForeignKey("memberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Member");
+                    b.HasOne("LMIS.Api.Core.Model.ApplicationUser", "user")
+                        .WithMany("notifications")
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("checkoutTransaction");
+
+                    b.Navigation("member");
+
+                    b.Navigation("user");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.UserRole", b =>
                 {
                     b.HasOne("LMIS.Api.Core.Model.Role", "Role")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("RoleId")
+                        .WithMany("userRoles")
+                        .HasForeignKey("roleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("LMIS.Api.Core.Model.ApplicationUser", "User")
-                        .WithMany("UserRoles")
-                        .HasForeignKey("UserId")
+                        .WithMany("userRoles")
+                        .HasForeignKey("userId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -533,32 +546,32 @@ namespace LMIS.Api.Core.Migrations
 
             modelBuilder.Entity("LMIS.Api.Core.Model.ApplicationUser", b =>
                 {
-                    b.Navigation("CheckoutTransactions");
+                    b.Navigation("checkoutTransactions");
 
-                    b.Navigation("Genres");
+                    b.Navigation("genres");
 
-                    b.Navigation("Members");
+                    b.Navigation("members");
 
-                    b.Navigation("Notifications");
+                    b.Navigation("notifications");
 
-                    b.Navigation("UserRoles");
+                    b.Navigation("userRoles");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.BookInventory", b =>
                 {
-                    b.Navigation("CheckoutTransactions");
+                    b.Navigation("checkoutTransactions");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.Member", b =>
                 {
-                    b.Navigation("CheckoutTransactions");
+                    b.Navigation("checkoutTransactions");
 
-                    b.Navigation("Notifications");
+                    b.Navigation("notifications");
                 });
 
             modelBuilder.Entity("LMIS.Api.Core.Model.Role", b =>
                 {
-                    b.Navigation("UserRoles");
+                    b.Navigation("userRoles");
                 });
 #pragma warning restore 612, 618
         }

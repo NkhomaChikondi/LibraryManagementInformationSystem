@@ -20,17 +20,17 @@ namespace LMIS.Api.Core.Repository
         }
         public void Update(CheckoutTransaction checkoutTransaction)
         {
-            _db.checkoutTransactions.Update(checkoutTransaction);
+            _db.CheckoutTransactions.Update(checkoutTransaction);
         }
 
         public async Task<int> GetOverDueTransaction(Member member)
         {
             // get the member having this member 
-            var allMemberTransactions = _db.checkoutTransactions.Where(c => c.member == member).ToList();
+            var allMemberTransactions = _db.CheckoutTransactions.Where(c => c.Member == member).ToList();
             if (allMemberTransactions.Count > 0)
             {
                 // get all transactions that are overdue
-                var overdueTransactions = allMemberTransactions.Where(o => o.isReturned == false).ToList();
+                var overdueTransactions = allMemberTransactions.Where(o => o.IsReturned == false).ToList();
 
                 if(overdueTransactions.Count > 0)
                     return overdueTransactions.Count;
@@ -43,7 +43,7 @@ namespace LMIS.Api.Core.Repository
 
         public async Task<bool> SoftDeleteAsync(int id)
         {
-            var entity = await _db.checkoutTransactions.FindAsync(id);
+            var entity = await _db.CheckoutTransactions.FindAsync(id);
 
             if (entity == null || entity.IsDeleted)
             {
@@ -59,13 +59,13 @@ namespace LMIS.Api.Core.Repository
 
         public async Task<IEnumerable<CheckoutTransaction>> GetAllTransactions()
         {
-            var alltransactions = _db.checkoutTransactions.Where(U => U.IsDeleted == false).ToList();
+            var alltransactions = _db.CheckoutTransactions.Where(U => U.IsDeleted == false).ToList();
             return alltransactions;
         }
 
         public async Task<CheckoutTransaction> GetLastOrDefault(int memberId)
         {
-            var allTransactions  = await _db.checkoutTransactions.OrderBy( m => m.Id).Where( m => m.MemberId == memberId).LastOrDefaultAsync();
+            var allTransactions  = await _db.CheckoutTransactions.OrderBy( m => m.Id).Where( m => m.MemberId == memberId).LastOrDefaultAsync();
             return allTransactions;
 
         }

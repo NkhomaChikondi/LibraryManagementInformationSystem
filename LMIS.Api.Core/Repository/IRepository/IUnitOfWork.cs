@@ -12,15 +12,14 @@ namespace LMIS.Api.Core.Repository.IRepository
         IUserRepository User { get; }
         IRoleRepository Role { get; }
         IUserRoleRepository UserRole { get; }
-        IMemberType memberType { get; }
-        IMember member { get; }
-        IBookInventoryRepository BookInventory { get; }
-        ITemp_DataRepository temp_DataRepository { get; }
+        IMemberType MemberType { get; }
+        IMember Member { get; }
+        IBookInventoryRepository BookInventory { get; }  
 
         ICheckoutTransactionRepository Checkout { get; } 
         IGenreRepository Genre { get; }
         
-        INotificationRepository  notification { get; }
+        INotificationRepository  Notification { get; }
         void Save();
 
     }
