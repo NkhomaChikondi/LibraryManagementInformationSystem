@@ -126,20 +126,22 @@ namespace LMIS.Api.Services.Services
             try
             {
                 var allRoles = _unitOfWork.Role.GetAllRoles();
-                if (allRoles != null)
+                if (allRoles == null)
                 {
-                    var allRoleDTO = _mapper.Map<IEnumerable<RoleDTO>>(allRoles);
                     return new()
                     {
-                        IsError = false,
-                        Result = allRoleDTO
+                        IsError = true,
+                        Message = "No roles was found"
                     };
-                }
+                }               
+                
+                var allRoleDTO = _mapper.Map<IEnumerable<RoleDTO>>(allRoles);
                 return new()
                 {
-                    IsError = true,
-                    Message = "No roles was found"
-                };
+                    IsError = false,
+                    Result = allRoleDTO
+                };                
+               
             }
             catch (Exception)
             {

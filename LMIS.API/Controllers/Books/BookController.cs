@@ -1,5 +1,4 @@
-﻿using LMIS.Api.Core.DTOs;
-using LMIS.Api.Core.DTOs.Book;
+﻿using LMIS.Api.Core.DTOs.Book;
 using LMIS.Api.Core.Model;
 using LMIS.Api.Services.Services;
 using LMIS.Api.Services.Services.IServices;

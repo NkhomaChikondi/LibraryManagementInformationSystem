@@ -318,6 +318,12 @@ namespace LMIS.Api.Services.Services
                         allTransactionDTO.Add(newTransaction);
                     }
                 }
+                if (allTransactions == null)
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "No checkout transaction found"
+                    };
 
                 return new BaseResponse<IEnumerable<CheckoutDTO>>
                 {
