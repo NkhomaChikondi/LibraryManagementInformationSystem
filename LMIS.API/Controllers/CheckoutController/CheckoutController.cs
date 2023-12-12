@@ -129,9 +129,7 @@ namespace LMIS.API.Controllers.CheckoutController
             {
                 return StatusCode(500, $"An error occurred while getting books: {ex.Message}");
             }
-        }
-
-        
+        }        
 
     }
 }
