@@ -8,8 +8,8 @@ namespace LMIS.Api.Core.DTOs.Book
 {
     public class SearchBookDTO
     {
-        public string Title { get; set; }
-        public string ISBN { get; set; }
-        public string Genre { get; set; }
+        public string Title { get; set; } = string.Empty;
+        public string ISBN { get; set; } = string.Empty;
+        public string Genre { get; set; } = string.Empty;
     }
 }

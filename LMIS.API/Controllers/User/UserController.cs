@@ -31,7 +31,7 @@ namespace LMIS.API.Controllers.User
         {
             try
             {
-                var response = await _userService.GetAllUsers();
+                var response =  _userService.GetAllUsers();
                 if (response.IsError)
                 {
                     return BadRequest(response.Message);

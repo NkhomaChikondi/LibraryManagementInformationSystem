@@ -23,7 +23,7 @@ namespace LMIS.Api.Core.Repository
             _db.CheckoutTransactions.Update(checkoutTransaction);
         }
 
-        public async Task<int> GetOverDueTransaction(Member member)
+        public int GetOverDueTransaction(Member member)
         {
             // get the member having this member 
             var allMemberTransactions = _db.CheckoutTransactions.Where(c => c.Member == member).ToList();
@@ -32,7 +32,7 @@ namespace LMIS.Api.Core.Repository
                 // get all transactions that are overdue
                 var overdueTransactions = allMemberTransactions.Where(o => o.IsReturned == false).ToList();
 
-                if(overdueTransactions.Count > 0)
+                if (overdueTransactions.Count > 0)
                     return overdueTransactions.Count;
 
                 else return 0;
@@ -57,17 +57,12 @@ namespace LMIS.Api.Core.Repository
             return true;
         }
 
-        public async Task<IEnumerable<CheckoutTransaction>> GetAllTransactions()
+        public IEnumerable<CheckoutTransaction> GetAllTransactions()
         {
             var alltransactions = _db.CheckoutTransactions.Where(U => U.IsDeleted == false).ToList();
             return alltransactions;
         }
 
-        public async Task<CheckoutTransaction> GetLastOrDefault(int memberId)
-        {
-            var allTransactions  = await _db.CheckoutTransactions.OrderBy( m => m.Id).Where( m => m.MemberId == memberId).LastOrDefaultAsync();
-            return allTransactions;
-
-        }
+       
     }
 }

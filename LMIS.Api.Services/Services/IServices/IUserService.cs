@@ -12,7 +12,7 @@ namespace LMIS.Api.Services.Services.IServices
     {
         public Task<BaseResponse<ApplicationUserDTO>> CreateUserAsync(ApplicationUserDTO createUserDTO);
         Task<BaseResponse<bool>> DeleteUserAsync(int memberId);
-        Task<BaseResponse<IEnumerable<ApplicationUserDTO>>> GetAllUsers();
+        BaseResponse<IEnumerable<ApplicationUserDTO>> GetAllUsers();
         Task<BaseResponse<ApplicationUserDTO>> GetUserByIdAsync(int userId);
         Task<BaseResponse<bool>> UpdateUserAsync(ApplicationUserDTO createUserDTO, int userId);
         Task<BaseResponse<bool>> ConfirmAccount(string email, int pin);

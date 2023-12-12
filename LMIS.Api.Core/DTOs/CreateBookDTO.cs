@@ -8,14 +8,14 @@ namespace LMIS.Api.Core.DTOs
 {
     public class CreateBookDTO
     {
-        public string ISBN { get; set; }        
-        public string Title { get; set; }
-        public string Author { get; set; }       
-        public string ObtainedThrough { get; set; }
-        public string Publisher { get; set; }
-        public string Genre { get; set; }
-        public string Condition { get; set; }
+        public string ISBN { get; set; } = string.Empty;
+        public string Title { get; set; } = string.Empty;
+        public string Author { get; set; } = string.Empty;
+        public string ObtainedThrough { get; set; } = string.Empty;
+        public string Publisher { get; set; } = string.Empty;
+        public string Genre { get; set; } = string.Empty;
+        public string Condition { get; set; } = string.Empty;
         public bool isAvailable { get; set; }
-        public string Location { get; set; }
+        public string Location { get; set; } = string.Empty;
     }
 }

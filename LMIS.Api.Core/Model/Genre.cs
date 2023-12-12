@@ -12,11 +12,11 @@ namespace LMIS.Api.Core.Model
     {
         [Key]
         public int GenreId { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public int MaximumBooksAllowed { get; set; }
         public bool IsDeleted { get; set; }
         public DateTime DeletedDate { get; set; }
         public int userId { get; set; }
-        public ApplicationUser user { get; set; }
+        public ApplicationUser? user { get; set; }
     }
 }

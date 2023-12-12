@@ -8,7 +8,7 @@ namespace LMIS.Api.Core.DTOs.Checkout
 {
     public class ReturnBookDTO
     {
-        public string ISBN { get; set; }
-        public string MemberCode { get; set; }
+        public string ISBN { get; set; } = string.Empty;
+        public string MemberCode { get; set; } = string.Empty;
     }
 }

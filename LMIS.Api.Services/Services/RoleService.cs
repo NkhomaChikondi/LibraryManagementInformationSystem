@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LMIS.Api.Core.DTOs;
 using LMIS.Api.Core.DTOs.Genre;
 using LMIS.Api.Core.DTOs.Role;
 using LMIS.Api.Core.Model;
@@ -27,27 +28,39 @@ namespace LMIS.Api.Services.Services
             _bookService = bookService;
         }
 
-        public async Task<RoleDTO> CreateRole(RoleDTO role, string userIdClaim)
+        public async Task<BaseResponse<RoleDTO>> CreateRole(RoleDTO role, string userIdClaim)
         {
             try
             {
                 if (role == null || string.IsNullOrEmpty(userIdClaim))
-                    return null;
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Role not found"
+                    };
 
                 var userEmail = userIdClaim;
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
                 if (user == null)
-                    return null;
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "User not found"
+                    };
+
                 var roleExist = await _unitOfWork.Role.ExistsAsync(r => r.RoleName == role.RoleName);
                 if (roleExist)
                 {
                     //check if it is deleted
                     var getRole = await _unitOfWork.Role.GetFirstOrDefaultAsync(R => R.RoleName == role.RoleName);
-                    if(!getRole.IsDeleted)
-                    {
-                        return null;
-                    }
-                    else 
+                    if (getRole.IsDeleted == true)
+                        return new()
+                        {
+                            IsError = true,
+                            Message = "role does not exist"
+                        };
+
+                    else
                     {
                         var newRole = new Role
                         {
@@ -63,10 +76,14 @@ namespace LMIS.Api.Services.Services
                             RoleName = newRole.RoleName,
                         };
 
-                        return newRoleDto;
+                        return new()
+                        {
+                            IsError = false,
+                            Result = newRoleDto
+                        };
                     }
                 }
-                else if(!roleExist) 
+                else if (!roleExist)
                 {
                     var newRole = new Role
                     {
@@ -82,35 +99,59 @@ namespace LMIS.Api.Services.Services
                         RoleName = newRole.RoleName,
                     };
 
-                    return newRoleDto;
+                    return new()
+                    {
+                        IsError = false,
+                        Result = newRoleDto
+                    };
                 }
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = "Failed to create role name"
+                };
             }
             catch (Exception)
             {
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = "Failed to create role name"
+                };
             }
         }
 
-        public IEnumerable<RoleDTO> GetAllRoles()
+        public BaseResponse<IEnumerable<RoleDTO>> GetAllRoles()
         {
             try
             {
-                var allRoles = _unitOfWork.Role.GetAllRoles().Result;
+                var allRoles = _unitOfWork.Role.GetAllRoles();
                 if (allRoles != null)
                 {
                     var allRoleDTO = _mapper.Map<IEnumerable<RoleDTO>>(allRoles);
-                    return allRoleDTO;
+                    return new()
+                    {
+                        IsError = false,
+                        Result = allRoleDTO
+                    };
                 }
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = "No roles was found"
+                };
             }
             catch (Exception)
             {
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = "No roles was found"
+                };
             }
         }
 
-        public async Task<RoleDTO> UpdateRoleAsync(RoleDTO role, int Id)
+        public async Task<BaseResponse<RoleDTO>> UpdateRoleAsync(RoleDTO role, int Id)
         {
             try
             {
@@ -123,29 +164,47 @@ namespace LMIS.Api.Services.Services
 
 
                 var getRoleDTO = _mapper.Map<RoleDTO>(selectedRole);
-                return getRoleDTO;
+                return new()
+                {
+                    IsError = false,
+                    Message = "Role updated successfully"
+
+                };
             }
             catch (Exception)
             {
+                return new()
+                {
+                    IsError = true,
+                    Message = "An error hass occured, failed to update role"
 
-                return null!;
+                };
             }
         }
 
-        public async Task DeleteRoleAsync(int roleId)
+        public async Task<BaseResponse<bool>> DeleteRoleAsync(int roleId)
         {
             try
             {
                 await _unitOfWork.Role.SoftDeleteAsync(roleId);
-                return;
+                return new()
+                {
+                    IsError = false,
+                    Message = "The role has been deleted successfully"
+
+                };
             }
             catch (Exception)
             {
-                return;
+                return new()
+                {
+                    IsError = true,
+                    Message = "An error hass occured, failed to update role"
+                };
             }
         }
 
-        public async Task<RoleDTO> GetRoleByIdAsync(int roleId)
+        public async Task<BaseResponse<RoleDTO>> GetRoleByIdAsync(int roleId)
         {
             try
             {
@@ -154,13 +213,27 @@ namespace LMIS.Api.Services.Services
                 if (role != null)
                 {
                     var getRoleDTO = _mapper.Map<RoleDTO>(role);
-                    return getRoleDTO;
+                    return new()
+                    {
+                        IsError = false,
+                        Result = getRoleDTO
+                    };
                 }
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = "Failed to get the select role"
+
+                };
             }
             catch (Exception)
             {
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = "Failed to get the select role"
+
+                };
             }
         }
     }

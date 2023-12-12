@@ -12,16 +12,16 @@ namespace LMIS.Api.Core.DTOs.User
         [Key]
         public int UserId { get; set; }
         [Required]
-        public string firstName { get; set; }
+        public string firstName { get; set; } = string.Empty;
         [Required]
-        public string lastName { get; set; }
+        public string lastName { get; set; } = string.Empty;
         [Required]
-        public string Location { get; set; }
+        public string Location { get; set; } = string.Empty;
         [Required]
-        public string Gender { get; set; }
+        public string Gender { get; set; } = string.Empty;
         [Required]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
-        public string RoleName { get; set; }
+        public string RoleName { get; set; } = string.Empty;
     }
 }

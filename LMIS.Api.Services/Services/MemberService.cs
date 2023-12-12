@@ -131,7 +131,7 @@ namespace LMIS.Api.Services.Services
                     Phone = createMemberDto.Phone
                 };
                 
-                //_mapper.Map<CreateMemberDto>(member);
+               
                 return new()
                 {
                     IsError = false,
@@ -173,7 +173,7 @@ namespace LMIS.Api.Services.Services
         {
             try
             {
-                var allMembers = await _unitOfWork.Member.GetAllRoles();
+                var allMembers =  _unitOfWork.Member.GetAllRoles();
                 if (allMembers != null)
                 {
                     var allMembersDTO = new List<CreateMemberDto>();

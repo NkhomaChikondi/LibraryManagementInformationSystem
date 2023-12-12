@@ -90,16 +90,23 @@ builder.Services.AddAuthentication(x =>
 
                 // Get user details based on the user ID 
                 var userEmail = userIdClaim.Value;
-                var userRepository =  context.HttpContext.RequestServices.GetService<IUnitOfWork>(); 
-                var user = await userRepository.User.GetFirstOrDefaultAsync(user => user.Email == userEmail); 
-
-                if (user == null)
+                var userRepository =  context.HttpContext.RequestServices.GetService<IUnitOfWork>();
+                if (userRepository != null)
                 {
-                    context.Fail("Unauthorized: User not found.");
-                    return ;
-                }               
+                    var user = await userRepository.User.GetFirstOrDefaultAsync(user => user.Email == userEmail);
 
-                return ;
+                    if (user == null)
+                    {
+                        context.Fail("Unauthorized: User not found.");
+                        return;
+                    }
+                    return;
+                }
+                else
+                    return;
+             
+
+               
             }
         };
         x.RequireHttpsMetadata = false;

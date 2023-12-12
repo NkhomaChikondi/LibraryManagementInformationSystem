@@ -9,6 +9,6 @@ namespace LMIS.Api.Core.DTOs.Member
     public class MemberTypeDTO
     {
        
-        public string TypeName { get; set; }
+        public string TypeName { get; set; } = string.Empty;
     }
 }

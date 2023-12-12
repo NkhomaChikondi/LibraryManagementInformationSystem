@@ -11,7 +11,7 @@ namespace LMIS.Api.Core.Repository.IRepository
     {
         void Update(MemberType memberType);
         Task<bool> SoftDeleteAsync(int id);
-        Task<IEnumerable<MemberType>> GetAllMemberType();
+        IEnumerable<MemberType> GetAllMemberType();
 
     }
 }

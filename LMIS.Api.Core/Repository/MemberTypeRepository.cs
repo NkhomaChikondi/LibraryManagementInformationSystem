@@ -32,7 +32,7 @@ public class MemberTypeRepository : Repository<MemberType>, IMemberType
         return true;
     }
 
-    public async Task<IEnumerable<MemberType>> GetAllMemberType()
+    public IEnumerable<MemberType> GetAllMemberType()
     {
         var allMemberType = _db.MemberTypes.Where(U => U.IsDeleted == false).ToList();
         return allMemberType;

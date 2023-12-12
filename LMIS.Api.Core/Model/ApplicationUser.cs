@@ -14,17 +14,17 @@ namespace LMIS.Api.Core.Model
         [Key]
         public int UserId { get; set; }
         [Required]
-        public string FirstName { get; set; }
+        public string FirstName { get; set; } = string.Empty;   
         [Required]
-        public string LastName { get; set; }
+        public string LastName { get; set; } = string.Empty;
         [Required]
-        public string Location { get; set; }
+        public string Location { get; set; } = string.Empty;
         [Required]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
         [Required]
-        public string Gender { get; set; }
+        public string Gender { get; set; } = string.Empty;
         [Required]
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
         [Required]
         public int Pin { get; set; }
         public DateTime CreatedOn { get; set; }
@@ -32,12 +32,12 @@ namespace LMIS.Api.Core.Model
         public bool IsDeleted { get; set; }
         public DateTime DeletedDate { get; set; }
 
-        public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<UserRole>? UserRoles { get; set; }
         [JsonIgnore]
-        public ICollection<Member> Members { get; set; }
-        public ICollection<Genre> Genres { get; set; }
-        public ICollection<CheckoutTransaction> CheckoutTransactions { get; set; }
-        public ICollection<Notification>  Notifications { get; set; }
+        public ICollection<Member>? Members { get; set; }
+        public ICollection<Genre>? Genres { get; set; }
+        public ICollection<CheckoutTransaction>? CheckoutTransactions { get; set; }
+        public ICollection<Notification>?  Notifications { get; set; }
 
 
         public ApplicationUser()

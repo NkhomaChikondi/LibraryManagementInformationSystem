@@ -12,7 +12,7 @@ namespace LMIS.Api.Core.Model
     {
         [Key]
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
         public bool IsDeleted { get; set; }
         public DateTime? DeletedDate { get; set; }
         public DateTime CreatedOn { get; set; }

@@ -9,11 +9,11 @@ namespace LMIS.Api.Core.DTOs.User
 {
     public class LoginDTO
     {
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         [Required]
         [StringLength(100, MinimumLength = 2)]
         [DataType(DataType.Password)]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
     }
 }

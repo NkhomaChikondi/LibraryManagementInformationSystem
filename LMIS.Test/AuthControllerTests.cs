@@ -64,7 +64,7 @@ public class AuthControllerTests
         };
 
         _unitOfWorkMock.Setup(u => u.User.GetFirstOrDefaultAsync(It.IsAny<Expression<Func<ApplicationUser, bool>>>()))
-                       .ReturnsAsync((ApplicationUser)null); // Simulate user not found in the database
+                       .ReturnsAsync((ApplicationUser)null); 
 
         // Act
         var result = await _authController.Login(loginModel);

@@ -19,10 +19,10 @@ namespace LMIS.Api.Core.Repository.IRepository
          string GeneratePassword(ApplicationUserDTO applicationUser);
          int GeneratePin();
          Task<LoginTokenDTO> GenerateToken(ApplicationUser applicationUser,IConfiguration configuration,IUnitOfWork unitOfWork);
-        Task<IEnumerable<ApplicationUser>> GetAllUsers();
+        IEnumerable<ApplicationUser> GetAllUsers();
         Task<bool> SoftDeleteAsync(int id);
         bool VerifyPassword(string hashedPasswordFromDatabase, string incomingPlainPassword);
-        IEnumerable<ApplicationUser> UsersWithRole();    
+      
     }
     
 }

@@ -130,15 +130,7 @@ namespace LMIS.Api.Core.Repository
             _db.ApplicationUsers.Update(user);
         }
 
-        public IEnumerable<ApplicationUser> UsersWithRole()
-        {
-          var users =  _db.ApplicationUsers
-              .Include(u => u.UserRoles) 
-                  .ThenInclude(ur => ur.Role) 
-              .ToList();
-            return users;
-        }
-
+       
         public bool VerifyPassword(string hashedPasswordFromDatabase, string incomingPlainPassword)
         {
             return BCrypt.Net.BCrypt.Verify(incomingPlainPassword, hashedPasswordFromDatabase);
@@ -160,7 +152,7 @@ namespace LMIS.Api.Core.Repository
             return true; 
         }
 
-        public async Task<IEnumerable <ApplicationUser>> GetAllUsers()
+        public IEnumerable <ApplicationUser> GetAllUsers()
         {
             var allUsers =  _db.ApplicationUsers.Where(U => U.IsDeleted == false).ToList();
             return allUsers;

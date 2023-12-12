@@ -16,9 +16,9 @@ namespace LMIS.Api.Core.Model
         
         public int UserId { get; set; }
         
-        public ApplicationUser User { get; set; }
+        public ApplicationUser? User { get; set; }
         public int RoleId { get; set; }
-        public Role Role { get; set; }
+        public Role? Role { get; set; }
         public bool IsDeleted { get; set ; }
         public DateTime? DeletedDate { get; set ; }
     }

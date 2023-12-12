@@ -13,9 +13,9 @@ namespace LMIS.Api.Core.Model
         [Key]
         public int RoleId { get; set; }
         [Required]
-        public string RoleName { get; set; }
+        public string RoleName { get; set; } = string.Empty;
         public bool IsDeleted { get; set; }
         public DateTime? DeletedDate { get; set; }
-        public ICollection<UserRole> UserRoles { get; set; }
+        public ICollection<UserRole>? UserRoles { get; set; }
     }
 }

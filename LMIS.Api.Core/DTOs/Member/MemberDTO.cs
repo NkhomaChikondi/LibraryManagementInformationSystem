@@ -10,16 +10,16 @@ namespace LMIS.Api.Core.DTOs.Member
 {
     public class MemberDTO
     {
-        public string Member_Code { get; set; }
-        public string First_Name { get; set; }
-        public string Last_Name { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string Status { get; set; }
+        public string Member_Code { get; set; } = string.Empty;
+        public string First_Name { get; set; } = string.Empty;
+        public string Last_Name { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Phone { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;  
         public DateTime CreatedOn { get; set; }
         public int userId { get; set; }
         public int MemberTypeId { get; set; }
-        public ApplicationUser user { get; set; }
-        public MemberType memberType { get; set; }
+        public ApplicationUser? User { get; set; }
+        public MemberType? MemberType { get; set; }
     }
 }

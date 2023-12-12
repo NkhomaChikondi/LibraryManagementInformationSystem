@@ -8,10 +8,10 @@ namespace LMIS.Api.Core.DTOs.User
 {
     public class PasswordResetDTO
     {
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
         public int Pin { get; set; }
 
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
     }
 }

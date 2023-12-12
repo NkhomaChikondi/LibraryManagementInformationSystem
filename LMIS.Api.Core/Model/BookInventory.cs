@@ -12,12 +12,12 @@ namespace LMIS.Api.Core.Model
     {
         [Key]
         public int Id { get; set; }          
-        public string BookId { get; set; }
-        public string Condition { get; set; }
+        public string BookId { get; set; } = string.Empty;
+        public string Condition { get; set; } = string.Empty;
         public bool IsAvailable { get; set; }
-        public string Location { get; set; }
+        public string Location { get; set; } = string.Empty;
         public bool IsDeleted { get; set; }
         public DateTime DeletedDate { get; set; }
-        public ICollection<CheckoutTransaction> CheckoutTransactions { get; set; }
+        public ICollection<CheckoutTransaction>? CheckoutTransactions { get; set; }
     }
 }

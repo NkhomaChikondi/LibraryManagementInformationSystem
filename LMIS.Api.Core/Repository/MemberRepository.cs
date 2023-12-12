@@ -63,7 +63,7 @@ namespace LMIS.Api.Core.Repository
             return true;
         }
 
-        public async Task<IEnumerable<Model.Member>> GetAllRoles()
+        public IEnumerable<Model.Member> GetAllRoles()
         {
             var allEntities = _db.Members.Where(U => U.IsDeleted == false).ToList();
             return allEntities;

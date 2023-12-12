@@ -157,11 +157,11 @@ namespace LMIS.Api.Services.Services
            
         }
 
-        public async Task<BaseResponse<IEnumerable<ApplicationUserDTO>>> GetAllUsers()
+        public BaseResponse<IEnumerable<ApplicationUserDTO>> GetAllUsers()
         {
             try
             {
-                var allUsers = await _unitOfWork.User.GetAllUsers();
+                var allUsers =  _unitOfWork.User.GetAllUsers();
                 if (allUsers != null)
                 {                   
                     var allMembersDTO = _mapper.Map<IEnumerable<ApplicationUserDTO>>(allUsers);

@@ -8,14 +8,14 @@ namespace LMIS.Api.Core.DTOs.User
 {
     public class LoginTokenDTO
     {
-        public string UserId { get; set; }
-        public string Token { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public string Role { get; set; }
-        public string Email { get; set; }
+        public string UserId { get; set; } = string.Empty;
+        public string Token { get; set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
+        public string LastName { get; set; } = string.Empty;
+        public string Role { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
 
-        public string TokenType { get; set; }
+        public string TokenType { get; set; } = string.Empty;
         public DateTime TokenExpiryMinutes { get; set; }
     }
 }

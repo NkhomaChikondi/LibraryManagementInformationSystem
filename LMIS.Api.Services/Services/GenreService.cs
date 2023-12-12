@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using LMIS.Api.Core.DTOs;
 using LMIS.Api.Core.DTOs.Genre;
 using LMIS.Api.Core.DTOs.Member;
 using LMIS.Api.Core.Model;
@@ -27,17 +28,25 @@ namespace LMIS.Api.Services.Services
             _bookService = bookService;
         }
 
-        public async Task<GenreDTO> CreateGenre(GenreDTO genre, string userIdClaim)
+        public async Task<BaseResponse<GenreDTO>> CreateGenre(GenreDTO genre, string userIdClaim)
         {
             try
             {
                 if (genre == null || string.IsNullOrEmpty(userIdClaim))
-                    return null;
+                    return new()
+                    {
+                        IsError = false,
+                        Message = "Make sure all values are entered correctly "
+                    };
 
                 var userEmail = userIdClaim;
                 var user = await _unitOfWork.User.GetFirstOrDefaultAsync(u => u.Email == userEmail);
                 if (user == null)
-                    return null;
+                    return new()
+                    {
+                        IsError = true,
+                        Message = "Failed to create the user"
+                    };
 
                 var newGenre = new Genre
                 {
@@ -56,17 +65,25 @@ namespace LMIS.Api.Services.Services
                     MaximumBooksAllowed = genre.MaximumBooksAllowed
                 };
 
-                return newGenreDto;
+                return new()
+                {
+                    IsError = false,
+                    Result = newGenreDto
+                };
             }
             catch (Exception)
-            {                
-                return null;
+            {
+                return new()
+                {
+                    IsError = true,
+                    Message = " An error occured, failed to create a user"
+                };
             }
         }
 
 
-      
-        public IEnumerable<GenreDTO> GetAllGenres()
+
+        public BaseResponse<IEnumerable<GenreDTO>> GetAllGenres()
         {
             try
             {
@@ -74,19 +91,29 @@ namespace LMIS.Api.Services.Services
                 if (allGenres != null)
                 {
                     var allGenreDTO = _mapper.Map<IEnumerable<GenreDTO>>(allGenres);
-                    return allGenreDTO;
+                    return new()
+                    {
+                        IsError = false,
+                        Result = allGenreDTO
+                    };
                 }
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = "Failed to get all genres "
+                };
             }
             catch (Exception)
             {
-               
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = "Failed to get all genres "
+                };
             }
         }
 
-
-        public async Task<GenreDTO> UpdateGenreAsync(GenreDTO genre, int Id)
+        public async Task<BaseResponse<GenreDTO>> UpdateGenreAsync(GenreDTO genre, int Id)
         {
             try
             {
@@ -102,13 +129,17 @@ namespace LMIS.Api.Services.Services
                     if (books != null)
                     {
                         // get all books having the genre's name
-                        var selectGenres = books.Where(b => b.Genre == selectedGenre.Name).ToList();
+                        var selectGenres = books.Where(b => b?.Genre == selectedGenre.Name).ToList();
+
                         if (selectGenres.Count > 0)
                         {
                             foreach (var book in selectGenres)
                             {
-                                book.Genre = selectedGenre.Name;
-                                await _bookService.UpdateAsync(book.Id, book);
+                                if (book != null && book.Id != null)
+                                {
+                                    // Use book.Id here
+                                    await _bookService.UpdateAsync(book.Id, book);
+                                }
                             }
                         }
                     }
@@ -116,20 +147,31 @@ namespace LMIS.Api.Services.Services
                 catch (Exception)
                 {
 
-                    throw;
+                    return new()
+                    {
+                        IsError = false,
+                        Message = "Failed to update Genre"
+                    };
                 }
-               
+
                 var getGenreDTO = _mapper.Map<GenreDTO>(selectedGenre);
-                return getGenreDTO;               
+                return new()
+                {
+                    IsError = false,
+                    Result = getGenreDTO,
+                };
             }
             catch (Exception)
             {
-
-                return null!;
+                return new()
+                {
+                    IsError = true,
+                    Message = "Failed to update a genre",
+                };
             }
         }
 
-        public async Task DeleteGenreAsync(int genreId)
+        public async Task<BaseResponse<bool>> DeleteGenreAsync(int genreId)
         {
             try
             {
@@ -141,28 +183,50 @@ namespace LMIS.Api.Services.Services
                         var books = await _bookService.GetAllAsync();
                         if (books != null)
                         {
-                            var selectGenres = books.Where(b => b.Genre == genre.Name).ToList();
+                            var selectGenres = books.Where(b => genre != null && b?.Genre == genre.Name).ToList();
+
                             if (selectGenres.Count > 0)
-                                return;
+                                return new()
+                                {
+                                    IsError = true,
+                                    Message = " This genre cannot be deleted, it is connected to other books"
+                                };
                         }
                     }
                     catch (Exception)
                     {
-                        // Log the exception or handle appropriately
-                        throw;
+                        return new()
+                        {
+                            IsError = true,
+                            Message = "Failed to delete this book"
+                        };
                     }
 
                     await _unitOfWork.Genre.DeleteAsync(genreId);
                     _unitOfWork.Save();
+                    return new()
+                    {
+                        IsError = false,
+                        Message = "Deleted successfully"
+                    };
                 }
+                return new()
+                {
+                    IsError = true,
+                    Message = "Failed to delete genre"
+                };
             }
             catch (Exception)
-            {                
-                return;
+            {
+                return new()
+                {
+                    IsError = false,
+                    Message = "Failed to delete genre"
+                };
             }
         }
 
-        public async Task<GenreDTO> GetGenreByIdAsync(int genreId)
+        public async Task<BaseResponse<GenreDTO>> GetGenreByIdAsync(int genreId)
         {
             try
             {
@@ -170,13 +234,25 @@ namespace LMIS.Api.Services.Services
                 if (genre != null)
                 {
                     var getGenreDTO = _mapper.Map<GenreDTO>(genre);
-                    return getGenreDTO;
+                    return new()
+                    {
+                        IsError = false,
+                        Result = getGenreDTO
+                    };
                 }
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = "Failed to selected genre"
+                };
             }
             catch (Exception)
             {
-                return null;
+                return new()
+                {
+                    IsError = true,
+                    Message = "Failed to selected genre"
+                };
             }
         }
     }

@@ -15,6 +15,6 @@ namespace LMIS.Api.Core.Repository.IRepository
         bool IsPhoneNumberValid(string phoneNumber);
         public bool IsValidEmail(string email);
         Task<bool> SoftDeleteAsync(int id);
-        Task<IEnumerable<Model.Member>> GetAllRoles();
+        IEnumerable<Model.Member> GetAllRoles();
     }
 }

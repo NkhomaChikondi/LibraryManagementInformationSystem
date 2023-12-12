@@ -7,7 +7,7 @@ namespace LMIS.Api.Services.Services
     {
         Task<BaseResponse<MemberTypeDTO>> CreateMemberTypeAsync(MemberTypeDTO createMemberTypeDTO, string userIdClaim);
         Task<BaseResponse<bool>> DeleteMemberTypeAsync(int MemberTypeId);
-        Task<BaseResponse<IEnumerable<MemberTypeDTO>>> GetAllMembersTypes();
+        BaseResponse<IEnumerable<MemberTypeDTO>> GetAllMembersTypes();
         Task<BaseResponse<MemberTypeDTO>> GetMemberTypeByIdAsync(int memberTypeId);
         Task<BaseResponse<bool>> UpdateMemberAsync(MemberTypeDTO memberTypeDTO, int memberTypeId);
     }

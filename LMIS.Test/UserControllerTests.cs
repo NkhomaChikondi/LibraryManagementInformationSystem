@@ -62,7 +62,7 @@ namespace LMIS.Test
             string userEmail = "chikondinkhoma51@gmail.com";
 
             // Case 1: Simulate null email
-            _userServiceMock.Setup(service => service.ResendEmail(null))
+           _userServiceMock.Setup(service => service.ResendEmail(null))
                             .ReturnsAsync(new BaseResponse<bool>
                             {
                                 IsError = true,
@@ -85,8 +85,7 @@ namespace LMIS.Test
                                 Message = " Email is resent successfully"
                             });
 
-            // Act and Assert for each case
-            // ... (perform assertions for each case)
+           
         }
 
     }

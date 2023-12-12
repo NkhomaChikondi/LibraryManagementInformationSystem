@@ -104,11 +104,11 @@ namespace LMIS.Api.Services.Services
 
         }
 
-        public async Task<BaseResponse<IEnumerable<MemberTypeDTO>>> GetAllMembersTypes()
+        public BaseResponse<IEnumerable<MemberTypeDTO>> GetAllMembersTypes()
         {
             try
             {
-                var allMemberTypes = await _unitOfWork.MemberType.GetAllMemberType();
+                var allMemberTypes =  _unitOfWork.MemberType.GetAllMemberType();
                 if (allMemberTypes != null)
                 {
                     var allMembersDTO = new List<MemberTypeDTO>();

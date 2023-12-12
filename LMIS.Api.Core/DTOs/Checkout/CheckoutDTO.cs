@@ -10,7 +10,7 @@ namespace LMIS.Api.Core.DTOs.Checkout
     {
         public DateTime CheckOutDate { get; set; }
         public DateTime DueDate { get; set; }        
-        public string book { get; set; }
+        public string book { get; set; } = string.Empty;
 
 
        
