@@ -34,9 +34,7 @@ namespace LMIS.Test
             var controller = new CheckoutController(mockCheckoutService.Object);
 
             // Act
-            var result = await controller.Get();
-
-            
+            var result = await controller.Get();            
         }
 
         [Fact]
@@ -63,10 +61,7 @@ namespace LMIS.Test
             var controller = new CheckoutController(mockCheckoutService.Object);
 
             // Act
-            var result = await controller.Delete(1); // Pass a valid ID
-
-            // Assert
-            // Validate the result
+            var result = await controller.Delete(1);             
         }
 
        
@@ -81,8 +76,7 @@ namespace LMIS.Test
 
             // Act
             var result = await controller.ReturnBook(new ReturnBookDTO()); 
-            // Assert
-            // Validate the result
+           
         }
     }
 }
